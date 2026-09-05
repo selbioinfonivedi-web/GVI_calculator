@@ -1,8 +1,4 @@
-# BUILD PROMPT: Genomic Virulence Index (GVI) Standalone Calculator
 
-**Feed this entire document to the build agent as the project specification.**
-
----
 
 ## 0. Role & Mandate
 
@@ -24,16 +20,11 @@ you design, implement, and test the software:
 | 9 | Technical Writer | 1 | User manual, algorithm reference doc, validation report |
 | 10 | Project Coordinator | 1 | Milestones, acceptance sign-off |
 
-Every module below must be implemented, reviewed, and independently self-tested
-before integration. Do not hand-wave any formula — implement exactly as
-specified in Section 5, and cite the formula/reference used in code comments.
-
----
 
 ## 1. Project Objective
 
 Build a **standalone, offline, cross-platform desktop application** (Windows,
-macOS, Linux) written in **Java** that:
+macOS, L**Java** that:inux) written in 
 
 1. Ingests raw **genomic sequence data** (FASTA/multi-FASTA alignments, VCF
    variant calls, optional Newick phylogenetic trees) and **temporal
@@ -305,7 +296,7 @@ multiplier in the composite module (Section 5.9).
 
 ### 5.6 Index 6 — Genetic Distance (GD)
 
-Implement all three, selectable by user/config:
+Implemented all three, selectable by user/config:
 - **Hamming**: `p` = proportion of differing (non-gap, non-N) sites.
 - **Jukes-Cantor (JC69)**: `d_JC = -3/4 · ln(1 - 4/3 · p)`
 - **Kimura 2-Parameter (K80)**: distinguish transitions (A↔G, C↔T) from
