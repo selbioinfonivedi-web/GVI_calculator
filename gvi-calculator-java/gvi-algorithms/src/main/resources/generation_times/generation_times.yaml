@@ -1,0 +1,344 @@
+# Bundled per-pathogen generation-time (T) reference table.
+#
+# Consumed by PhylodynamicReEstimator's Euler-Lotka/Wallinga-Lipsitch renewal
+# equation (reFromGrowthRate, PhylodynamicReEstimator.java:177-184) as the
+# MEAN of a Gamma-distributed serial interval -- NOT a point value plugged
+# into a bare exp(r*T). T_days below is that Gamma mean; the SD is derived
+# elsewhere as a fixed ratio of the mean (SERIAL_INTERVAL_SD_TO_MEAN_RATIO),
+# unchanged by this table.
+#
+# This file replaces the single hardcoded default (--generation-time-days,
+# currently 5.0 for every pathogen -- GviCli.java:149) that was flagged in
+# the GVI validation audit as the root cause of Re collapsing to ~1.00-1.01
+# across biologically very different organisms.
+#
+# ---------------------------------------------------------------------------
+# SCHEMA (six required fields per entry)
+# ---------------------------------------------------------------------------
+#   pathogen_id      snake_case key, matches the CLI --pathogen-id value
+#   T_days           mean generation time in days; null when re_applicable
+#                    is false or unknown
+#   confidence       high | medium | low | none
+#   re_applicable    true | false | unknown
+#   vector_borne     true | false
+#   T_note           free text -- which biological cycle T represents,
+#                    citation where known
+#
+# display_name and organism_class are carried as additional metadata: they
+# were already present in this table and organism_class is needed by the
+# separate CAI organism-class gating fix, so dropping them would lose data.
+#
+# ---------------------------------------------------------------------------
+# INVARIANTS (assert these at load time)
+# ---------------------------------------------------------------------------
+#   - re_applicable: true  =>  T_days is non-null and > 0
+#   - re_applicable: false =>  T_days is null (Re must not be reported)
+#   - re_applicable: unknown => T_days is null; loader raises
+#     MissingGenerationTimeException on lookup
+# ---------------------------------------------------------------------------
+
+schema_version: 2
+
+generation_times:
+
+  # =========================================================================
+  # CITATION-BACKED ENTRIES -- usable as-is
+  # =========================================================================
+
+  influenza_a:
+    pathogen_id: influenza_a
+    display_name: "Influenza A virus"
+    organism_class: virus
+    T_days: 2.0
+    confidence: high
+    re_applicable: true
+    vector_borne: false
+    T_note: "Host-to-host serial interval, direct respiratory transmission. Cowling et al. 2009, Epidemiology 20(3) -- household transmission pair serial intervals."
+
+  sars_cov_2:
+    pathogen_id: sars_cov_2
+    display_name: "SARS-CoV-2"
+    organism_class: virus
+    T_days: 5.2
+    confidence: high
+    re_applicable: true
+    vector_borne: false
+    T_note: "Host-to-host generation interval, direct respiratory transmission. Ganyani et al. 2020, Euro Surveill 25(17) -- generation interval from Singapore/Tianjin case pairs."
+
+  monkeypox:
+    pathogen_id: monkeypox
+    display_name: "Monkeypox virus (Mpox)"
+    organism_class: virus
+    T_days: 12.0
+    confidence: high
+    re_applicable: true
+    vector_borne: false
+    T_note: "Host-to-host serial interval, close-contact transmission. Guzzetta et al. 2022, Euro Surveill 27(22); UKHSA 2022 contact-tracing serial interval estimates."
+
+  # =========================================================================
+  # CORRECTED ENTRIES
+  # =========================================================================
+
+  m_tuberculosis:
+    pathogen_id: m_tuberculosis
+    display_name: "Mycobacterium tuberculosis"
+    organism_class: bacterium
+    T_days: 365.0
+    confidence: medium
+    re_applicable: true
+    vector_borne: false
+    T_note: "CORRECTED from 20.0 d. The previous value was an in-vitro doubling time, which is not the quantity phylodynamic Re requires. T is the host-to-host serial interval -- approximately 1 year in human populations, reflecting the slow and highly variable progression from infection to infectious active disease (Vynnycky & Fine 1997, Epidemiol Infect 119(2)). Genuinely broad distribution around this mean; confidence medium rather than high because a single Gamma mean compresses a serial interval that in reality spans months to many years."
+
+  p_falciparum:
+    pathogen_id: p_falciparum
+    display_name: "Plasmodium falciparum"
+    organism_class: parasite
+    T_days: 2.0
+    confidence: medium
+    re_applicable: true
+    vector_borne: true
+    T_note: "CORRECTED from 10.0 d and relabelled. T is the ~48-hour intraerythrocytic (asexual) cycle -- the correct in-host generation time for phylodynamic Re computed on a parasite gene tree, where successive generations are parasite replication cycles within the host. The previous 10.0 d value was the mosquito extrinsic incubation period (sporogony in Anopheles), a distinct biological quantity governing vector-to-host transmission timing, not in-host parasite replication. These are not interchangeable. NOTE: because T here is the intrinsic cycle only, Re estimates describe within-host parasite population growth and are NOT directly comparable to an epidemiological between-host Re for malaria."
+
+  # =========================================================================
+  # NOT APPLICABLE TO A SERIAL-INTERVAL FRAMEWORK
+  # Environmentally / toxin / food acquired -- no host-to-host transmission
+  # chain, so no generation time exists. Re must not be reported for these.
+  # =========================================================================
+
+  b_anthracis:
+    pathogen_id: b_anthracis
+    display_name: "Bacillus anthracis"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: false
+    vector_borne: false
+    T_note: "Not applicable. Acquired by inhalation, ingestion or cutaneous exposure to environmental spores (soil, contaminated carcasses/hides), not from a preceding case. Host-to-host transmission is rare, so there is no serial interval and no meaningful phylodynamic Re. Consistent with the validation audit finding that Re was already unavailable for all four bacterial datasets in the test corpus."
+
+  c_botulinum:
+    pathogen_id: c_botulinum
+    display_name: "Clostridium botulinum"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: false
+    vector_borne: false
+    T_note: "Not applicable. Botulism is intoxication by ingestion of preformed toxin in food (or, in wound/infant forms, in-situ toxin production), not host-to-host infection. No transmission chain, therefore no generation time. The previously supplied 0.5 d was an explicit 'toxin locus proxy' placeholder, not a serial interval."
+
+  c_burnetii:
+    pathogen_id: c_burnetii
+    display_name: "Coxiella burnetii"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: false
+    vector_borne: false
+    T_note: "Not applicable. Q fever is acquired by inhalation of contaminated aerosols from parturient livestock, birth products and dust, or by direct animal contact -- environmental exposure, not serial host-to-host spread. The previously supplied 8.0 d conflated an incubation-period midpoint with a serial interval; these are different quantities."
+
+  t_gondii:
+    pathogen_id: t_gondii
+    display_name: "Toxoplasma gondii"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: false
+    vector_borne: false
+    T_note: "Not applicable. Acquired by ingestion of environmental oocysts (felid-shed, in soil/water) or tissue cysts in undercooked meat; also congenital. No horizontal host-to-host chain among intermediate hosts, so a conventional epidemic generation time is undefined."
+
+  e_histolytica:
+    pathogen_id: e_histolytica
+    display_name: "Entamoeba histolytica"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: false
+    vector_borne: false
+    T_note: "Not applicable. Faecal-oral acquisition by ingestion of environmentally shed cysts in contaminated food or water, rather than a clean serial chain of host-to-host transmission events. The previously supplied 8.0 d had no source and no defined referent."
+
+  # =========================================================================
+  # VECTOR-BORNE -- T covers the INTRINSIC (in-host) cycle only
+  # =========================================================================
+
+  blue_tongue:
+    pathogen_id: blue_tongue
+    display_name: "Bluetongue virus"
+    organism_class: virus
+    T_days: 14.0
+    confidence: medium
+    re_applicable: true
+    vector_borne: true
+    T_note: "T represents the INTRINSIC (in-host) cycle only -- ruminant viraemia duration, on the order of two weeks. It does NOT include the extrinsic incubation period (EIP) in the Culicoides vector, which is strongly temperature-dependent (roughly 4-20+ days across ambient temperatures; cf. Carpenter et al. 2011, J Appl Ecol). Because the full transmission loop is intrinsic + extrinsic, Re computed from the intrinsic cycle alone will be SYSTEMATICALLY UNDERESTIMATED relative to the true between-host reproduction number. FLAG: the 14.0 value was originally entered to represent the whole loop; it is retained here but relabelled as intrinsic-only, so the number should be re-derived against a ruminant-viraemia source rather than assumed correct under its new meaning."
+
+  leishmania_spp:
+    pathogen_id: leishmania_spp
+    display_name: "Leishmania spp."
+    organism_class: parasite
+    T_days: 7.0
+    confidence: low
+    re_applicable: true
+    vector_borne: true
+    T_note: "T represents the INTRINSIC (in-host) amastigote cycle only. It does NOT include the extrinsic development period in the phlebotomine sandfly vector (promastigote development and metacyclogenesis). Because the full transmission loop is intrinsic + extrinsic, Re computed from the intrinsic cycle alone will be SYSTEMATICALLY UNDERESTIMATED relative to the true between-host reproduction number. Confidence low: no source yet attached to the 7.0 value, and Leishmania spp. spans species with materially different host and vector biology."
+
+  # =========================================================================
+  # TEST-CORPUS ANCHOR
+  # =========================================================================
+
+  asfv:
+    pathogen_id: asfv
+    display_name: "African Swine Fever Virus"
+    organism_class: virus
+    T_days: 5.0
+    confidence: medium
+    re_applicable: true
+    vector_borne: false
+    T_note: "Direct-contact/oronasal domestic-pig transmission cycle only. Does NOT cover the Ornithodoros soft-tick sylvatic cycle, which has a materially different (generally longer, tick-lifecycle-dependent) effective generation time -- do not reuse this value for tick-cycle ASF datasets. Citation still TODO: 5.0 is a commonly repeated round-number estimate and needs pinning to a specific pig-to-pig transmission study (e.g. Guinat et al. 2016 within-farm transmission dynamics, or an EFSA ASF scientific opinion) before being treated as sourced."
+
+  # =========================================================================
+  # CARRIED FORWARD -- not covered by the current correction instructions
+  # =========================================================================
+
+  y_pestis:
+    pathogen_id: y_pestis
+    display_name: "Yersinia pestis"
+    organism_class: bacterium
+    T_days: 2.0
+    confidence: medium
+    re_applicable: true
+    vector_borne: false
+    T_note: "T=2.0 d reflects the PNEUMONIC (person-to-person, respiratory) plague serial interval only; pin to Gani & Leach 2004, Emerg Infect Dis before treating as sourced. It does NOT describe the more common flea-vector-borne bubonic form, whose effective generation time (flea maintenance cycle plus bubo incubation) is longer and more variable -- vector_borne is false here strictly because T refers to the pneumonic route. Split into separate pneumonic/bubonic entries if a dataset mixes the two forms."
+
+  # =========================================================================
+  # STUBS -- test-corpus pathogens, T not yet assigned.
+  # Every lookup against these raises MissingGenerationTimeException until
+  # populated. Values deliberately NOT guessed.
+  # =========================================================================
+
+  csf:
+    pathogen_id: csf
+    display_name: "Classical Swine Fever"
+    organism_class: virus
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated."
+
+  fmd:
+    pathogen_id: fmd
+    display_name: "Foot and Mouth Disease"
+    organism_class: virus
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated."
+
+  lsd:
+    pathogen_id: lsd
+    display_name: "Lumpy Skin Disease"
+    organism_class: virus
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE when populating: LSD is largely transmitted by biting arthropods, so this entry will most likely need vector_borne: true and the intrinsic/extrinsic distinction applied as for blue_tongue."
+
+  sheep_goat_pox:
+    pathogen_id: sheep_goat_pox
+    display_name: "Sheep and Goat Pox"
+    organism_class: virus
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated."
+
+  ppr:
+    pathogen_id: ppr
+    display_name: "Peste des Petits Ruminants"
+    organism_class: virus
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated."
+
+  hs:
+    pathogen_id: hs
+    display_name: "Haemorrhagic Septicaemia (Pasteurella multocida)"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE when populating: carrier-state transmission may make a clean serial interval hard to define; re_applicable: false may prove correct."
+
+  enterotoxaemia:
+    pathogen_id: enterotoxaemia
+    display_name: "Enterotoxaemia (Clostridium perfringens)"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE when populating: this is an endogenous gut-overgrowth opportunist rather than a host-to-host transmitted pathogen, so re_applicable: false is the likely correct resolution, as for c_botulinum."
+
+  blackleg:
+    pathogen_id: blackleg
+    display_name: "Blackleg (Clostridium chauvoei)"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE: same organism as black_quarter (C. chauvoei) -- see that entry; these two ids should almost certainly be merged. Soil-spore acquisition means re_applicable: false is the likely correct resolution, as for b_anthracis."
+
+  black_quarter:
+    pathogen_id: black_quarter
+    display_name: "Black Quarter (Clostridium chauvoei)"
+    organism_class: bacterium
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE: 'black quarter' and 'blackleg' are two names for the SAME disease caused by the same organism (C. chauvoei). Retained as separate ids only to mirror the existing test-corpus directory layout; resolve to a single id before populating so one organism cannot carry two different T values."
+
+  babesiosis:
+    pathogen_id: babesiosis
+    display_name: "Babesiosis (Babesia spp.)"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: true
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. Tick-borne (Rhipicephalus): when populating, state explicitly whether T is the intrinsic in-host cycle or the full loop, and apply the same underestimation caveat as blue_tongue and leishmania_spp."
+
+  theileriosis:
+    pathogen_id: theileriosis
+    display_name: "Theileriosis (Theileria spp.)"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: true
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. Tick-borne: when populating, state explicitly whether T is the intrinsic in-host cycle or the full loop, and apply the same underestimation caveat as blue_tongue and leishmania_spp."
+
+  trypanosomiasis:
+    pathogen_id: trypanosomiasis
+    display_name: "Trypanosomiasis (Trypanosoma spp.)"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: true
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. Tsetse-borne: when populating, state explicitly whether T is the intrinsic in-host cycle or the full loop, and apply the same underestimation caveat as blue_tongue and leishmania_spp."
+
+  fascioliasis:
+    pathogen_id: fascioliasis
+    display_name: "Fascioliasis (Fasciola spp.)"
+    organism_class: parasite
+    T_days: null
+    confidence: none
+    re_applicable: unknown
+    vector_borne: false
+    T_note: "Stub -- T not yet assigned. Will trigger MissingGenerationTimeException until populated. NOTE when populating: Fasciola is a macroparasitic trematode with an obligate snail intermediate host and free-living environmental stages; a microbial-style serial interval may not apply at all, so re_applicable: false is a plausible resolution."

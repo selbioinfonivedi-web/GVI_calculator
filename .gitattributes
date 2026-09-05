@@ -1,0 +1,49 @@
+# Normalise line endings on commit, check out native. Without this a Windows
+# clone rewrites shell scripts to CRLF and run_corpus.sh stops being executable.
+* text=auto
+
+# ─── Explicitly text ─────────────────────────────────────────────────────────
+*.java      text diff=java
+*.xml       text
+*.yaml      text
+*.yml       text
+*.json      text
+*.md        text
+*.html      text diff=html
+*.css       text
+*.js        text
+*.py        text diff=python
+*.csv       text
+*.txt       text
+
+# Shell scripts must keep LF whatever the platform, or they will not run.
+*.sh        text eol=lf
+
+# ─── Bioinformatics inputs are text, but not worth diffing ───────────────────
+# A changed alignment is reviewed by re-running the corpus, not by reading a
+# 600-line character diff.
+*.fasta     text -diff
+*.fa        text -diff
+*.gff3      text -diff
+*.gb        text -diff
+
+# ─── Binary: never diff, never touch line endings ────────────────────────────
+*.docx      binary
+*.pptx      binary
+*.xlsx      binary
+*.pdf       binary
+*.ttf       binary
+*.otf       binary
+*.woff      binary
+*.woff2     binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.jar       binary
+*.zip       binary
+
+# ─── Keep the repository lean when it is exported or archived ────────────────
+gui_concepts/   export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore

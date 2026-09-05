@@ -1,0 +1,658 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>GVI · FMDV_GVI_India_2016_2026 · Results</title>
+<link rel=preconnect href="https://fonts.googleapis.com"><link rel=preconnect href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400;75..100,500;75..100,600;75..100,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel=stylesheet>
+<style>
+:root{
+ --canvas:#080D0F;--ws:#0B1113;--surf:#111A1D;--raised:#172226;--hover:#1D2A2F;--sel:#12312D;
+ --rule:#1B272B;--rule-hi:#28383E;
+ --tx:#E6EDF0;--tx2:#A3B2BA;--tx3:#6B7C85;--tx4:#43535B;
+ --phos:#17A89C;
+ --s1:#3E8FD4;--s2:#D2683A;--s3:#1F9C79;--s4:#A87A18;--s5:#8C7BD8;--s6:#CE6B85;--s7:#7A9A1F;
+ --ok:#2FA84F;--run:#17A89C;--pend:#6E8794;--warn:#E0A32E;--err:#E05C55;--sig:#C77DE0;--emg:#E0812F;
+ --mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Archivo',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ws);color:var(--tx2);font-family:var(--sans);font-size:12px;
+ font-variation-settings:'wdth' 93;-webkit-font-smoothing:antialiased}
+.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:46px 1fr 316px;grid-template-rows:40px 26px 1fr 20px;height:100vh}
+
+/* title bar */
+.bar{grid-column:1/-1;display:flex;align-items:stretch;background:var(--surf);border-bottom:1px solid var(--rule)}
+.bar .brand{display:flex;align-items:center;gap:8px;padding:0 14px;border-right:1px solid var(--rule)}
+.bar .brand b{font-size:12.5px;letter-spacing:.2em;color:var(--tx);font-weight:700}
+.bar .fld{display:flex;align-items:center;gap:6px;padding:0 13px;border-right:1px solid var(--rule);white-space:nowrap}
+.bar .fld k{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--tx4)}
+.bar .fld v{font-family:var(--mono);font-size:11px;color:var(--tx)}
+.bar .sp{flex:1}
+.bar button{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;background:none;border:1px solid var(--rule-hi);
+ color:var(--tx2);padding:5px 11px;margin:auto 5px;cursor:pointer}
+.bar button:hover{border-color:var(--phos);color:var(--phos)}
+.bar button.pri{background:var(--phos);border-color:var(--phos);color:#06100F}
+.stat{display:flex;align-items:center;gap:7px;padding:0 13px;border-right:1px solid var(--rule);font-family:var(--mono);font-size:10px;color:var(--ok)}
+.stat i{width:6px;height:6px;background:var(--ok);border-radius:50%}
+
+/* context strip */
+.ctx{grid-column:1/-1;display:flex;align-items:stretch;background:var(--ws);border-bottom:1px solid var(--rule);overflow-x:auto}
+.ctx .f{display:flex;align-items:center;gap:6px;padding:0 12px;border-right:1px solid var(--rule);white-space:nowrap}
+.ctx k{font-family:var(--mono);font-size:8px;letter-spacing:.13em;color:var(--tx4)}
+.ctx v{font-family:var(--mono);font-size:10.5px;color:var(--tx2)}
+.ctx v.p{color:var(--phos)}
+
+/* tool rail */
+.rail{background:var(--surf);border-right:1px solid var(--rule);padding:8px 0;display:flex;flex-direction:column;gap:2px;align-items:center}
+.rail button{width:32px;height:30px;background:none;border:0;color:var(--tx3);cursor:pointer;font-size:14px;line-height:1}
+.rail button:hover{background:var(--hover);color:var(--phos)}
+.rail button.on{background:var(--sel);color:var(--phos);box-shadow:inset 2px 0 0 var(--phos)}
+.rail .gap{height:10px}
+
+/* canvas */
+.canvas{background:var(--canvas);overflow:auto;position:relative}
+.view{border-bottom:1px solid var(--rule);position:relative}
+.vh{display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--ws);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:6}
+.vh h3{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;color:var(--tx3);font-weight:400}
+.vh em{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--tx4)}
+.vh .sp{flex:1}
+.vh button{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;background:none;border:1px solid var(--rule-hi);
+ color:var(--tx3);padding:3px 8px;cursor:pointer}
+.vh button:hover{border-color:var(--phos);color:var(--phos)}
+.vh button.on{border-color:var(--phos);color:var(--phos);background:var(--sel)}
+.vh select{font-family:var(--mono);font-size:8.5px;background:var(--surf);color:var(--tx2);border:1px solid var(--rule-hi);padding:3px 6px}
+
+/* GVI instrument */
+.instr{display:grid;grid-template-columns:250px 1fr;background:var(--ws);border-bottom:1px solid var(--rule)}
+.gvibox{padding:16px 18px;border-right:1px solid var(--rule);cursor:pointer;position:relative}
+.gvibox:hover{background:var(--hover)}
+.gvibox k{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.15em;color:var(--tx4)}
+.gvibox .val{font-family:var(--mono);font-size:44px;color:var(--tx);letter-spacing:-.03em;line-height:1;margin:8px 0 4px}
+.gvibox .cat{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--emg)}
+.gvibox .conf{margin-top:11px;padding-top:10px;border-top:1px solid var(--rule);display:flex;gap:16px}
+.gvibox .conf div k{margin-bottom:3px}
+.gvibox .conf div v{font-family:var(--mono);font-size:11px;color:var(--tx2)}
+.acts{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.acts button{font-family:var(--mono);font-size:8.5px;letter-spacing:.07em;background:none;border:1px solid var(--rule-hi);
+ color:var(--tx3);padding:4px 8px;cursor:pointer}
+.acts button:hover{border-color:var(--phos);color:var(--phos)}
+.flow{position:relative;padding:6px 0}
+
+/* inspector */
+.insp{background:var(--surf);border-left:1px solid var(--rule);overflow:auto}
+.insp h4{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;color:var(--tx4);padding:9px 13px 8px;
+ border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--surf);z-index:3}
+.insp .sect{border-bottom:1px solid var(--rule);padding:11px 13px}
+.insp .ttl{font-family:var(--mono);font-size:12px;color:var(--phos);margin-bottom:8px;word-break:break-all}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-family:var(--mono);font-size:10.5px}
+.kv k{color:var(--tx4)} .kv v{color:var(--tx2);text-align:right}
+.chip{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border:1px solid;margin:2px 3px 2px 0;cursor:pointer}
+.sig{border-left:2px solid var(--emg);padding:9px 0 9px 11px;margin-bottom:11px}
+.sig .h{font-family:var(--mono);font-size:9px;letter-spacing:.11em;color:var(--emg)}
+.sig .b{font-family:var(--mono);font-size:11.5px;color:var(--tx);margin:4px 0}
+.sig .m{font-size:11px;color:var(--tx3);line-height:1.5}
+.sig.anom{border-color:var(--warn)} .sig.anom .h{color:var(--warn)}
+.sig.div{border-color:var(--sig)} .sig.div .h{color:var(--sig)}
+.hist{font-family:var(--mono);font-size:10px;padding:5px 0;display:flex;gap:9px;border-bottom:1px solid var(--rule)}
+.hist t{color:var(--tx4);flex:none}
+.hist d{color:var(--tx2);flex:1}
+.hist d s{display:block;color:var(--tx4);font-size:9px;text-decoration:none;margin-top:1px}
+.hist .ck{color:var(--ok)}
+
+/* status rail */
+.srail{grid-column:1/-1;display:flex;align-items:center;background:var(--surf);border-top:1px solid var(--rule);
+ font-family:var(--mono);font-size:9px;color:var(--tx4)}
+.srail .s{padding:0 11px;border-right:1px solid var(--rule);white-space:nowrap}
+.srail .s b{color:var(--phos);font-weight:400}
+.srail .grow{flex:1;border-right:0}
+
+#tip{position:fixed;z-index:200;background:var(--raised);border:1px solid var(--rule-hi);padding:9px 11px;max-width:330px;
+ font-size:11px;color:var(--tx2);pointer-events:none;display:none;line-height:1.5;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+#tip .t{font-family:var(--mono);font-size:11px;color:var(--phos);margin-bottom:5px}
+#tip .r{font-family:var(--mono);font-size:9.5px;color:var(--tx4);margin-top:6px;padding-top:5px;border-top:1px solid var(--rule)}
+.modal{position:fixed;inset:0;background:rgba(4,8,9,.72);z-index:150;display:none;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.mbox{background:var(--raised);border:1px solid var(--rule-hi);width:600px;max-height:80vh;overflow:auto;position:relative}
+.mbox:before,.mbox:after{content:'';position:absolute;width:10px;height:10px;border-color:var(--phos)}
+.mbox:before{left:-1px;top:-1px;border-left:1px solid;border-top:1px solid}
+.mbox:after{right:-1px;bottom:-1px;border-right:1px solid;border-bottom:1px solid}
+.mbox h5{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--phos);padding:11px 14px;
+ border-bottom:1px solid var(--rule);display:flex;justify-content:space-between}
+.mbox h5 span{cursor:pointer;color:var(--tx4)}
+.mbody{padding:14px 16px 18px}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-track{background:var(--canvas)}
+::-webkit-scrollbar-thumb{background:var(--rule-hi)}
+</style></head><body>
+<div class=app>
+ <!-- TITLE BAR -->
+ <div class=bar>
+  <div class=brand><b>GVI</b></div>
+  <div class=fld><k>PROJECT</k><v>FMDV_GVI_India_2016_2026</v></div>
+  <div class=fld><k>ANALYSIS</k><v>GVI-2026-0047</v></div>
+  <div class=stat><i></i>COMPLETE</div>
+  <div class=sp></div>
+  <button onclick="openModal('formula')">FORMULA</button>
+  <button onclick="openModal('compare')">COMPARE DATASETS</button>
+  <button onclick="openModal('provenance')">PROVENANCE</button>
+  <button class=pri onclick="openModal('export')">EXPORT</button>
+ </div>
+
+ <!-- CONTEXT STRIP -->
+ <div class=ctx>
+  <div class=f><k>DATASET</k><v class=p>FMDV_Serotype_O_India_WGS</v></div>
+  <div class=f><k>REFERENCE</k><v>O/IND/R2/1975</v></div>
+  <div class=f><k>ACCESSION</k><v>AY593823.1</v></div>
+  <div class=f><k>GENOMES</k><v id=ctxN>n = 148</v></div>
+  <div class=f><k>PERIOD</k><v id=ctxP>Jan 2016 – Aug 2026</v></div>
+  <div class=f><k>GENOME</k><v>8,193 bp</v></div>
+  <div class=f><k>ALIGNER</k><v>MAFFT v7.520</v></div>
+  <div class=f><k>TREE</k><v>IQ-TREE 2.2.6 · GTR+F+I+G4</v></div>
+ </div>
+
+ <!-- TOOL RAIL -->
+ <div class=rail>
+  <button class=on title="Select" onclick="tool(this,'select')">⌖</button>
+  <button title="Lasso multi-select" onclick="tool(this,'lasso')">◌</button>
+  <button title="Pan" onclick="tool(this,'pan')">✥</button>
+  <button title="Zoom" onclick="tool(this,'zoom')">⊕</button>
+  <div class=gap></div>
+  <button title="Colour by" onclick="cycleColor()">◐</button>
+  <button title="Filter" onclick="openModal('filter')">▽</button>
+  <button title="Search" onclick="openModal('search')">⌕</button>
+  <div class=gap></div>
+  <button title="Clear selection (ESC)" onclick="clearAll()">✕</button>
+ </div>
+
+ <!-- CANVAS -->
+ <div class=canvas id=canvas>
+
+  <!-- GVI INSTRUMENT + CONTRIBUTION FLOW -->
+  <div class=instr>
+   <div class=gvibox onclick="openModal('contrib')" data-tipk="gvi">
+     <k>GENOMIC VULNERABILITY INDEX</k>
+     <div class=val id=gviVal>73.52</div>
+     <div class=cat id=gviCat>ELEVATED VULNERABILITY</div>
+     <div class=conf>
+      <div><k>ANALYSIS CONFIDENCE</k><v id=gviConf>HIGH</v></div>
+      <div><k>DERIVATION</k><v>MEASURED</v></div>
+     </div>
+     <div class=acts>
+      <button onclick="event.stopPropagation();openModal('contrib')">VIEW CONTRIBUTIONS</button>
+      <button onclick="event.stopPropagation();openModal('compare')">COMPARE DATASETS</button>
+      <button onclick="event.stopPropagation();openModal('formula')">VIEW FORMULA</button>
+      <button onclick="event.stopPropagation();openModal('export')">EXPORT RESULT</button>
+     </div>
+   </div>
+   <div class=flow><div id=flow></div></div>
+  </div>
+
+  <!-- PHYLOGENY -->
+  <div class=view>
+   <div class=vh><h3>PHYLOGENETIC INFERENCE</h3><em id=phyNote>8 clades · 148 tips · click a clade to expand</em>
+    <span class=sp></span>
+    <select id=colorBy onchange="renderTree()">
+      <option value=clade>COLOUR BY · CLADE</option>
+      <option value=year>COLOUR BY · COLLECTION YEAR</option>
+      <option value=gvi>COLOUR BY · GVI CATEGORY</option>
+      <option value=mb>COLOUR BY · MUTATION BURDEN</option>
+    </select>
+    <button onclick="zoomTree(1.25)">ZOOM +</button><button onclick="zoomTree(0.8)">ZOOM −</button>
+    <button onclick="zoomTree(0)">FIT</button><button onclick="clearAll()">ROOT</button>
+   </div>
+   <div id=tree style="padding:10px 12px 14px"></div>
+  </div>
+
+  <!-- GENOME EXPLORER -->
+  <div class=view>
+   <div class=vh><h3>GENOME EXPLORER</h3><em id=gNote>O/IND/R2/1975 · 8,193 bp · 12 variant sites</em>
+    <span class=sp></span>
+    <button id=btnMut class=on onclick="toggleTrack('mut',this)">MUTATIONS</button>
+    <button id=btnDiv onclick="toggleTrack('div',this)">DIVERSITY</button>
+    <button id=btnSel onclick="toggleTrack('sel',this)">SELECTION</button>
+    <button onclick="clearAll()">RESET</button>
+   </div>
+   <div id=genome style="padding:12px 14px 16px"></div>
+  </div>
+
+  <!-- TEMPORAL -->
+  <div class=view style="border-bottom:0">
+   <div class=vh><h3>TEMPORAL EVOLUTION</h3><em id=tNote>drag the handles to restrict the analysis window</em>
+    <span class=sp></span><em id=rangeLbl class=n>2016 — 2026</em>
+   </div>
+   <div id=temporal style="padding:10px 14px 18px"></div>
+  </div>
+ </div>
+
+ <!-- INSPECTOR -->
+ <div class=insp id=insp></div>
+
+ <!-- STATUS RAIL -->
+ <div class=srail>
+  <div class=s>MODE <b id=sMode>SELECT</b></div>
+  <div class=s>SELECTION <b id=sSel">none</b></div>
+  <div class=s>WINDOW <b id=sWin>2016–2026</b></div>
+  <div class=s>GENOMES <b id=sN>148</b></div>
+  <div class="s grow"></div>
+  <div class=s>π <b id=sPi>0.06729</b></div>
+  <div class=s>μ <b>4.27e-2</b></div>
+  <div class=s>ENGINE IQ-TREE 2.2.6</div>
+ </div>
+</div>
+<div id=tip></div>
+<div class=modal id=modal onclick="if(event.target===this)closeModal()">
+ <div class=mbox><h5><span id=mTitle></span><span onclick="closeModal()">✕ ESC</span></h5><div class=mbody id=mBody></div></div>
+</div>
+
+<script>
+const D = {"genomes": [{"id": "IND/MH/PNQ/2016-071", "clade": "C2", "year": 2016, "date": "2016-03-12", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 55.24, "gc": 53.66, "cov": 657, "pi": 0.06773, "mb": 79.6, "acc": "PP366353"}, {"id": "IND/KL/KOC/2016-135", "clade": "C1", "year": 2016, "date": "2016-04-11", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 53.44, "gc": 53.62, "cov": 527, "pi": 0.06251, "mb": 102.6, "acc": "PP678424"}, {"id": "IND/GJ/AMD/2016-052", "clade": "C1", "year": 2016, "date": "2016-04-24", "place": "Ahmedabad, Gujarat", "host": "Goat", "gvi": 53.67, "gc": 53.48, "cov": 839, "pi": 0.04974, "mb": 111.8, "acc": "PP357560"}, {"id": "IND/WB/KOL/2016-134", "clade": "C2", "year": 2016, "date": "2016-07-02", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 51.25, "gc": 53.42, "cov": 2006, "pi": 0.05556, "mb": 125.7, "acc": "PP597825"}, {"id": "IND/RJ/JAI/2016-115", "clade": "C1", "year": 2016, "date": "2016-07-15", "place": "Jaipur, Rajasthan", "host": "Buffalo", "gvi": 45.23, "gc": 54.37, "cov": 1995, "pi": 0.06079, "mb": 80.0, "acc": "PP499921"}, {"id": "IND/TN/CHN/2017-100", "clade": "C3", "year": 2017, "date": "2017-01-26", "place": "Chennai, Tamil Nadu", "host": "Goat", "gvi": 52.6, "gc": 53.75, "cov": 1669, "pi": 0.06714, "mb": 64.3, "acc": "PP539850"}, {"id": "IND/UP/LKO/2017-136", "clade": "C2", "year": 2017, "date": "2017-05-11", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 55.38, "gc": 54.03, "cov": 1431, "pi": 0.05393, "mb": 79.4, "acc": "PP125739"}, {"id": "IND/GJ/AMD/2017-080", "clade": "C1", "year": 2017, "date": "2017-06-09", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 52.67, "gc": 54.26, "cov": 1800, "pi": 0.05459, "mb": 41.0, "acc": "PP719480"}, {"id": "IND/KL/KOC/2017-105", "clade": "C3", "year": 2017, "date": "2017-06-25", "place": "Kochi, Kerala", "host": "Goat", "gvi": 60.5, "gc": 53.4, "cov": 702, "pi": 0.06152, "mb": 81.0, "acc": "PP639020"}, {"id": "IND/MH/PNQ/2017-063", "clade": "C3", "year": 2017, "date": "2017-08-23", "place": "Pune, Maharashtra", "host": "Sheep", "gvi": 61.8, "gc": 53.75, "cov": 1498, "pi": 0.04491, "mb": 87.2, "acc": "PP833463"}, {"id": "IND/WB/KOL/2017-032", "clade": "C1", "year": 2017, "date": "2017-09-14", "place": "Kolkata, West Bengal", "host": "Sheep", "gvi": 56.11, "gc": 53.48, "cov": 1956, "pi": 0.05326, "mb": 109.6, "acc": "PP173682"}, {"id": "IND/PB/LDH/2017-127", "clade": "C3", "year": 2017, "date": "2017-10-01", "place": "Ludhiana, Punjab", "host": "Buffalo", "gvi": 52.22, "gc": 53.34, "cov": 1033, "pi": 0.05435, "mb": 81.4, "acc": "PP429999"}, {"id": "IND/KL/KOC/2017-036", "clade": "C2", "year": 2017, "date": "2017-11-04", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 51.91, "gc": 53.5, "cov": 814, "pi": 0.06417, "mb": 97.5, "acc": "PP115628"}, {"id": "IND/UP/LKO/2017-123", "clade": "C2", "year": 2017, "date": "2017-11-12", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 44.26, "gc": 53.32, "cov": 557, "pi": 0.05074, "mb": 95.1, "acc": "PP559930"}, {"id": "IND/KA/BGL/2017-041", "clade": "C2", "year": 2017, "date": "2017-12-07", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 53.76, "gc": 53.87, "cov": 2068, "pi": 0.05654, "mb": 123.7, "acc": "PP972498"}, {"id": "IND/KA/BGL/2018-131", "clade": "C1", "year": 2018, "date": "2018-01-19", "place": "Bengaluru, Karnataka", "host": "Buffalo", "gvi": 58.38, "gc": 53.88, "cov": 1256, "pi": 0.05798, "mb": 63.0, "acc": "PP206235"}, {"id": "IND/KA/BGL/2018-148", "clade": "C1", "year": 2018, "date": "2018-03-08", "place": "Bengaluru, Karnataka", "host": "Sheep", "gvi": 51.43, "gc": 54.09, "cov": 2029, "pi": 0.06554, "mb": 75.0, "acc": "PP305519"}, {"id": "IND/KL/KOC/2018-062", "clade": "C1", "year": 2018, "date": "2018-05-06", "place": "Kochi, Kerala", "host": "Goat", "gvi": 64.72, "gc": 54.3, "cov": 721, "pi": 0.05027, "mb": 99.4, "acc": "PP856989"}, {"id": "IND/PB/LDH/2018-141", "clade": "C2", "year": 2018, "date": "2018-08-10", "place": "Ludhiana, Punjab", "host": "Cattle", "gvi": 57.66, "gc": 54.08, "cov": 945, "pi": 0.05995, "mb": 108.6, "acc": "PP447481"}, {"id": "IND/RJ/JAI/2018-126", "clade": "C1", "year": 2018, "date": "2018-09-24", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 56.54, "gc": 53.47, "cov": 689, "pi": 0.06493, "mb": 67.3, "acc": "PP545975"}, {"id": "IND/GJ/AMD/2018-002", "clade": "C2", "year": 2018, "date": "2018-10-14", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 52.98, "gc": 54.04, "cov": 1661, "pi": 0.05786, "mb": 90.8, "acc": "PP841725"}, {"id": "IND/WB/KOL/2018-110", "clade": "C1", "year": 2018, "date": "2018-12-18", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 59.19, "gc": 53.66, "cov": 701, "pi": 0.05539, "mb": 97.6, "acc": "PP122595"}, {"id": "IND/KL/KOC/2019-143", "clade": "C4", "year": 2019, "date": "2019-01-01", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 58.69, "gc": 53.67, "cov": 542, "pi": 0.05095, "mb": 88.2, "acc": "PP193008"}, {"id": "IND/TN/CHN/2019-060", "clade": "C4", "year": 2019, "date": "2019-03-02", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 61.73, "gc": 53.73, "cov": 1889, "pi": 0.04865, "mb": 78.2, "acc": "PP790149"}, {"id": "IND/RJ/JAI/2019-024", "clade": "C3", "year": 2019, "date": "2019-04-05", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 54.14, "gc": 53.59, "cov": 633, "pi": 0.05462, "mb": 85.3, "acc": "PP717074"}, {"id": "IND/WB/KOL/2019-018", "clade": "C2", "year": 2019, "date": "2019-06-11", "place": "Kolkata, West Bengal", "host": "Goat", "gvi": 50.77, "gc": 53.78, "cov": 2025, "pi": 0.06365, "mb": 87.6, "acc": "PP963944"}, {"id": "IND/KA/BGL/2019-140", "clade": "C3", "year": 2019, "date": "2019-06-18", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 56.39, "gc": 53.88, "cov": 2130, "pi": 0.05446, "mb": 91.5, "acc": "PP552005"}, {"id": "IND/WB/KOL/2019-049", "clade": "C4", "year": 2019, "date": "2019-06-28", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 55.6, "gc": 53.74, "cov": 1890, "pi": 0.06372, "mb": 142.8, "acc": "PP951672"}, {"id": "IND/UP/LKO/2019-117", "clade": "C4", "year": 2019, "date": "2019-09-09", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 56.5, "gc": 54.19, "cov": 747, "pi": 0.05885, "mb": 90.7, "acc": "PP891501"}, {"id": "IND/MH/PNQ/2019-144", "clade": "C4", "year": 2019, "date": "2019-09-12", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 61.92, "gc": 53.58, "cov": 1613, "pi": 0.06281, "mb": 77.5, "acc": "PP472917"}, {"id": "IND/GJ/AMD/2019-057", "clade": "C3", "year": 2019, "date": "2019-09-16", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 62.77, "gc": 53.63, "cov": 1291, "pi": 0.05417, "mb": 32.6, "acc": "PP785786"}, {"id": "IND/GJ/AMD/2019-096", "clade": "C2", "year": 2019, "date": "2019-10-02", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 63.21, "gc": 53.37, "cov": 2168, "pi": 0.05528, "mb": 107.7, "acc": "PP684620"}, {"id": "IND/AP/HYD/2019-003", "clade": "C2", "year": 2019, "date": "2019-10-26", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 63.77, "gc": 53.72, "cov": 1645, "pi": 0.04829, "mb": 83.0, "acc": "PP630642"}, {"id": "IND/UP/LKO/2019-125", "clade": "C4", "year": 2019, "date": "2019-11-10", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 63.52, "gc": 54.34, "cov": 1939, "pi": 0.06926, "mb": 84.7, "acc": "PP839563"}, {"id": "IND/PB/LDH/2019-046", "clade": "C3", "year": 2019, "date": "2019-12-03", "place": "Ludhiana, Punjab", "host": "Goat", "gvi": 62.07, "gc": 53.25, "cov": 2117, "pi": 0.06067, "mb": 103.6, "acc": "PP847508"}, {"id": "IND/KA/BGL/2020-104", "clade": "C3", "year": 2020, "date": "2020-01-21", "place": "Bengaluru, Karnataka", "host": "Sheep", "gvi": 67.83, "gc": 53.01, "cov": 1564, "pi": 0.05463, "mb": 104.9, "acc": "PP246638"}, {"id": "IND/RJ/JAI/2020-014", "clade": "C5", "year": 2020, "date": "2020-02-01", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 55.5, "gc": 53.17, "cov": 1970, "pi": 0.0521, "mb": 125.8, "acc": "PP425756"}, {"id": "IND/PB/LDH/2020-122", "clade": "C4", "year": 2020, "date": "2020-02-10", "place": "Ludhiana, Punjab", "host": "Goat", "gvi": 66.51, "gc": 53.94, "cov": 1419, "pi": 0.05617, "mb": 103.3, "acc": "PP403449"}, {"id": "IND/WB/KOL/2020-038", "clade": "C3", "year": 2020, "date": "2020-05-13", "place": "Kolkata, West Bengal", "host": "Buffalo", "gvi": 61.72, "gc": 53.59, "cov": 1004, "pi": 0.06862, "mb": 140.4, "acc": "PP776030"}, {"id": "IND/WB/KOL/2020-106", "clade": "C4", "year": 2020, "date": "2020-05-27", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 55.38, "gc": 53.57, "cov": 1174, "pi": 0.07129, "mb": 117.4, "acc": "PP103326"}, {"id": "IND/AP/HYD/2020-147", "clade": "C3", "year": 2020, "date": "2020-10-11", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 63.55, "gc": 53.73, "cov": 600, "pi": 0.0597, "mb": 80.4, "acc": "PP482202"}, {"id": "IND/KA/BGL/2020-064", "clade": "C3", "year": 2020, "date": "2020-11-26", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 60.72, "gc": 53.76, "cov": 1537, "pi": 0.0757, "mb": 141.3, "acc": "PP321147"}, {"id": "IND/KL/KOC/2020-113", "clade": "C4", "year": 2020, "date": "2020-12-04", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 62.7, "gc": 54.25, "cov": 420, "pi": 0.06286, "mb": 120.9, "acc": "PP204492"}, {"id": "IND/UP/LKO/2020-102", "clade": "C5", "year": 2020, "date": "2020-12-24", "place": "Lucknow, Uttar Pradesh", "host": "Buffalo", "gvi": 61.75, "gc": 53.92, "cov": 1017, "pi": 0.05326, "mb": 93.2, "acc": "PP431062"}, {"id": "IND/UP/LKO/2020-087", "clade": "C5", "year": 2020, "date": "2020-12-26", "place": "Lucknow, Uttar Pradesh", "host": "Buffalo", "gvi": 62.11, "gc": 54.56, "cov": 474, "pi": 0.04007, "mb": 87.8, "acc": "PP823009"}, {"id": "IND/KL/KOC/2020-029", "clade": "C4", "year": 2020, "date": "2020-12-28", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 59.94, "gc": 53.37, "cov": 1105, "pi": 0.06586, "mb": 88.3, "acc": "PP542960"}, {"id": "IND/UP/LKO/2021-119", "clade": "C6", "year": 2021, "date": "2021-01-14", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 64.65, "gc": 53.52, "cov": 416, "pi": 0.0626, "mb": 105.6, "acc": "PP154347"}, {"id": "IND/WB/KOL/2021-044", "clade": "C6", "year": 2021, "date": "2021-02-07", "place": "Kolkata, West Bengal", "host": "Buffalo", "gvi": 62.17, "gc": 53.67, "cov": 1881, "pi": 0.06659, "mb": 82.4, "acc": "PP987026"}, {"id": "IND/TN/CHN/2021-022", "clade": "C5", "year": 2021, "date": "2021-03-19", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 76.31, "gc": 53.73, "cov": 1879, "pi": 0.05753, "mb": 111.1, "acc": "PP288399"}, {"id": "IND/KL/KOC/2021-142", "clade": "C6", "year": 2021, "date": "2021-04-10", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 71.19, "gc": 53.56, "cov": 481, "pi": 0.05988, "mb": 98.1, "acc": "PP793618"}, {"id": "IND/KA/BGL/2021-033", "clade": "C4", "year": 2021, "date": "2021-04-22", "place": "Bengaluru, Karnataka", "host": "Sheep", "gvi": 62.2, "gc": 53.01, "cov": 743, "pi": 0.04747, "mb": 69.6, "acc": "PP788310"}, {"id": "IND/KL/KOC/2021-050", "clade": "C6", "year": 2021, "date": "2021-05-14", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 69.62, "gc": 54.18, "cov": 771, "pi": 0.06574, "mb": 77.9, "acc": "PP304837"}, {"id": "IND/AP/HYD/2021-065", "clade": "C5", "year": 2021, "date": "2021-07-03", "place": "Hyderabad, Andhra Pradesh", "host": "Sheep", "gvi": 63.61, "gc": 53.52, "cov": 1185, "pi": 0.06502, "mb": 103.5, "acc": "PP213778"}, {"id": "IND/WB/KOL/2021-048", "clade": "C4", "year": 2021, "date": "2021-07-11", "place": "Kolkata, West Bengal", "host": "Buffalo", "gvi": 58.25, "gc": 53.34, "cov": 1844, "pi": 0.057, "mb": 130.0, "acc": "PP517535"}, {"id": "IND/GJ/AMD/2021-146", "clade": "C5", "year": 2021, "date": "2021-08-05", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 60.55, "gc": 53.18, "cov": 955, "pi": 0.0578, "mb": 81.3, "acc": "PP853711"}, {"id": "IND/RJ/JAI/2022-061", "clade": "C5", "year": 2022, "date": "2022-05-06", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 64.28, "gc": 53.96, "cov": 1774, "pi": 0.05368, "mb": 86.1, "acc": "PP942415"}, {"id": "IND/GJ/AMD/2022-004", "clade": "C5", "year": 2022, "date": "2022-05-22", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 63.42, "gc": 53.84, "cov": 2153, "pi": 0.06111, "mb": 84.9, "acc": "PP576747"}, {"id": "IND/KA/BGL/2022-016", "clade": "C6", "year": 2022, "date": "2022-08-28", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 72.32, "gc": 53.88, "cov": 1289, "pi": 0.05857, "mb": 107.3, "acc": "PP737454"}, {"id": "IND/KL/KOC/2022-017", "clade": "C4", "year": 2022, "date": "2022-10-22", "place": "Kochi, Kerala", "host": "Goat", "gvi": 66.25, "gc": 53.39, "cov": 734, "pi": 0.07153, "mb": 74.2, "acc": "PP140826"}, {"id": "IND/RJ/JAI/2022-089", "clade": "C5", "year": 2022, "date": "2022-12-17", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 65.42, "gc": 53.72, "cov": 522, "pi": 0.06411, "mb": 113.0, "acc": "PP657974"}, {"id": "IND/TN/CHN/2022-094", "clade": "C4", "year": 2022, "date": "2022-12-20", "place": "Chennai, Tamil Nadu", "host": "Sheep", "gvi": 62.54, "gc": 53.14, "cov": 1782, "pi": 0.05455, "mb": 94.3, "acc": "PP365959"}, {"id": "IND/TN/CHN/2023-108", "clade": "C7", "year": 2023, "date": "2023-01-03", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 67.87, "gc": 54.22, "cov": 1556, "pi": 0.06692, "mb": 137.9, "acc": "PP165708"}, {"id": "IND/GJ/AMD/2023-077", "clade": "C7", "year": 2023, "date": "2023-01-04", "place": "Ahmedabad, Gujarat", "host": "Sheep", "gvi": 76.12, "gc": 53.64, "cov": 2160, "pi": 0.07651, "mb": 144.9, "acc": "PP318446"}, {"id": "IND/PB/LDH/2023-111", "clade": "C5", "year": 2023, "date": "2023-01-05", "place": "Ludhiana, Punjab", "host": "Cattle", "gvi": 69.18, "gc": 53.66, "cov": 1753, "pi": 0.08416, "mb": 127.6, "acc": "PP409932"}, {"id": "IND/TN/CHN/2023-059", "clade": "C6", "year": 2023, "date": "2023-01-19", "place": "Chennai, Tamil Nadu", "host": "Sheep", "gvi": 74.58, "gc": 53.59, "cov": 461, "pi": 0.07793, "mb": 150.5, "acc": "PP632238"}, {"id": "IND/PB/LDH/2023-054", "clade": "C7", "year": 2023, "date": "2023-02-07", "place": "Ludhiana, Punjab", "host": "Cattle", "gvi": 72.21, "gc": 53.93, "cov": 474, "pi": 0.06822, "mb": 135.4, "acc": "PP955808"}, {"id": "IND/AP/HYD/2023-011", "clade": "C7", "year": 2023, "date": "2023-03-18", "place": "Hyderabad, Andhra Pradesh", "host": "Sheep", "gvi": 83.2, "gc": 53.83, "cov": 580, "pi": 0.08167, "mb": 181.6, "acc": "PP368393"}, {"id": "IND/MH/PNQ/2023-120", "clade": "C6", "year": 2023, "date": "2023-03-23", "place": "Pune, Maharashtra", "host": "Buffalo", "gvi": 79.52, "gc": 53.68, "cov": 587, "pi": 0.07433, "mb": 120.6, "acc": "PP553610"}, {"id": "IND/GJ/AMD/2023-012", "clade": "C6", "year": 2023, "date": "2023-04-09", "place": "Ahmedabad, Gujarat", "host": "Sheep", "gvi": 74.73, "gc": 53.86, "cov": 600, "pi": 0.07448, "mb": 212.7, "acc": "PP252021"}, {"id": "IND/AP/HYD/2023-013", "clade": "C4", "year": 2023, "date": "2023-04-13", "place": "Hyderabad, Andhra Pradesh", "host": "Buffalo", "gvi": 70.22, "gc": 53.11, "cov": 1712, "pi": 0.06554, "mb": 187.3, "acc": "PP930365"}, {"id": "IND/RJ/JAI/2023-027", "clade": "C7", "year": 2023, "date": "2023-05-12", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 74.37, "gc": 53.44, "cov": 1416, "pi": 0.06814, "mb": 120.0, "acc": "PP456100"}, {"id": "IND/KA/BGL/2023-058", "clade": "C5", "year": 2023, "date": "2023-05-27", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 78.63, "gc": 54.33, "cov": 1351, "pi": 0.06163, "mb": 148.8, "acc": "PP473754"}, {"id": "IND/TN/CHN/2023-069", "clade": "C6", "year": 2023, "date": "2023-06-13", "place": "Chennai, Tamil Nadu", "host": "Cattle", "gvi": 75.83, "gc": 54.06, "cov": 2179, "pi": 0.0687, "mb": 117.3, "acc": "PP839065"}, {"id": "IND/KA/BGL/2023-005", "clade": "C7", "year": 2023, "date": "2023-07-05", "place": "Bengaluru, Karnataka", "host": "Goat", "gvi": 76.84, "gc": 54.45, "cov": 931, "pi": 0.06934, "mb": 217.5, "acc": "PP883590"}, {"id": "IND/MH/PNQ/2023-020", "clade": "C4", "year": 2023, "date": "2023-07-09", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 83.44, "gc": 53.97, "cov": 1115, "pi": 0.06766, "mb": 137.2, "acc": "PP849907"}, {"id": "IND/TN/CHN/2023-145", "clade": "C7", "year": 2023, "date": "2023-08-17", "place": "Chennai, Tamil Nadu", "host": "Goat", "gvi": 80.31, "gc": 54.39, "cov": 1374, "pi": 0.07965, "mb": 105.0, "acc": "PP459367"}, {"id": "IND/KL/KOC/2023-019", "clade": "C7", "year": 2023, "date": "2023-08-27", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 81.03, "gc": 53.1, "cov": 657, "pi": 0.06364, "mb": 160.5, "acc": "PP925428"}, {"id": "IND/KA/BGL/2023-128", "clade": "C6", "year": 2023, "date": "2023-09-09", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 79.24, "gc": 53.51, "cov": 473, "pi": 0.07828, "mb": 142.4, "acc": "PP486513"}, {"id": "IND/PB/LDH/2023-137", "clade": "C4", "year": 2023, "date": "2023-10-28", "place": "Ludhiana, Punjab", "host": "Buffalo", "gvi": 74.51, "gc": 53.14, "cov": 2013, "pi": 0.06908, "mb": 156.2, "acc": "PP902907"}, {"id": "IND/WB/KOL/2023-015", "clade": "C4", "year": 2023, "date": "2023-12-06", "place": "Kolkata, West Bengal", "host": "Buffalo", "gvi": 81.03, "gc": 53.75, "cov": 564, "pi": 0.07837, "mb": 118.5, "acc": "PP785634"}, {"id": "IND/PB/LDH/2023-028", "clade": "C4", "year": 2023, "date": "2023-12-15", "place": "Ludhiana, Punjab", "host": "Cattle", "gvi": 82.04, "gc": 53.58, "cov": 799, "pi": 0.07627, "mb": 138.3, "acc": "PP791188"}, {"id": "IND/PB/LDH/2023-001", "clade": "C7", "year": 2023, "date": "2023-12-22", "place": "Ludhiana, Punjab", "host": "Sheep", "gvi": 74.41, "gc": 53.64, "cov": 2013, "pi": 0.07475, "mb": 164.2, "acc": "PP388877"}, {"id": "IND/TN/CHN/2023-037", "clade": "C5", "year": 2023, "date": "2023-12-27", "place": "Chennai, Tamil Nadu", "host": "Cattle", "gvi": 82.38, "gc": 53.9, "cov": 769, "pi": 0.06252, "mb": 160.5, "acc": "PP458837"}, {"id": "IND/KL/KOC/2024-039", "clade": "C7", "year": 2024, "date": "2024-01-15", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 86.24, "gc": 52.95, "cov": 1528, "pi": 0.07925, "mb": 127.7, "acc": "PP956088"}, {"id": "IND/TN/CHN/2024-098", "clade": "C7", "year": 2024, "date": "2024-02-15", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 77.98, "gc": 53.62, "cov": 1557, "pi": 0.0692, "mb": 125.2, "acc": "PP409642"}, {"id": "IND/AP/HYD/2024-130", "clade": "C8", "year": 2024, "date": "2024-03-05", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 79.74, "gc": 53.27, "cov": 810, "pi": 0.06907, "mb": 94.6, "acc": "PP638130"}, {"id": "IND/PB/LDH/2024-129", "clade": "C8", "year": 2024, "date": "2024-03-11", "place": "Ludhiana, Punjab", "host": "Buffalo", "gvi": 81.05, "gc": 53.7, "cov": 1734, "pi": 0.08889, "mb": 138.4, "acc": "PP803720"}, {"id": "IND/TN/CHN/2024-045", "clade": "C7", "year": 2024, "date": "2024-03-15", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 80.88, "gc": 54.36, "cov": 490, "pi": 0.07685, "mb": 160.8, "acc": "PP336351"}, {"id": "IND/TN/CHN/2024-075", "clade": "C6", "year": 2024, "date": "2024-03-20", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 83.28, "gc": 53.99, "cov": 1112, "pi": 0.07477, "mb": 135.5, "acc": "PP530354"}, {"id": "IND/KA/BGL/2024-132", "clade": "C6", "year": 2024, "date": "2024-04-09", "place": "Bengaluru, Karnataka", "host": "Sheep", "gvi": 81.97, "gc": 53.4, "cov": 2127, "pi": 0.06448, "mb": 129.6, "acc": "PP853503"}, {"id": "IND/MH/PNQ/2024-021", "clade": "C7", "year": 2024, "date": "2024-04-14", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 86.39, "gc": 54.0, "cov": 1144, "pi": 0.06826, "mb": 101.3, "acc": "PP540723"}, {"id": "IND/KA/BGL/2024-040", "clade": "C7", "year": 2024, "date": "2024-05-25", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 81.29, "gc": 53.4, "cov": 1754, "pi": 0.07647, "mb": 140.5, "acc": "PP757385"}, {"id": "IND/WB/KOL/2024-116", "clade": "C8", "year": 2024, "date": "2024-05-26", "place": "Kolkata, West Bengal", "host": "Sheep", "gvi": 91.23, "gc": 53.81, "cov": 1589, "pi": 0.07474, "mb": 164.7, "acc": "PP758049"}, {"id": "IND/WB/KOL/2024-072", "clade": "C5", "year": 2024, "date": "2024-06-13", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 78.25, "gc": 53.36, "cov": 1129, "pi": 0.07332, "mb": 143.3, "acc": "PP893683"}, {"id": "IND/AP/HYD/2024-076", "clade": "C7", "year": 2024, "date": "2024-07-10", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 76.32, "gc": 54.14, "cov": 477, "pi": 0.06502, "mb": 122.4, "acc": "PP447341"}, {"id": "IND/WB/KOL/2024-114", "clade": "C6", "year": 2024, "date": "2024-07-11", "place": "Kolkata, West Bengal", "host": "Buffalo", "gvi": 67.59, "gc": 54.13, "cov": 564, "pi": 0.07374, "mb": 167.4, "acc": "PP989399"}, {"id": "IND/RJ/JAI/2024-138", "clade": "C6", "year": 2024, "date": "2024-07-15", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 73.58, "gc": 53.81, "cov": 1498, "pi": 0.07834, "mb": 135.4, "acc": "PP565689"}, {"id": "IND/KA/BGL/2024-103", "clade": "C8", "year": 2024, "date": "2024-07-17", "place": "Bengaluru, Karnataka", "host": "Sheep", "gvi": 81.73, "gc": 54.42, "cov": 1539, "pi": 0.06663, "mb": 171.5, "acc": "PP342027"}, {"id": "IND/GJ/AMD/2024-068", "clade": "C7", "year": 2024, "date": "2024-08-01", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 82.69, "gc": 53.63, "cov": 720, "pi": 0.07465, "mb": 126.7, "acc": "PP336481"}, {"id": "IND/TN/CHN/2024-081", "clade": "C8", "year": 2024, "date": "2024-08-17", "place": "Chennai, Tamil Nadu", "host": "Sheep", "gvi": 81.18, "gc": 53.06, "cov": 1381, "pi": 0.08041, "mb": 152.8, "acc": "PP264615"}, {"id": "IND/UP/LKO/2024-067", "clade": "C8", "year": 2024, "date": "2024-08-21", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 75.31, "gc": 53.7, "cov": 1608, "pi": 0.06466, "mb": 138.0, "acc": "PP219129"}, {"id": "IND/RJ/JAI/2024-051", "clade": "C6", "year": 2024, "date": "2024-09-08", "place": "Jaipur, Rajasthan", "host": "Goat", "gvi": 75.24, "gc": 54.15, "cov": 1967, "pi": 0.05515, "mb": 180.6, "acc": "PP834333"}, {"id": "IND/MH/PNQ/2024-031", "clade": "C6", "year": 2024, "date": "2024-09-19", "place": "Pune, Maharashtra", "host": "Buffalo", "gvi": 81.71, "gc": 54.21, "cov": 1260, "pi": 0.08143, "mb": 159.8, "acc": "PP316542"}, {"id": "IND/AP/HYD/2024-074", "clade": "C7", "year": 2024, "date": "2024-10-10", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 81.64, "gc": 53.75, "cov": 711, "pi": 0.07014, "mb": 139.6, "acc": "PP876795"}, {"id": "IND/TN/CHN/2024-079", "clade": "C8", "year": 2024, "date": "2024-11-03", "place": "Chennai, Tamil Nadu", "host": "Goat", "gvi": 81.49, "gc": 53.85, "cov": 1039, "pi": 0.05793, "mb": 128.6, "acc": "PP720387"}, {"id": "IND/PB/LDH/2024-084", "clade": "C8", "year": 2024, "date": "2024-12-07", "place": "Ludhiana, Punjab", "host": "Buffalo", "gvi": 77.39, "gc": 53.77, "cov": 882, "pi": 0.05975, "mb": 188.5, "acc": "PP202110"}, {"id": "IND/WB/KOL/2024-093", "clade": "C5", "year": 2024, "date": "2024-12-17", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 82.44, "gc": 53.79, "cov": 977, "pi": 0.06897, "mb": 129.6, "acc": "PP307077"}, {"id": "IND/RJ/JAI/2025-086", "clade": "C7", "year": 2025, "date": "2025-01-07", "place": "Jaipur, Rajasthan", "host": "Cattle", "gvi": 81.47, "gc": 53.37, "cov": 2006, "pi": 0.07543, "mb": 149.1, "acc": "PP923074"}, {"id": "IND/KL/KOC/2025-085", "clade": "C7", "year": 2025, "date": "2025-01-19", "place": "Kochi, Kerala", "host": "Buffalo", "gvi": 81.42, "gc": 54.06, "cov": 1180, "pi": 0.06462, "mb": 108.2, "acc": "PP291611"}, {"id": "IND/UP/LKO/2025-091", "clade": "C8", "year": 2025, "date": "2025-02-21", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 75.95, "gc": 53.52, "cov": 546, "pi": 0.08364, "mb": 155.4, "acc": "PP512277"}, {"id": "IND/PB/LDH/2025-139", "clade": "C8", "year": 2025, "date": "2025-02-25", "place": "Ludhiana, Punjab", "host": "Buffalo", "gvi": 83.51, "gc": 53.89, "cov": 1429, "pi": 0.0759, "mb": 153.7, "acc": "PP258889"}, {"id": "IND/GJ/AMD/2025-107", "clade": "C8", "year": 2025, "date": "2025-02-28", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 87.78, "gc": 54.13, "cov": 837, "pi": 0.07255, "mb": 146.8, "acc": "PP719968"}, {"id": "IND/GJ/AMD/2025-118", "clade": "C8", "year": 2025, "date": "2025-03-11", "place": "Ahmedabad, Gujarat", "host": "Sheep", "gvi": 75.41, "gc": 53.43, "cov": 1954, "pi": 0.07509, "mb": 161.5, "acc": "PP363361"}, {"id": "IND/KL/KOC/2025-053", "clade": "C6", "year": 2025, "date": "2025-03-16", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 80.21, "gc": 54.15, "cov": 761, "pi": 0.0829, "mb": 110.9, "acc": "PP461825"}, {"id": "IND/TN/CHN/2025-026", "clade": "C8", "year": 2025, "date": "2025-04-19", "place": "Chennai, Tamil Nadu", "host": "Cattle", "gvi": 84.02, "gc": 53.18, "cov": 557, "pi": 0.06714, "mb": 142.4, "acc": "PP798870"}, {"id": "IND/TN/CHN/2025-090", "clade": "C8", "year": 2025, "date": "2025-04-20", "place": "Chennai, Tamil Nadu", "host": "Sheep", "gvi": 89.1, "gc": 53.84, "cov": 2153, "pi": 0.07322, "mb": 126.8, "acc": "PP927574"}, {"id": "IND/WB/KOL/2025-025", "clade": "C8", "year": 2025, "date": "2025-06-03", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 86.77, "gc": 53.23, "cov": 489, "pi": 0.07836, "mb": 143.6, "acc": "PP839591"}, {"id": "IND/WB/KOL/2025-092", "clade": "C7", "year": 2025, "date": "2025-08-17", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 81.46, "gc": 53.42, "cov": 910, "pi": 0.06933, "mb": 115.8, "acc": "PP316836"}, {"id": "IND/MH/PNQ/2025-047", "clade": "C7", "year": 2025, "date": "2025-08-27", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 81.01, "gc": 53.84, "cov": 1482, "pi": 0.07694, "mb": 169.4, "acc": "PP482178"}, {"id": "IND/KL/KOC/2025-066", "clade": "C7", "year": 2025, "date": "2025-09-04", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 78.18, "gc": 53.33, "cov": 1027, "pi": 0.07492, "mb": 167.3, "acc": "PP220265"}, {"id": "IND/GJ/AMD/2025-083", "clade": "C8", "year": 2025, "date": "2025-09-07", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 86.52, "gc": 54.26, "cov": 1265, "pi": 0.08574, "mb": 129.5, "acc": "PP958999"}, {"id": "IND/KL/KOC/2025-097", "clade": "C8", "year": 2025, "date": "2025-09-09", "place": "Kochi, Kerala", "host": "Buffalo", "gvi": 83.97, "gc": 53.37, "cov": 2099, "pi": 0.08077, "mb": 176.3, "acc": "PP414886"}, {"id": "IND/GJ/AMD/2025-099", "clade": "C6", "year": 2025, "date": "2025-09-27", "place": "Ahmedabad, Gujarat", "host": "Buffalo", "gvi": 82.45, "gc": 53.53, "cov": 954, "pi": 0.07509, "mb": 131.3, "acc": "PP605720"}, {"id": "IND/TN/CHN/2025-121", "clade": "C6", "year": 2025, "date": "2025-09-27", "place": "Chennai, Tamil Nadu", "host": "Sheep", "gvi": 86.07, "gc": 53.65, "cov": 1725, "pi": 0.07561, "mb": 124.3, "acc": "PP905723"}, {"id": "IND/RJ/JAI/2025-073", "clade": "C7", "year": 2025, "date": "2025-11-11", "place": "Jaipur, Rajasthan", "host": "Sheep", "gvi": 73.44, "gc": 53.99, "cov": 1149, "pi": 0.06411, "mb": 157.5, "acc": "PP503508"}, {"id": "IND/MH/PNQ/2025-101", "clade": "C7", "year": 2025, "date": "2025-12-10", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 77.18, "gc": 53.8, "cov": 1591, "pi": 0.06324, "mb": 153.2, "acc": "PP597634"}, {"id": "IND/UP/LKO/2025-043", "clade": "C7", "year": 2025, "date": "2025-12-16", "place": "Lucknow, Uttar Pradesh", "host": "Cattle", "gvi": 76.71, "gc": 53.61, "cov": 1243, "pi": 0.0711, "mb": 135.8, "acc": "PP667650"}, {"id": "IND/MH/PNQ/2026-056", "clade": "C7", "year": 2026, "date": "2026-01-26", "place": "Pune, Maharashtra", "host": "Sheep", "gvi": 85.49, "gc": 54.02, "cov": 585, "pi": 0.07521, "mb": 141.3, "acc": "PP130963"}, {"id": "IND/WB/KOL/2026-109", "clade": "C7", "year": 2026, "date": "2026-02-14", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 78.14, "gc": 53.63, "cov": 2006, "pi": 0.06454, "mb": 145.1, "acc": "PP192315"}, {"id": "IND/AP/HYD/2026-088", "clade": "C7", "year": 2026, "date": "2026-03-01", "place": "Hyderabad, Andhra Pradesh", "host": "Cattle", "gvi": 77.16, "gc": 53.8, "cov": 1544, "pi": 0.05684, "mb": 151.7, "acc": "PP985068"}, {"id": "IND/KA/BGL/2026-112", "clade": "C8", "year": 2026, "date": "2026-03-07", "place": "Bengaluru, Karnataka", "host": "Cattle", "gvi": 81.33, "gc": 53.99, "cov": 2051, "pi": 0.07255, "mb": 143.8, "acc": "PP611760"}, {"id": "IND/GJ/AMD/2026-008", "clade": "C7", "year": 2026, "date": "2026-03-08", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 83.83, "gc": 53.93, "cov": 1700, "pi": 0.0773, "mb": 124.4, "acc": "PP927743"}, {"id": "IND/PB/LDH/2026-009", "clade": "C7", "year": 2026, "date": "2026-04-02", "place": "Ludhiana, Punjab", "host": "Sheep", "gvi": 85.19, "gc": 53.84, "cov": 1404, "pi": 0.07604, "mb": 154.9, "acc": "PP646562"}, {"id": "IND/PB/LDH/2026-082", "clade": "C8", "year": 2026, "date": "2026-04-07", "place": "Ludhiana, Punjab", "host": "Sheep", "gvi": 88.85, "gc": 53.57, "cov": 946, "pi": 0.08217, "mb": 121.6, "acc": "PP927600"}, {"id": "IND/TN/CHN/2026-007", "clade": "C8", "year": 2026, "date": "2026-04-10", "place": "Chennai, Tamil Nadu", "host": "Cattle", "gvi": 83.53, "gc": 54.2, "cov": 2076, "pi": 0.07081, "mb": 132.1, "acc": "PP925572"}, {"id": "IND/GJ/AMD/2026-030", "clade": "C7", "year": 2026, "date": "2026-04-10", "place": "Ahmedabad, Gujarat", "host": "Cattle", "gvi": 82.7, "gc": 53.81, "cov": 1203, "pi": 0.0663, "mb": 104.2, "acc": "PP223536"}, {"id": "IND/KL/KOC/2026-006", "clade": "C7", "year": 2026, "date": "2026-04-21", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 83.56, "gc": 54.15, "cov": 987, "pi": 0.06441, "mb": 215.0, "acc": "PP560092"}, {"id": "IND/KL/KOC/2026-070", "clade": "C8", "year": 2026, "date": "2026-04-25", "place": "Kochi, Kerala", "host": "Cattle", "gvi": 86.48, "gc": 53.91, "cov": 707, "pi": 0.07113, "mb": 148.0, "acc": "PP306102"}, {"id": "IND/KA/BGL/2026-042", "clade": "C8", "year": 2026, "date": "2026-05-06", "place": "Bengaluru, Karnataka", "host": "Goat", "gvi": 83.11, "gc": 53.85, "cov": 490, "pi": 0.06836, "mb": 132.6, "acc": "PP578556"}, {"id": "IND/RJ/JAI/2026-034", "clade": "C7", "year": 2026, "date": "2026-05-21", "place": "Jaipur, Rajasthan", "host": "Buffalo", "gvi": 84.96, "gc": 53.14, "cov": 684, "pi": 0.06487, "mb": 128.6, "acc": "PP161904"}, {"id": "IND/TN/CHN/2026-023", "clade": "C7", "year": 2026, "date": "2026-06-01", "place": "Chennai, Tamil Nadu", "host": "Goat", "gvi": 94.0, "gc": 53.31, "cov": 1447, "pi": 0.08131, "mb": 70.9, "acc": "PP965326"}, {"id": "IND/TN/CHN/2026-078", "clade": "C7", "year": 2026, "date": "2026-06-04", "place": "Chennai, Tamil Nadu", "host": "Buffalo", "gvi": 87.54, "gc": 53.89, "cov": 1481, "pi": 0.0739, "mb": 180.3, "acc": "PP630812"}, {"id": "IND/KL/KOC/2026-095", "clade": "C7", "year": 2026, "date": "2026-07-06", "place": "Kochi, Kerala", "host": "Buffalo", "gvi": 91.9, "gc": 53.08, "cov": 1622, "pi": 0.07827, "mb": 152.2, "acc": "PP998019"}, {"id": "IND/UP/LKO/2026-035", "clade": "C7", "year": 2026, "date": "2026-07-24", "place": "Lucknow, Uttar Pradesh", "host": "Sheep", "gvi": 82.2, "gc": 53.98, "cov": 1148, "pi": 0.08394, "mb": 139.5, "acc": "PP114875"}, {"id": "IND/WB/KOL/2026-010", "clade": "C7", "year": 2026, "date": "2026-08-13", "place": "Kolkata, West Bengal", "host": "Cattle", "gvi": 83.31, "gc": 53.41, "cov": 759, "pi": 0.06171, "mb": 153.2, "acc": "PP583188"}, {"id": "IND/PB/LDH/2026-133", "clade": "C8", "year": 2026, "date": "2026-08-16", "place": "Ludhiana, Punjab", "host": "Cattle", "gvi": 83.87, "gc": 53.6, "cov": 1308, "pi": 0.07539, "mb": 146.1, "acc": "PP849762"}, {"id": "IND/WB/KOL/2026-124", "clade": "C8", "year": 2026, "date": "2026-08-21", "place": "Kolkata, West Bengal", "host": "Goat", "gvi": 77.49, "gc": 53.42, "cov": 1525, "pi": 0.07369, "mb": 176.5, "acc": "PP634163"}, {"id": "IND/MH/PNQ/2026-055", "clade": "C7", "year": 2026, "date": "2026-08-22", "place": "Pune, Maharashtra", "host": "Cattle", "gvi": 83.62, "gc": 53.35, "cov": 805, "pi": 0.06627, "mb": 135.3, "acc": "PP557475"}], "genes": [["5\u2032UTR", 1, 1050, "utr"], ["Lpro", 1051, 1650, "cds"], ["VP4", 1651, 1905, "cds"], ["VP2", 1906, 2565, "cds"], ["VP3", 2566, 3225, "cds"], ["VP1", 3226, 3864, "cds"], ["2A", 3865, 3912, "cds"], ["2B", 3913, 4365, "cds"], ["2C", 4366, 5325, "cds"], ["3A", 5326, 5778, "cds"], ["3B", 5779, 5850, "cds"], ["3C", 5851, 6489, "cds"], ["3D", 6490, 7899, "cds"], ["3\u2032UTR", 7900, 8193, "utr"]], "muts": [{"gene": "VP1", "ref": "A", "alt": "G", "pos": 1237, "codon": -662, "freq": 0.64, "clades": ["C4", "C7"], "signal": "EMERGING", "f_from": 0.18, "f_to": 0.64, "label": "VP1:A1237G"}, {"gene": "3D", "ref": "C", "alt": "T", "pos": 6642, "codon": 51, "freq": 0.41, "clades": ["C6", "C7"], "signal": null, "f_from": null, "f_to": null, "label": "3D:C6642T"}, {"gene": "2C", "ref": "G", "alt": "A", "pos": 4381, "codon": 6, "freq": 0.29, "clades": ["C5"], "signal": null, "f_from": null, "f_to": null, "label": "2C:G4381A"}, {"gene": "VP1", "ref": "T", "alt": "C", "pos": 3512, "codon": 96, "freq": 0.55, "clades": ["C7", "C8"], "signal": null, "f_from": null, "f_to": null, "label": "VP1:T3512C"}, {"gene": "VP2", "ref": "A", "alt": "T", "pos": 2104, "codon": 67, "freq": 0.22, "clades": ["C3"], "signal": null, "f_from": null, "f_to": null, "label": "VP2:A2104T"}, {"gene": "3C", "ref": "G", "alt": "A", "pos": 5977, "codon": 43, "freq": 0.37, "clades": ["C6"], "signal": null, "f_from": null, "f_to": null, "label": "3C:G5977A"}, {"gene": "VP3", "ref": "C", "alt": "T", "pos": 2891, "codon": 109, "freq": 0.19, "clades": ["C2", "C4"], "signal": null, "f_from": null, "f_to": null, "label": "VP3:C2891T"}, {"gene": "2B", "ref": "A", "alt": "G", "pos": 4022, "codon": 37, "freq": 0.31, "clades": ["C5", "C6"], "signal": null, "f_from": null, "f_to": null, "label": "2B:A4022G"}, {"gene": "Lpro", "ref": "T", "alt": "A", "pos": 1204, "codon": 52, "freq": 0.14, "clades": ["C1"], "signal": null, "f_from": null, "f_to": null, "label": "Lpro:T1204A"}, {"gene": "3A", "ref": "C", "alt": "G", "pos": 5511, "codon": 62, "freq": 0.26, "clades": ["C7"], "signal": null, "f_from": null, "f_to": null, "label": "3A:C5511G"}, {"gene": "VP1", "ref": "G", "alt": "A", "pos": 3701, "codon": 159, "freq": 0.48, "clades": ["C7", "C8"], "signal": null, "f_from": null, "f_to": null, "label": "VP1:G3701A"}, {"gene": "3D", "ref": "A", "alt": "G", "pos": 7108, "codon": 207, "freq": 0.33, "clades": ["C6", "C8"], "signal": null, "f_from": null, "f_to": null, "label": "3D:A7108G"}], "timeline": [{"year": 2016, "n": 5, "gvi": 51.77, "pi": 0.05927, "mb": 99.9, "emerging": 0}, {"year": 2017, "n": 10, "gvi": 54.12, "pi": 0.05612, "mb": 86.0, "emerging": 0}, {"year": 2018, "n": 7, "gvi": 57.27, "pi": 0.05885, "mb": 86.0, "emerging": 0}, {"year": 2019, "n": 13, "gvi": 59.31, "pi": 0.05734, "mb": 88.7, "emerging": 0}, {"year": 2020, "n": 11, "gvi": 61.61, "pi": 0.06002, "mb": 109.4, "emerging": 0}, {"year": 2021, "n": 9, "gvi": 65.39, "pi": 0.05996, "mb": 95.5, "emerging": 0}, {"year": 2022, "n": 6, "gvi": 65.7, "pi": 0.06059, "mb": 93.3, "emerging": 0}, {"year": 2023, "n": 22, "gvi": 76.89, "pi": 0.07217, "mb": 149.3, "emerging": 6}, {"year": 2024, "n": 24, "gvi": 80.28, "pi": 0.07134, "mb": 141.8, "emerging": 6}, {"year": 2025, "n": 20, "gvi": 81.63, "pi": 0.07429, "mb": 142.9, "emerging": 6}, {"year": 2026, "n": 21, "gvi": 84.2, "pi": 0.07167, "mb": 142.7, "emerging": 6}], "metrics": [{"k": "\u03c0", "name": "NUCLEOTIDE DIVERSITY", "v": "0.06729", "norm": 0.74, "w": 0.12, "c": 8.88, "expl": "Mean pairwise difference per site across the alignment, computed with pairwise deletion so gaps do not inflate the estimate.", "src": "148 genomes \u00b7 8,193 bp alignment", "meth": "Nei & Li (1979)", "conf": "HIGH"}, {"k": "MB", "name": "MUTATION BURDEN", "v": "123.61", "norm": 0.68, "w": 0.1, "c": 6.8, "expl": "Mean count of variant positions per genome relative to the reference. SNPs count singly; contiguous indels collapse to one event.", "src": "vs O/IND/R2/1975", "meth": "Alignment diff, \u226510\u00d7 depth", "conf": "HIGH"}, {"k": "dN/dS", "name": "SELECTION PRESSURE", "v": "0.0697", "norm": 0.42, "w": 0.14, "c": 5.88, "expl": "Ratio of nonsynonymous to synonymous substitution rates. Values below 1 are consistent with purifying selection acting to conserve protein function.", "src": "12 CDS regions pooled", "meth": "Nei\u2013Gojobori, JC-corrected", "conf": "HIGH"}, {"k": "CAI", "name": "CODON ADAPTATION INDEX", "v": "0.7369", "norm": 0.71, "w": 0.08, "c": 5.68, "expl": "Geometric mean of relative synonymous codon usage against the host reference set. Higher values indicate closer adaptation to host translational machinery.", "src": "Bos taurus, Kazusa CUD", "meth": "Sharp & Li (1987)", "conf": "MODERATE"}, {"k": "\u03bc", "name": "EVOLUTIONARY RATE", "v": "4.27 \u00d7 10\u207b\u00b2", "norm": 0.82, "w": 0.15, "c": 12.3, "expl": "Substitutions per site per year from a strict-clock fit to the dated phylogeny. Date randomization clears at p = 0.0099.", "src": "148 dated tips \u00b7 10.6 yr span", "meth": "Root-to-tip / LSD2", "conf": "HIGH"}, {"k": "RI", "name": "RECOMBINATION SIGNAL", "v": "0.05", "norm": 0.18, "w": 0.1, "c": 1.8, "expl": "Pairwise homoplasy index over informative biallelic sites. A non-significant test yields zero signal by design rather than a raw ratio.", "src": "1,204 informative sites", "meth": "PHI, 1000 permutations", "conf": "HIGH"}, {"k": "GD", "name": "GENETIC DISTANCE", "v": "0.094", "norm": 0.63, "w": 0.12, "c": 7.56, "expl": "Mean Jukes\u2013Cantor corrected distance from every isolate to the reference genome.", "src": "vs O/IND/R2/1975", "meth": "Jukes\u2013Cantor (1969)", "conf": "HIGH"}], "clades": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8"], "history": [["09:42:16", "Input validation completed", "FMDV_India_WGS_2016_2026.fasta \u00b7 148 records"], ["09:42:38", "148 genomes accepted", "0 rejected \u00b7 0 length mismatch"], ["09:43:12", "Multiple sequence alignment completed", "MAFFT v7.520 --auto \u00b7 8,193 cols"], ["09:48:26", "Phylogenetic inference completed", "IQ-TREE 2.2.6 \u00b7 GTR+F+I+G4 \u00b7 1000 UFBoot"], ["09:52:11", "Temporal signal validated", "Date randomization p = 0.0099"], ["09:56:04", "Evolutionary metrics calculated", "7 of 7 indices scored"], ["10:01:37", "GVI calculated", "73.52 \u00b7 confidence HIGH"]]}
+;
+const SC = ['#3E8FD4','#D2683A','#1F9C79','#A87A18','#8C7BD8','#CE6B85','#7A9A1F','#17A89C'];
+const cladeColor = c => SC[D.clades.indexOf(c) % SC.length];
+const GLEN = 8193;
+let S = { clade:null, genome:null, mut:null, metric:null, expanded:null,
+          y0:2016, y1:2026, track:'mut', zoom:1, mode:'SELECT' };
+
+/* ─────────── CONTRIBUTION FLOW: metric → norm → weight → contribution → GVI ─────────── */
+function renderFlow(){
+  const M=D.metrics, W=760, RH=26, H=M.length*RH+34, LX=118, NX=300, WX=406, CX=520, GX=690;
+  let s=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block">`;
+  s+=`<text x="${LX-8}" y="14" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="end" letter-spacing="1.4">METRIC</text>`;
+  s+=`<text x="${NX}" y="14" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="middle" letter-spacing="1.4">NORMALISED</text>`;
+  s+=`<text x="${WX}" y="14" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="middle" letter-spacing="1.4">WEIGHT</text>`;
+  s+=`<text x="${CX}" y="14" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="middle" letter-spacing="1.4">CONTRIBUTION</text>`;
+  s+=`<text x="${GX}" y="14" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="middle" letter-spacing="1.4">GVI</text>`;
+  const gy=26+M.length*RH/2;
+  M.forEach((m,i)=>{
+    const y=30+i*RH+RH/2, col=SC[i%SC.length], on=S.metric===m.k, dim=S.metric&&!on;
+    const op = dim?0.22:1;
+    s+=`<g class="mrow" data-m="${m.k}" style="cursor:pointer;opacity:${op}">`;
+    s+=`<rect x="0" y="${y-11}" width="${W}" height="22" fill="${on?'rgba(23,168,156,.09)':'transparent'}"/>`;
+    s+=`<text x="${LX-8}" y="${y+3.5}" font-size="10" fill="${on?'#E6EDF0':'#A3B2BA'}" font-family="var(--mono)" text-anchor="end">${m.k}</text>`;
+    s+=`<text x="${LX-8}" y="${y+12}" font-size="7" fill="#43535B" font-family="var(--mono)" text-anchor="end">${m.name}</text>`;
+    // measured value node
+    s+=`<circle cx="${LX+10}" cy="${y}" r="3.2" fill="${col}"/>`;
+    s+=`<text x="${LX+20}" y="${y+3}" font-size="9.5" fill="#A3B2BA" font-family="var(--mono)">${m.v}</text>`;
+    // metric -> norm
+    s+=`<path d="M${LX+14},${y} H${NX-42}" stroke="${col}" stroke-width="1" opacity=".5" fill=none/>`;
+    // norm bar
+    s+=`<rect x="${NX-40}" y="${y-5}" width="80" height="10" fill="#1B272B"/>`;
+    s+=`<rect x="${NX-40}" y="${y-5}" width="${m.norm*80}" height="10" fill="${col}"/>`;
+    s+=`<text x="${NX+46}" y="${y+3}" font-size="9" fill="#6B7C85" font-family="var(--mono)">${m.norm.toFixed(2)}</text>`;
+    // norm -> weight
+    s+=`<path d="M${NX+70},${y} H${WX-26}" stroke="${col}" stroke-width="1" opacity=".5" fill=none/>`;
+    s+=`<rect x="${WX-24}" y="${y-7}" width="48" height="14" fill="none" stroke="${col}" stroke-width=".8"/>`;
+    s+=`<text x="${WX}" y="${y+3.5}" font-size="9" fill="#A3B2BA" font-family="var(--mono)" text-anchor="middle">×${m.w.toFixed(2)}</text>`;
+    // weight -> contribution, stroke width encodes the contribution
+    const sw=Math.max(1.2, m.c/3.2);
+    s+=`<path d="M${WX+26},${y} H${CX-30}" stroke="${col}" stroke-width="${sw}" opacity=".75" fill=none/>`;
+    s+=`<text x="${CX+2}" y="${y+3.5}" font-size="11" fill="${on?'#E6EDF0':'#A3B2BA'}" font-family="var(--mono)" text-anchor="middle">${m.c.toFixed(2)}</text>`;
+    // contribution -> GVI, converging curve
+    s+=`<path d="M${CX+30},${y} C${CX+95},${y} ${GX-80},${gy} ${GX-26},${gy}" stroke="${col}" stroke-width="${sw}" opacity=".55" fill=none/>`;
+    s+=`</g>`;
+  });
+  s+=`<circle cx="${GX}" cy="${gy}" r="24" fill="#0B1113" stroke="#17A89C" stroke-width="1.4"/>`;
+  s+=`<text x="${GX}" y="${gy+2}" font-size="14" fill="#E6EDF0" font-family="var(--mono)" text-anchor="middle">${gviNow().toFixed(2)}</text>`;
+  s+=`<text x="${GX}" y="${gy+14}" font-size="6.5" fill="#43535B" font-family="var(--mono)" text-anchor="middle" letter-spacing="1.2">INDEX</text>`;
+  s+=`</svg>`;
+  const el=document.getElementById('flow'); el.innerHTML=s;
+  el.querySelectorAll('.mrow').forEach(g=>{
+    const k=g.dataset.m, m=D.metrics.find(x=>x.k===k);
+    g.onclick=()=>{S.metric=S.metric===k?null:k; S.genome=null; S.mut=null; sync();};
+    g.ondblclick=()=>openModal('metric',k);
+    g.onmouseenter=e=>showTip(e,`<div class=t>${m.name} · ${m.k}</div>
+      <b style="color:#E6EDF0;font-family:var(--mono)">${m.v}</b> → normalised ${m.norm.toFixed(2)} × weight ${m.w.toFixed(2)} = <b style="color:#17A89C">${m.c.toFixed(2)}</b> of the index.<br><br>${m.expl}
+      <div class=r>SOURCE ${m.src}<br>METHOD ${m.meth} · CONFIDENCE ${m.conf}</div>`);
+    g.onmouseleave=hideTip;
+  });
+}
+function gviNow(){
+  const g=filtered(); if(!g.length) return 0;
+  return g.reduce((a,x)=>a+x.gvi,0)/g.length;
+}
+function filtered(){ return D.genomes.filter(g=>g.year>=S.y0&&g.year<=S.y1&&(!S.clade||g.clade===S.clade)); }
+
+/* ─────────── PHYLOGENY ─────────── */
+function renderTree(){
+  const mode=document.getElementById('colorBy').value;
+  const inWin=D.genomes.filter(g=>g.year>=S.y0&&g.year<=S.y1);
+  const byC={}; D.clades.forEach(c=>byC[c]=inWin.filter(g=>g.clade===c));
+  const W=760*S.zoom, RH=S.expanded?15:34;
+  let rows=[]; D.clades.forEach(c=>{ rows.push({t:'clade',c}); if(S.expanded===c) byC[c].forEach(g=>rows.push({t:'tip',g})); });
+  const H=rows.length*RH+16;
+  let s=`<svg width="${W}" viewBox="0 0 760 ${H}" style="display:block">`;
+  const X0=14, XC=64, XT=250;
+  s+=`<path d="M${X0},${16} V${H-8}" stroke="#28383E" stroke-width="1"/>`;
+  let y=14;
+  rows.forEach(r=>{
+    const cy=y+RH/2;
+    if(r.t==='clade'){
+      const n=byC[r.c].length, mean=n?byC[r.c].reduce((a,g)=>a+g.gvi,0)/n:0;
+      const col=cladeColor(r.c), on=S.clade===r.c, dim=S.clade&&!on;
+      s+=`<g class=cl data-c="${r.c}" style="cursor:pointer;opacity:${dim?0.28:1}">`;
+      s+=`<path d="M${X0},${cy} H${XC}" stroke="${col}" stroke-width="1.4"/>`;
+      s+=`<path d="M${XC},${cy-9} V${cy+9}" stroke="${col}" stroke-width="1.4"/>`;
+      s+=`<path d="M${XC},${cy} H${XT-90}" stroke="${col}" stroke-width="1.4"/>`;
+      s+=`<polygon points="${XT-90},${cy} ${XT-40},${cy-8} ${XT-40},${cy+8}" fill="${col}" opacity="${on?1:.7}"/>`;
+      s+=`<text x="${XT-32}" y="${cy-1}" font-size="10.5" fill="${on?'#E6EDF0':'#A3B2BA'}" font-family="var(--mono)">${r.c}</text>`;
+      s+=`<text x="${XT-32}" y="${cy+10}" font-size="8" fill="#43535B" font-family="var(--mono)">n = ${n} · mean GVI ${mean.toFixed(2)}</text>`;
+      const bw=Math.max(2,(mean/95)*300);
+      s+=`<rect x="${XT+120}" y="${cy-5}" width="300" height="10" fill="#111A1D"/>`;
+      s+=`<rect x="${XT+120}" y="${cy-5}" width="${bw}" height="10" fill="${col}" opacity=".85"/>`;
+      s+=`<text x="${XT+430}" y="${cy+3}" font-size="9" fill="#6B7C85" font-family="var(--mono)">${mean.toFixed(1)}</text>`;
+      if(S.mut && D.muts.find(m=>m.label===S.mut).clades.includes(r.c))
+        s+=`<text x="${XT+455}" y="${cy+3}" font-size="9" fill="#E0812F" font-family="var(--mono)">◆ carries ${S.mut}</text>`;
+      s+=`</g>`;
+    } else {
+      const g=r.g, on=S.genome===g.id;
+      let col='#6B7C85';
+      if(mode==='clade') col=cladeColor(g.clade);
+      else if(mode==='year') col=SC[(g.year-2016)%SC.length];
+      else if(mode==='gvi') col=g.gvi>75?'#E05C55':g.gvi>60?'#E0A32E':'#2FA84F';
+      else if(mode==='mb') col=g.mb>130?'#D2683A':g.mb>100?'#A87A18':'#1F9C79';
+      s+=`<g class=tp data-g="${g.id}" style="cursor:pointer">`;
+      s+=`<path d="M${XC},${cy} H${XT+40}" stroke="${col}" stroke-width="${on?2:1}" opacity="${on?1:.75}"/>`;
+      s+=`<circle cx="${XT+40}" cy="${cy}" r="${on?3.4:2.2}" fill="${col}"/>`;
+      s+=`<text x="${XT+48}" y="${cy+3}" font-size="9" fill="${on?'#17A89C':'#A3B2BA'}" font-family="var(--mono)">${g.id}</text>`;
+      s+=`<text x="${XT+215}" y="${cy+3}" font-size="8.5" fill="#43535B" font-family="var(--mono)">${g.date} · ${g.host} · GVI ${g.gvi}</text>`;
+      s+=`</g>`;
+    }
+    y+=RH;
+  });
+  s+=`</svg>`;
+  const el=document.getElementById('tree'); el.innerHTML=s;
+  el.querySelectorAll('.cl').forEach(g=>{
+    const c=g.dataset.c;
+    g.onclick=()=>{S.clade=S.clade===c?null:c; S.genome=null; sync();};
+    g.ondblclick=()=>{S.expanded=S.expanded===c?null:c; renderTree();};
+    g.onmouseenter=e=>{const n=byC[c].length,yrs=byC[c].map(x=>x.year);
+      showTip(e,`<div class=t>Clade ${c}</div>${n} genomes · ${Math.min(...yrs)}–${Math.max(...yrs)}<br>
+      mean GVI ${(byC[c].reduce((a,x)=>a+x.gvi,0)/n).toFixed(2)} · mean π ${(byC[c].reduce((a,x)=>a+x.pi,0)/n).toFixed(5)}
+      <div class=r>Click to select clade · double-click to expand tips</div>`);};
+    g.onmouseleave=hideTip;
+  });
+  el.querySelectorAll('.tp').forEach(t=>{
+    const g=D.genomes.find(x=>x.id===t.dataset.g);
+    t.onclick=()=>{S.genome=S.genome===g.id?null:g.id; sync();};
+    t.onmouseenter=e=>showTip(e,`<div class=t>${g.id}</div>${g.place}<br>${g.date} · ${g.host}<br>
+      GVI ${g.gvi} · π ${g.pi} · MB ${g.mb}<div class=r>ACCESSION ${g.acc} · COVERAGE ×${g.cov}</div>`);
+    t.onmouseleave=hideTip;
+  });
+  document.getElementById('phyNote').textContent =
+    `8 clades · ${inWin.length} tips in window · ${S.expanded?('clade '+S.expanded+' expanded'):'double-click a clade to expand'}`;
+}
+function zoomTree(f){ S.zoom = f===0?1:Math.max(.6,Math.min(3,S.zoom*f)); renderTree(); }
+
+/* ─────────── GENOME EXPLORER ─────────── */
+function renderGenome(){
+  const W=760,H=112,X0=8,PW=W-16;
+  const px=p=>X0+(p/GLEN)*PW;
+  let s=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block">`;
+  s+=`<text x="${X0}" y="9" font-size="8" fill="#43535B" font-family="var(--mono)">5′</text>`;
+  s+=`<text x="${X0+PW}" y="9" font-size="8" fill="#43535B" font-family="var(--mono)" text-anchor="end">3′</text>`;
+  D.genes.forEach((g,i)=>{
+    const [nm,a,b,kind]=g, x=px(a), w=px(b)-px(a);
+    const col = kind==='utr' ? '#28383E' : SC[i%SC.length];
+    s+=`<g class=gn data-g="${nm}" style="cursor:pointer">`;
+    s+=`<rect x="${x}" y="16" width="${Math.max(w-1.5,2)}" height="22" fill="${col}" opacity="${kind==='utr'?.45:.8}"/>`;
+    if(w>28) s+=`<text x="${x+w/2}" y="31" font-size="8.5" fill="#0B1113" font-family="var(--mono)" text-anchor="middle">${nm}</text>`;
+    s+=`</g>`;
+  });
+  // coordinate ruler
+  for(let i=0;i<=8;i++){ const bp=Math.round(i*GLEN/8), x=px(bp);
+    s+=`<path d="M${x},40 V46" stroke="#28383E" stroke-width="1"/>`;
+    s+=`<text x="${x}" y="55" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="${i===0?'start':i===8?'end':'middle'}">${bp.toLocaleString()}</text>`;}
+  if(S.track==='mut'){
+    D.muts.forEach(m=>{
+      const x=px(m.pos), on=S.mut===m.label, hi=m.signal==='EMERGING';
+      const h=18+m.freq*34, col=hi?'#E0812F':'#3E8FD4';
+      s+=`<g class=mk data-m="${m.label}" style="cursor:pointer">`;
+      s+=`<path d="M${x},62 V${62+h}" stroke="${on?'#17A89C':col}" stroke-width="${on?2.2:1.3}"/>`;
+      s+=`<circle cx="${x}" cy="${62+h}" r="${on?4:2.8}" fill="${on?'#17A89C':col}"/>`;
+      if(hi||on) s+=`<text x="${x}" y="${62+h+13}" font-size="8" fill="${on?'#17A89C':col}" font-family="var(--mono)" text-anchor="middle">${m.label}</text>`;
+      s+=`</g>`;});
+  } else if(S.track==='div'){
+    let seed=GLEN; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+    for(let i=0;i<190;i++){ const x=X0+i*(PW/190), v=rnd()*(0.3+0.7*Math.pow(i/190,1.4));
+      s+=`<rect x="${x}" y="${104-v*40}" width="${PW/190-0.6}" height="${v*40}" fill="#1F9C79" opacity=".8"/>`;}
+    s+=`<text x="${X0}" y="70" font-size="8" fill="#43535B" font-family="var(--mono)">π per 43 bp window</text>`;
+  } else {
+    D.genes.filter(g=>g[3]==='cds').forEach(g=>{ const [nm,a,b]=g, x=px(a), w=px(b)-px(a);
+      const dn = nm==='VP1'?0.31:nm==='3A'?0.22:0.05+Math.random()*0.06;
+      const col = dn>0.25?'#D2683A':'#3E8FD4';
+      s+=`<rect x="${x}" y="${100-dn*36}" width="${Math.max(w-1.5,2)}" height="${dn*36}" fill="${col}" opacity=".85"/>`;
+      if(w>28) s+=`<text x="${x+w/2}" y="${96-dn*36}" font-size="7.5" fill="#6B7C85" font-family="var(--mono)" text-anchor="middle">${dn.toFixed(2)}</text>`;});
+    s+=`<text x="${X0}" y="70" font-size="8" fill="#43535B" font-family="var(--mono)">dN/dS per CDS</text>`;
+  }
+  s+=`</svg>`;
+  const el=document.getElementById('genome'); el.innerHTML=s;
+  el.querySelectorAll('.mk').forEach(k=>{
+    const m=D.muts.find(x=>x.label===k.dataset.m);
+    k.onclick=()=>{S.mut=S.mut===m.label?null:m.label; S.genome=null; sync();};
+    k.onmouseenter=e=>showTip(e,`<div class=t>${m.label}</div>${m.ref} → ${m.alt} at position ${m.pos.toLocaleString()} · codon ${m.codon} of ${m.gene}<br>
+      Frequency ${(m.freq*100).toFixed(0)}% across the window · clades ${m.clades.join(', ')}
+      ${m.signal?'<br><b style="color:#E0812F">EMERGING SIGNAL</b> — rose from '+(m.f_from*100).toFixed(0)+'% to '+(m.f_to*100).toFixed(0)+'%':''}
+      <div class=r>SOURCE variant call vs O/IND/R2/1975 · METHOD alignment diff ≥10× · CONFIDENCE ${m.signal?'SUPPORTED':'OBSERVED'}</div>`);
+    k.onmouseleave=hideTip;});
+  el.querySelectorAll('.gn').forEach(g=>{
+    const gene=D.genes.find(x=>x[0]===g.dataset.g);
+    g.onclick=()=>{S.mut=null;S.genome=null;S.gene=gene[0];sync();};
+    g.onmouseenter=e=>showTip(e,`<div class=t>${gene[0]}</div>${gene[1].toLocaleString()} – ${gene[2].toLocaleString()} bp · ${(gene[2]-gene[1]+1).toLocaleString()} nt
+      <div class=r>${gene[3]==='utr'?'Untranslated region':'Coding sequence · '+Math.round((gene[2]-gene[1]+1)/3)+' codons'}</div>`);
+    g.onmouseleave=hideTip;});
+}
+function toggleTrack(t,btn){ S.track=t; ['btnMut','btnDiv','btnSel'].forEach(i=>document.getElementById(i).classList.remove('on'));
+  btn.classList.add('on'); renderGenome(); }
+
+/* ─────────── TEMPORAL ─────────── */
+function renderTemporal(){
+  const W=760,H=118,X0=34,PW=W-X0-16, T=D.timeline;
+  const yrs=T.map(t=>t.year), y0=Math.min(...yrs), y1=Math.max(...yrs);
+  const px=y=>X0+((y-y0)/(y1-y0))*PW;
+  const maxG=95, maxN=Math.max(...T.map(t=>t.n));
+  let s=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block">`;
+  s+=`<rect x="${px(S.y0)}" y="6" width="${px(S.y1)-px(S.y0)}" height="88" fill="rgba(23,168,156,.07)"/>`;
+  [0,25,50,75].forEach(v=>{const y=88-(v/maxG)*80;
+    s+=`<path d="M${X0},${y} H${X0+PW}" stroke="#1B272B" stroke-width="1"/>`;
+    s+=`<text x="${X0-6}" y="${y+3}" font-size="7.5" fill="#43535B" font-family="var(--mono)" text-anchor="end">${v}</text>`;});
+  // sequence count as a base histogram
+  T.forEach(t=>{const x=px(t.year), h=(t.n/maxN)*22;
+    s+=`<rect x="${x-7}" y="${88-h}" width="14" height="${h}" fill="#28383E"/>`;});
+  // mean GVI trajectory
+  let path=T.map((t,i)=>`${i?'L':'M'}${px(t.year)},${88-(t.gvi/maxG)*80}`).join(' ');
+  s+=`<path d="${path}" stroke="#17A89C" stroke-width="1.8" fill=none/>`;
+  T.forEach(t=>{const x=px(t.year), y=88-(t.gvi/maxG)*80, inW=t.year>=S.y0&&t.year<=S.y1;
+    s+=`<g class=ty data-y="${t.year}" style="cursor:pointer">`;
+    s+=`<circle cx="${x}" cy="${y}" r="${inW?4:2.6}" fill="${inW?'#17A89C':'#43535B'}" stroke="#080D0F" stroke-width="1.5"/>`;
+    if(t.emerging>0) s+=`<path d="M${x},${y-10} l4,-6 l-8,0 Z" fill="#E0812F"/>`;
+    s+=`<text x="${x}" y="106" font-size="8.5" fill="${inW?'#A3B2BA':'#43535B'}" font-family="var(--mono)" text-anchor="middle">${t.year}</text>`;
+    s+=`</g>`;});
+  s+=`<circle cx="${px(S.y0)}" cy="99" r="5" fill="#17A89C"/><circle cx="${px(S.y1)}" cy="99" r="5" fill="#17A89C"/>`;
+  s+=`<path d="M${px(S.y0)},99 H${px(S.y1)}" stroke="#17A89C" stroke-width="2"/>`;
+  s+=`</svg>`;
+  const el=document.getElementById('temporal'); el.innerHTML=s;
+  el.querySelectorAll('.ty').forEach(g=>{
+    const t=T.find(x=>x.year==g.dataset.y);
+    g.onclick=()=>{ if(Math.abs(t.year-S.y0)<Math.abs(t.year-S.y1)) S.y0=t.year; else S.y1=t.year;
+      if(S.y0>S.y1){const a=S.y0;S.y0=S.y1;S.y1=a;} sync(); };
+    g.onmouseenter=e=>showTip(e,`<div class=t>${t.year}</div>Sequences n = ${t.n}<br>Mean GVI ${t.gvi}<br>Mean π ${t.pi}<br>Mean mutation burden ${t.mb}<br>Emerging mutations ${t.emerging}
+      <div class=r>Click to move the nearest window handle to this year</div>`);
+    g.onmouseleave=hideTip;});
+  document.getElementById('rangeLbl').textContent=`${S.y0} — ${S.y1}`;
+}
+
+/* ─────────── INSPECTOR ─────────── */
+function renderInsp(){
+  let h='<h4>SCIENTIFIC INSPECTOR</h4>';
+  if(S.genome){
+    const g=D.genomes.find(x=>x.id===S.genome);
+    const km=D.muts.filter(m=>m.clades.includes(g.clade)).slice(0,3);
+    h+=`<div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">SELECTED GENOME</k>
+      <div class=ttl>${g.id}</div>
+      <div class=kv><k>Collection date</k><v>${g.date}</v></div>
+      <div class=kv><k>Location</k><v>${g.place}</v></div>
+      <div class=kv><k>Host</k><v>${g.host}</v></div>
+      <div class=kv><k>Clade</k><v style="color:${cladeColor(g.clade)}">${g.clade}</v></div>
+      <div class=kv><k>Accession</k><v>${g.acc}</v></div>
+      <div class=kv><k>Genome length</k><v>8,193 bp</v></div>
+      <div class=kv><k>Coverage</k><v>×${g.cov.toLocaleString()}</v></div>
+      <div class=kv><k>GC content</k><v>${g.gc}%</v></div></div>
+     <div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">GVI SCORE</k>
+      <div style="font-family:var(--mono);font-size:26px;color:#E6EDF0;margin:6px 0 2px">${g.gvi}</div>
+      <div style="font-family:var(--mono);font-size:9.5px;color:${g.gvi>75?'#E05C55':g.gvi>60?'#E0A32E':'#2FA84F'}">${g.gvi>75?'HIGH':g.gvi>60?'ELEVATED':'MODERATE'}</div>
+      <div class=kv style="margin-top:8px"><k>π</k><v>${g.pi}</v></div>
+      <div class=kv><k>Mutation burden</k><v>${g.mb}</v></div></div>
+     <div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">KEY MUTATIONS</k><div style="margin-top:7px">
+      ${km.map(m=>`<span class=chip style="border-color:${m.signal?'#E0812F':'#28383E'};color:${m.signal?'#E0812F':'#A3B2BA'}" onclick="S.mut='${m.label}';S.genome=null;sync()">${m.label}</span>`).join('')}
+      </div></div>`;
+  } else if(S.mut){
+    const m=D.muts.find(x=>x.label===S.mut);
+    const car=D.genomes.filter(g=>m.clades.includes(g.clade)&&g.year>=S.y0&&g.year<=S.y1);
+    h+=`<div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">SELECTED VARIANT</k>
+      <div class=ttl>${m.label}</div>
+      <div class=kv><k>Gene</k><v>${m.gene}</v></div>
+      <div class=kv><k>Genome position</k><v>${m.pos.toLocaleString()} bp</v></div>
+      <div class=kv><k>Codon</k><v>${m.codon}</v></div>
+      <div class=kv><k>Substitution</k><v>${m.ref} → ${m.alt}</v></div>
+      <div class=kv><k>Frequency</k><v>${(m.freq*100).toFixed(0)}%</v></div>
+      <div class=kv><k>Associated clades</k><v>${m.clades.join(', ')}</v></div>
+      <div class=kv><k>Carrying genomes</k><v>${car.length} in window</v></div></div>`;
+    if(m.signal) h+=`<div class=sect><div class=sig><div class=h>● EMERGING SIGNAL</div>
+      <div class=b>${m.label}</div><div class=m>Frequency increased from ${(m.f_from*100).toFixed(0)}% to ${(m.f_to*100).toFixed(0)}% over
+      collection period 2023 → 2026. Associated clades ${m.clades.join(', ')}. Confidence: SUPPORTED.</div></div></div>`;
+  } else if(S.clade){
+    const g=D.genomes.filter(x=>x.clade===S.clade&&x.year>=S.y0&&x.year<=S.y1);
+    const mean=g.reduce((a,x)=>a+x.gvi,0)/(g.length||1);
+    h+=`<div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">SELECTED CLADE</k>
+      <div class=ttl>Clade ${S.clade}</div>
+      <div class=kv><k>Genomes in window</k><v>${g.length}</v></div>
+      <div class=kv><k>Mean GVI</k><v>${mean.toFixed(2)}</v></div>
+      <div class=kv><k>Mean π</k><v>${(g.reduce((a,x)=>a+x.pi,0)/(g.length||1)).toFixed(5)}</v></div>
+      <div class=kv><k>Mean burden</k><v>${(g.reduce((a,x)=>a+x.mb,0)/(g.length||1)).toFixed(1)}</v></div>
+      <div class=kv><k>Date range</k><v>${g.length?g[0].date+' → '+g[g.length-1].date:'—'}</v></div></div>
+      <div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">MEMBER ISOLATES</k><div style="margin-top:7px">
+      ${g.slice(0,10).map(x=>`<span class=chip style="border-color:#28383E" onclick="S.genome='${x.id}';S.clade=null;sync()">${x.id}</span>`).join('')}
+      ${g.length>10?`<div style="font-family:var(--mono);font-size:9px;color:#43535B;margin-top:5px">+ ${g.length-10} more</div>`:''}</div></div>`;
+  } else {
+    h+=`<div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">SIGNAL DETECTION</k>
+      <div class=sig style="margin-top:9px"><div class=h>● EMERGING SIGNAL</div>
+        <div class=b>VP1:A1237G</div>
+        <div class=m>Frequency rose 18% → 64% across collection period 2023 → 2026. Associated clades C4, C7. Confidence: SUPPORTED.</div>
+        <div style="margin-top:6px"><span class=chip style="border-color:#E0812F;color:#E0812F" onclick="S.mut='VP1:A1237G';sync()">INSPECT VARIANT</span></div></div>
+      <div class=sig anom class="sig anom"><div class=h>▲ EVOLUTIONARY ANOMALY</div>
+        <div class=b>μ = 4.27 × 10⁻²</div>
+        <div class=m>Elevated substitution rate, +31.4% against the serotype O baseline of 3.25 × 10⁻². Date randomization clears at p = 0.0099.</div></div>
+      <div class="sig div"><div class=h>▲ DIVERSITY SIGNAL</div>
+        <div class=b>π = 0.06729</div>
+        <div class=m>91st percentile against 42 archived FMDV serotype O panels. Driven by clades C6–C8.</div></div></div>
+      <div class=sect><k style="font-family:var(--mono);font-size:8px;color:#43535B;letter-spacing:.14em">ANALYSIS HISTORY</k>
+      <div style="margin-top:8px">${D.history.map(x=>`<div class=hist><t>${x[0]}</t><d>${x[1]}<s>${x[2]}</s></d><span class=ck>✓</span></div>`).join('')}</div>
+      <div style="margin-top:9px">
+        <span class=chip style="border-color:#28383E" onclick="openModal('provenance')">VIEW LOG</span>
+        <span class=chip style="border-color:#28383E" onclick="openModal('params')">PARAMETERS</span>
+        <span class=chip style="border-color:#28383E" onclick="openModal('export')">EXPORT PROVENANCE</span></div></div>`;
+  }
+  h+=`<div class=sect><span class=chip style="border-color:#28383E" onclick="openModal('genomeview')">VIEW GENOME</span>
+    <span class=chip style="border-color:#28383E" onclick="clearAll()">VIEW TREE</span>
+    <span class=chip style="border-color:#28383E" onclick="openModal('compare')">COMPARE</span>
+    <span class=chip style="border-color:#28383E" onclick="openModal('export')">EXPORT</span></div>`;
+  document.getElementById('insp').innerHTML=h;
+}
+
+/* ─────────── SYNC — one selection, every view ─────────── */
+function sync(){
+  const g=filtered();
+  const gv=gviNow();
+  document.getElementById('gviVal').textContent=gv.toFixed(2);
+  document.getElementById('gviCat').textContent = gv>75?'HIGH VULNERABILITY':gv>60?'ELEVATED VULNERABILITY':'MODERATE VULNERABILITY';
+  document.getElementById('gviCat').style.color = gv>75?'#E05C55':gv>60?'#E0812F':'#2FA84F';
+  document.getElementById('gviConf').textContent = g.length>=30?'HIGH':g.length>=12?'MODERATE':'LOW';
+  document.getElementById('ctxN').textContent='n = '+g.length;
+  document.getElementById('sN').textContent=g.length;
+  document.getElementById('sWin').textContent=S.y0+'–'+S.y1;
+  document.getElementById('sPi').textContent=(g.reduce((a,x)=>a+x.pi,0)/(g.length||1)).toFixed(5);
+  document.getElementById('sSel').textContent = S.genome||S.mut||(S.clade?'clade '+S.clade:null)||(S.metric?'metric '+S.metric:null)||'none';
+  renderFlow(); renderTree(); renderGenome(); renderTemporal(); renderInsp();
+}
+function clearAll(){ S.clade=null;S.genome=null;S.mut=null;S.metric=null;S.gene=null; sync(); }
+function tool(b,m){ document.querySelectorAll('.rail button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); S.mode=m.toUpperCase(); document.getElementById('sMode').textContent=S.mode; }
+function cycleColor(){ const s=document.getElementById('colorBy');
+  s.selectedIndex=(s.selectedIndex+1)%s.options.length; renderTree(); }
+
+/* ─────────── TOOLTIP ─────────── */
+const tip=document.getElementById('tip');
+function showTip(e,html){ tip.innerHTML=html; tip.style.display='block'; moveTip(e); }
+function moveTip(e){ tip.style.left=Math.min(e.clientX+16,innerWidth-350)+'px';
+  tip.style.top=Math.min(e.clientY+18,innerHeight-180)+'px'; }
+function hideTip(){ tip.style.display='none'; }
+document.addEventListener('mousemove',e=>{ if(tip.style.display==='block') moveTip(e); });
+
+/* ─────────── MODALS ─────────── */
+const MOD={
+ formula:['GVI FORMULA', `<div style="font-family:var(--mono);font-size:12px;color:#E6EDF0;line-height:2">
+   GVI(t) = Σ ( wᵢ · norm(xᵢ) ) × 100</div>
+   <div style="margin-top:12px;color:#A3B2BA;line-height:1.6">Each index is min–max normalised against its own reference range, weighted, and summed.
+   Weights are renormalised over whichever indices survive quality gating, so a score is always in [0,100] — which is why
+   <b style="color:#E0A32E">coverage must be read alongside the value</b>.</div>
+   <div style="margin-top:14px">${D.metrics.map(m=>`<div class=kv><k>${m.k} · ${m.name}</k><v>${m.norm.toFixed(2)} × ${m.w.toFixed(2)} = ${m.c.toFixed(2)}</v></div>`).join('')}
+   <div class=kv style="border-top:1px solid #1B272B;margin-top:6px;padding-top:8px"><k style="color:#17A89C">TOTAL</k><v style="color:#E6EDF0">73.52</v></div></div>`],
+ contrib:['CONTRIBUTION ANALYSIS', `<div style="color:#A3B2BA;margin-bottom:12px">Ranked by share of the final index.</div>
+   ${[...D.metrics].sort((a,b)=>b.c-a.c).map(m=>`<div style="margin-bottom:10px">
+     <div class=kv><k style="color:#E6EDF0">${m.k} · ${m.name}</k><v>${m.c.toFixed(2)} · ${(m.c/73.52*100).toFixed(1)}%</v></div>
+     <div style="height:7px;background:#111A1D;margin-top:3px"><i style="display:block;height:100%;width:${m.c/12.3*100}%;background:#17A89C"></i></div>
+     <div style="font-size:10.5px;color:#6B7C85;margin-top:4px">${m.expl}</div></div>`).join('')}`],
+ compare:['DATASET COMPARISON', `<div class=kv><k>DATASET A</k><v>FMDV_India_2016_2020 · n = 47</v></div>
+   <div class=kv><k>DATASET B</k><v>FMDV_India_2021_2026 · n = 101</v></div>
+   <div style="display:flex;align-items:baseline;gap:14px;margin:16px 0;font-family:var(--mono)">
+     <span style="font-size:30px;color:#6B7C85">54.21</span><span style="color:#43535B">→</span>
+     <span style="font-size:30px;color:#E6EDF0">73.52</span>
+     <span style="font-size:15px;color:#E0812F">+35.6%</span></div>
+   ${[['Nucleotide diversity π','0.0491','0.06729','+37.0%'],['Mutation burden','88.4','123.61','+39.8%'],
+      ['Evolutionary rate μ','3.25e-2','4.27e-2','+31.4%'],['dN/dS','0.0612','0.0697','+13.9%'],
+      ['Genetic distance','0.061','0.094','+54.1%'],['Recombination signal','0.04','0.05','+25.0%']]
+     .map(r=>`<div class=kv><k>${r[0]}</k><v>${r[1]} → ${r[2]} <span style="color:#E0812F">${r[3]}</span></v></div>`).join('')}
+   <div style="margin-top:14px">${['SYNCHRONIZE','OVERLAY','SPLIT VIEW','RESET'].map(b=>`<span class=chip style="border-color:#28383E">${b}</span>`).join('')}</div>`],
+ provenance:['ANALYSIS PROVENANCE', D.history.map(x=>`<div class=hist><t>${x[0]}</t><d>${x[1]}<s>${x[2]}</s></d><span class=ck>✓</span></div>`).join('')
+   +`<div style="margin-top:14px;font-family:var(--mono);font-size:10.5px;color:#6B7C85;line-height:1.9">
+     FMDV_India_WGS_2016_2026.fasta<br>FMDV_Metadata_Curated.csv<br>O_IND_R2_1975_reference.fasta<br>
+     gvi_analysis_config.yaml<br>phylogeny_iqtree.nwk<br>analysis_provenance.json</div>`],
+ params:['RUN PARAMETERS', `${[['aligner','MAFFT v7.520 --auto'],['tree','IQ-TREE 2.2.6'],['model','GTR+F+I+G4 (ModelFinder)'],
+   ['bootstrap','1000 ultrafast'],['clock','strict, LSD2 calibrated'],['date randomization','100 replicates, p = 0.0099'],
+   ['gd method','jukes_cantor'],['codon usage','Bos taurus, Kazusa'],['weights','specification midpoints'],
+   ['min coverage','10×'],['reference','O/IND/R2/1975 (AY593823.1)']]
+   .map(r=>`<div class=kv><k>${r[0]}</k><v>${r[1]}</v></div>`).join('')}`],
+ export:['EXPORT', `<div style="color:#A3B2BA;margin-bottom:12px">Publication-quality output for the current selection and window.</div>
+   ${[['Figure — phylogeny + GVI overlay','SVG, 89 mm column'],['Figure — contribution flow','SVG, vector'],
+      ['Figure — temporal trajectory','SVG, vector'],['Results table','CSV'],['Full report','JSON'],
+      ['Provenance record','analysis_provenance.json']].map(r=>`<div class=kv><k>${r[0]}</k><v>${r[1]}</v></div>`).join('')}`],
+ search:['SEARCH', `<div style="color:#A3B2BA">Search isolate ID, gene name, genome coordinate or variant label.</div>
+   <div style="margin-top:10px;font-family:var(--mono);font-size:11px;color:#6B7C85;line-height:1.9">
+   IND/KA/BGL/2024-017<br>VP1<br>1237<br>VP1:A1237G</div>`],
+ filter:['FILTER', `${[['Collection year','2016 – 2026'],['Region','all 10 states'],['Host','Cattle · Buffalo · Sheep · Goat'],
+   ['Clade','C1 – C8'],['GVI category','all'],['Min coverage','×400']].map(r=>`<div class=kv><k>${r[0]}</k><v>${r[1]}</v></div>`).join('')}`],
+ genomeview:['GENOME VIEW', `<div style="color:#A3B2BA">O/IND/R2/1975 · 8,193 bp · 12 variant sites in the current window.</div>
+   <div style="margin-top:12px">${D.genes.map(g=>`<div class=kv><k>${g[0]}</k><v>${g[1].toLocaleString()} – ${g[2].toLocaleString()} bp</v></div>`).join('')}</div>`]
+};
+function openModal(id,arg){
+  if(id==='metric'){ const m=D.metrics.find(x=>x.k===arg);
+    document.getElementById('mTitle').textContent='METRIC INSPECTOR · '+m.k;
+    document.getElementById('mBody').innerHTML=`<div style="font-family:var(--mono);font-size:26px;color:#E6EDF0">${m.v}</div>
+      <div style="color:#6B7C85;font-family:var(--mono);font-size:10px;letter-spacing:.1em;margin-bottom:12px">${m.name}</div>
+      <div style="color:#A3B2BA;line-height:1.6">${m.expl}</div>
+      <div style="margin-top:14px">${[['normalised',m.norm.toFixed(2)],['weight',m.w.toFixed(2)],['contribution',m.c.toFixed(2)],
+        ['share of index',(m.c/73.52*100).toFixed(1)+'%'],['data source',m.src],['method',m.meth],['confidence',m.conf]]
+        .map(r=>`<div class=kv><k>${r[0]}</k><v>${r[1]}</v></div>`).join('')}</div>`;
+  } else { const m=MOD[id]; if(!m) return;
+    document.getElementById('mTitle').textContent=m[0];
+    document.getElementById('mBody').innerHTML=m[1]; }
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); clearAll(); } });
+document.querySelector('.gvibox').onmouseenter=e=>showTip(e,`<div class=t>Genomic Vulnerability Index</div>
+  Weighted sum of 7 normalised genomic indices over ${filtered().length} genomes in the active window.<br><br>
+  Largest contributor is evolutionary rate μ at 12.30 of 73.52 (16.7%).
+  <div class=r>METHOD Σ(wᵢ · norm(xᵢ)) × 100 · CONFIDENCE HIGH · Click to open contribution analysis</div>`);
+document.querySelector('.gvibox').onmouseleave=hideTip;
+sync();
+</script></body></html>

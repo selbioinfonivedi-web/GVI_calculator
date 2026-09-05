@@ -1,0 +1,58 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.0000   [5 of 9 indices, 54% of the weighting scheme]
+  *** NOT COMPARABLE across datasets -- too little of the weighting scheme survived quality
+      gating. See the warning below before ranking this value against anything. ***
+
+  pi             raw=0.00000      norm=0.0000 weight=0.1688 contribution=0.0000
+  MB             raw=0.00000      norm=0.0000 weight=0.3629 contribution=0.0000
+  dN/dS          raw=0.00000      norm=0.0000 weight=0.2532 contribution=0.0000
+  GD             raw=0.00000      norm=0.0000 weight=0.1688 contribution=0.0000
+  GC_Deviation   raw=0.00000      norm=0.0000 weight=0.0464 contribution=0.0000
+  excluded: [MU, RE, CAI, RI]
+
+-- Component index detail (dataset-wide) --
+  pi             value=0.00000      category=Acute outbreak (Very low diversity; single clone); Originated from single introduction
+      * 66 of 66 sampled pairs had at least one comparable site
+  MB             value=0.00000      category=Within-household transmission (Days); Genetic link confirmable -- mean across 11 sequence(s)
+      * Mean of 11 per-sequence value(s); range [0.000, 0.000]
+  dN/dS          value=0.00000      category=Purifying selection (dN/dS < 1): functional constraint (pooled across 11 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 11 sequence(s)
+      * Pooled Nei-Gojobori counts across 11 result(s) (not an average of individual ratios)
+      * No synonymous differences were observed in 1371.333333333332 synonymous sites, so dS is 0 and dN/dS is mathematically UNDEFINED. A continuity correction (add-0.5) was applied to keep the ratio finite, but the resulting omega is an arbitrary lower bound set by the site count and the pseudo-count -- NOT a point estimate, and NOT evidence of positive selection. Zero synonymous change is the expected result of very low overall divergence (synonymous sites are ~1/4 of a codon), not a signature of selection. Treat this gene as having insufficient divergence to estimate omega; add more divergent sequences or a longer coding region.
+      * Selection test inconclusive: No synonymous and no nonsynonymous differences were observed (Sd=0.0 in 1371.3 synonymous sites, Nd=0.0 in 4766.7 nonsynonymous sites). The Jukes-Cantor variance of a zero proportion is exactly zero, which would give that distance infinite apparent precision and manufacture a significant Z from no evidence. A zero count means no information, not perfect information -- the normal approximation does not hold at the boundary, so no selection verdict is issued. Add more divergent sequences or a longer coding region.
+      * Nei-Gojobori Z-test on the pooled counts: Z=NaN, two-tailed p=NaN, verdict=NOT_SIGNIFICANT. Selection test inconclusive: No synonymous and no nonsynonymous differences were observed (Sd=0.0 in 1371.3 synonymous sites, Nd=0.0 in 4766.7 nonsynonymous sites). The Jukes-Cantor variance of a zero proportion is exactly zero, which would give that distance infinite apparent precision and manufacture a significant Z from no evidence. A zero count means no information, not perfect information -- the normal approximation does not hold at the boundary, so no selection verdict is issued. Add more divergent sequences or a longer coding region.
+  GD             value=0.00000      category=Same transmission event (<1 week, confidence: Very high) -- mean across 11 sequence(s)
+      * Mean of 11 per-sequence value(s); range [0.000, 0.000]
+  GC_Deviation   value=0.00000      category=Native (No HGT signal; Stable, expected) -- mean across 11 sequence(s)
+      * Mean of 11 per-sequence value(s); range [0.000, 0.000]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  pi             GVI range [0.0000, 0.0000]  (spread=0.0000, base=0.0000)
+  MB             GVI range [0.0000, 0.0000]  (spread=0.0000, base=0.0000)
+  dN/dS          GVI range [0.0000, 0.0000]  (spread=0.0000, base=0.0000)
+  GD             GVI range [0.0000, 0.0000]  (spread=0.0000, base=0.0000)
+  GC_Deviation   GVI range [0.0000, 0.0000]  (spread=0.0000, base=0.0000)
+
+-- Per-sequence detail omitted (11 sequence(s) -- pass --per-sequence to include it) --
+
+-- Skipped --
+  - RI: PHI test needs at least 4 informative biallelic sites, found 0. This alignment may be too conserved or too small to assess recombination.
+  - mu: Cannot estimate mu: need at least 2 distinct collection dates with usable distances, found 0. Provide a temporally spread dataset.
+  - Re: Phylodynamic Re fallback needs at least 5 dated sequences, got 0
+  - CAI: not computed for organism-class 'bacterium'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.
+
+-- Warnings --
+  - --trim-to-covered: Alignment trimmed to the 558 of 597 columns (93%) covered by all 12 sequences; longest contiguous block 558 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - Re: the birth-death (BDSKY) fit was unavailable for this dataset (BDSKY-ML Re needs every sequence dated (12 missing); use the phylodynamic fallback instead), so Re falls back to the lineages-through-time regression, which is markedly less able to distinguish growth rates -- treat the resulting Re as indicative only.
+  - --trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (37.81%, from 'MK510833.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - NOT COMPARABLE: this GVI of 0.0000 was computed from only 5 of 9 indices, 54% of the weighting scheme (threshold for cross-dataset comparison is 60%). The surviving indices were renormalized to sum to 1, so the score still falls in [0,1] and still looks like a normal GVI -- but it summarizes a different, much smaller set of evidence than a fully-populated score does. Do NOT rank this value against other pathogens' GVIs. A LOW value here is especially easy to misread: it can mean the contributing indices happened to be small, not that virulence is low. Resolve the exclusions listed under 'Skipped' and re-run before drawing any comparative conclusion.
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/anthrax.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/anthrax.csv

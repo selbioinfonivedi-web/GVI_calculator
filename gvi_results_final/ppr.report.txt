@@ -1,0 +1,76 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.2764   [9 of 9 indices, 100% of the weighting scheme]
+
+  mu             raw=0.00330130   norm=0.3301 weight=0.1239 contribution=0.0409
+  Re             raw=0.996138     norm=0.3320 weight=0.2752 contribution=0.0914
+  pi             raw=0.0151020    norm=0.7551 weight=0.0917 contribution=0.0693
+  MB             raw=17.0000      norm=0.1700 weight=0.1972 contribution=0.0335
+  dN/dS          raw=0.0828602    norm=0.0276 weight=0.1376 contribution=0.0038
+  GD             raw=0.0109800    norm=0.2196 weight=0.0917 contribution=0.0201
+  CAI            raw=0.669646     norm=0.6696 weight=0.0252 contribution=0.0169
+  GC_Deviation   raw=0.199546     norm=0.0200 weight=0.0252 contribution=0.0005
+  RI             raw=0.00000      norm=0.0000 weight=0.0321 contribution=0.0000
+
+-- Component index detail (dataset-wide) --
+  mu             value=0.00330130   category=RNA (low-fidelity) (Influenza, SARS-CoV-2, HIV); immune escape 6-18 months
+      * Built a 8-taxon Neighbor-Joining tree rooted at 'MT072489.1'
+      * Temporal signal R^2=0.893 over 11.94 years (n=8)
+      * Date randomization passed: the fitted rate (0.00330130) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0396, range [-0.00169191, 0.00340711]) -- the collection dates, not lineage structure alone, explain the divergence.
+  Re             value=0.996138     category=Endemic (Stable circulation -> Stable); Routine vaccination
+      * Built a 8-taxon Neighbor-Joining tree rooted at 'MT072489.1'
+      * Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9961, 95% likelihood-ratio interval [0.99, 1.01]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-103.5145 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.
+      * Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number.
+  pi             value=0.0151020    category=Endemic circulation (High diversity; years of transmission); Likely antigenically variable; vaccine updates needed
+      * 28 of 28 sampled pairs had at least one comparable site
+  RI             value=0.00000      category=Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis
+      * 6 informative biallelic sites; 3 pairs within 100bp window (of 15 total pairs); 1000 permutations run
+      * windowed PHI=0.6667, global PHI=0.6000, one-sided permutation p=0.8042
+  MB             value=17.0000      category=Established outbreak (months) (1-3 months); Variant of interest (VOI) classification -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [5.000, 64.00]
+  dN/dS          value=0.0828602    category=Purifying selection (dN/dS < 1): functional constraint (pooled across 7 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 7 sequence(s)
+      * Pooled Nei-Gojobori counts across 7 result(s) (not an average of individual ratios)
+      * dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-8.683, two-tailed p=0.0000) -- purifying/negative selection
+      * Nei-Gojobori Z-test on the pooled counts: Z=-8.683, two-tailed p=0.000, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-8.683, two-tailed p=0.0000) -- purifying/negative selection
+  GD             value=0.0109800    category=Separate introduction event (1-3 months, confidence: Moderate) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.003181, 0.04178]
+  CAI            value=0.669646     category=Intermediate (Emerging; partial adaptation; Weeks-months) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.6682, 0.6723]
+  GC_Deviation   value=0.199546     category=Native (No compositional anomaly; Stable, expected) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.06349, 0.5079]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  pi             GVI range [0.2668, 0.2861]  (spread=0.0193, base=0.2764)
+  dN/dS          GVI range [0.2685, 0.2844]  (spread=0.0159, base=0.2764)
+  MB             GVI range [0.2712, 0.2817]  (spread=0.0105, base=0.2764)
+  Re             GVI range [0.2722, 0.2807]  (spread=0.0084, base=0.2764)
+  CAI            GVI range [0.2744, 0.2785]  (spread=0.0041, base=0.2764)
+  RI             GVI range [0.2746, 0.2783]  (spread=0.0037, base=0.2764)
+  mu             GVI range [0.2749, 0.2779]  (spread=0.0030, base=0.2764)
+  GC_Deviation   GVI range [0.2751, 0.2778]  (spread=0.0027, base=0.2764)
+  GD             GVI range [0.2753, 0.2776]  (spread=0.0023, base=0.2764)
+
+-- Per-sequence detail omitted (7 sequence(s) -- pass --per-sequence to include it) --
+
+-- Warnings --
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:1 [MT072489.1] - Header gave only a year, not a full date; using 2010-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:29 [MT072483.1] - Header gave only a year, not a full date; using 2010-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:57 [MT072462.1] - Header gave only a year, not a full date; using 2012-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:85 [MT072494.1] - Header gave only a year, not a full date; using 2012-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:113 [MT072490.1] - Header gave only a year, not a full date; using 2013-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:141 [MT072485.1] - Header gave only a year, not a full date; using 2013-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/ppr/aligned.fasta:169 [MT072473.1] - Header gave only a year, not a full date; using 2014-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)
+  - --trim-to-covered: Alignment trimmed to the 1575 of 1578 columns (100%) covered by all 8 sequences; longest contiguous block 1575 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - --trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.
+  - CAI: no --codon-usage supplied; using the bundled 'goat' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (50.10%, from 'MT072489.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/ppr.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/ppr.csv

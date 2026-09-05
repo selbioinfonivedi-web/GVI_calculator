@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.gvi</groupId>
+    <artifactId>gvi-calculator-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>gvi-ui</artifactId>
+  <name>gvi-ui</name>
+  <description>JavaFX desktop GUI: the same gvi-cli pipeline (GviPipeline/PipelineConfig/PipelineResult/ReportWriter) behind file pickers, a run button, and a results table instead of command-line flags.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.gvi</groupId>
+      <artifactId>gvi-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gvi</groupId>
+      <artifactId>gvi-algorithms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gvi</groupId>
+      <artifactId>gvi-composite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gvi</groupId>
+      <artifactId>gvi-selftest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gvi</groupId>
+      <artifactId>gvi-cli</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>gvi-calculator-ui</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.gvi.ui.GviUiLauncher</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

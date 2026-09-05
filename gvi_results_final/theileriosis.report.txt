@@ -1,0 +1,78 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.2322   [6 of 9 indices, 71% of the weighting scheme]
+
+  Re             raw=0.991032     norm=0.3303 weight=0.3859 contribution=0.1275
+  pi             raw=0.0104065    norm=0.5203 weight=0.1286 contribution=0.0669
+  MB             raw=5.30000      norm=0.0530 weight=0.2765 contribution=0.0147
+  GD             raw=0.00870603   norm=0.1741 weight=0.1286 contribution=0.0224
+  GC_Deviation   raw=0.227642     norm=0.0228 weight=0.0354 contribution=0.0008
+  RI             raw=0.00000      norm=0.0000 weight=0.0450 contribution=0.0000
+  excluded: [MU, DNDS, CAI]
+
+-- Component index detail (dataset-wide) --
+  mu             value=0.00786115   category=Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A
+      * Rooting the temporal (root-to-tip) regression at 'OQ640227.1' (earliest collection date, 2022.20) instead of the pipeline reference 'PQ899713.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'PQ899713.1'.
+      * Negative branch length (-1.4125008500971876E-5) clamped to 0 for leaf/clade 'PQ899713.1'
+      * Negative branch length (-8.82813031310688E-6) clamped to 0 for leaf/clade 'PQ899712.1'
+      * Negative branch length (-6.196943980477099E-6) clamped to 0 for leaf/clade 'PP894807.1'
+      * Negative branch length (-5.513941761149763E-6) clamped to 0 for leaf/clade 'PP894805.1'
+      * Built a 11-taxon Neighbor-Joining tree rooted at 'OQ640227.1'
+      * Temporal signal R^2=0.642 over 2.42 years (n=11)
+      * Date randomization passed: the fitted rate (0.00786115) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0099, range [-0.00745682, 0.00747735]) -- the collection dates, not lineage structure alone, explain the divergence.
+  Re             value=0.991032     category=Endemic (Stable circulation -> Stable); Routine vaccination
+      * Rooting the temporal (root-to-tip) regression at 'OQ640227.1' (earliest collection date, 2022.20) instead of the pipeline reference 'PQ899713.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'PQ899713.1'.
+      * Negative branch length (-1.4125008500971876E-5) clamped to 0 for leaf/clade 'PQ899713.1'
+      * Negative branch length (-8.82813031310688E-6) clamped to 0 for leaf/clade 'PQ899712.1'
+      * Negative branch length (-6.196943980477099E-6) clamped to 0 for leaf/clade 'PP894807.1'
+      * Negative branch length (-5.513941761149763E-6) clamped to 0 for leaf/clade 'PP894805.1'
+      * Built a 11-taxon Neighbor-Joining tree rooted at 'OQ640227.1'
+      * Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9910, 95% likelihood-ratio interval [0.95, 1.04]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.003; log-likelihood=6.1622 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.
+      * Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number.
+  pi             value=0.0104065    category=Endemic circulation (High diversity; years of transmission); Likely antigenically variable; vaccine updates needed
+      * 55 of 55 sampled pairs had at least one comparable site
+  RI             value=0.00000      category=Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis
+      * 11 informative biallelic sites; 30 pairs within 100bp window (of 55 total pairs); 1000 permutations run
+      * windowed PHI=0.0667, global PHI=0.0364, one-sided permutation p=1.0000
+  MB             value=5.30000      category=Within-household transmission (Days); Genetic link confirmable -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 11.00]
+  dN/dS          value=1.75502      category=Positive selection (dN/dS > 1): adaptive advantage (pooled across 10 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 10 sequence(s)
+      * Pooled Nei-Gojobori counts across 10 result(s) (not an average of individual ratios)
+      * dN and dS not significantly different (Nei-Gojobori Z-test, Z=1.369, two-tailed p=0.1709) -- neutral evolution cannot be rejected
+      * Nei-Gojobori Z-test on the pooled counts: Z=1.369, two-tailed p=0.1709, verdict=NOT_SIGNIFICANT. dN and dS not significantly different (Nei-Gojobori Z-test, Z=1.369, two-tailed p=0.1709) -- neutral evolution cannot be rejected
+  GD             value=0.00870603   category=Separate introduction event (1-3 months, confidence: Moderate) -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 0.01810]
+  GC_Deviation   value=0.227642     category=Native (No compositional anomaly; Stable, expected) -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 0.4878]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  MB             GVI range [0.2201, 0.2448]  (spread=0.0247, base=0.2322)
+  Re             GVI range [0.2215, 0.2424]  (spread=0.0209, base=0.2322)
+  pi             GVI range [0.2240, 0.2403]  (spread=0.0163, base=0.2322)
+  RI             GVI range [0.2301, 0.2344]  (spread=0.0043, base=0.2322)
+  GD             GVI range [0.2306, 0.2339]  (spread=0.0033, base=0.2322)
+  GC_Deviation   GVI range [0.2307, 0.2338]  (spread=0.0030, base=0.2322)
+
+-- Per-sequence detail omitted (10 sequence(s) -- pass --per-sequence to include it) --
+
+-- Skipped --
+  - CAI: not computed for organism-class 'eukaryotic_parasite'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.
+  - mu (excluded from composite GVI): the fitted rate is 0.007861 sub/site/yr, which the reference table classifies as implausible for a DNA genome -- no known DNA virus replicates faster than about 1e-05, and the fastest credible band (small ssDNA, no proofreading) tops out there. Note this is NOT a weak-signal problem: the temporal-signal checks may well have passed, because the dates genuinely do explain the divergence. What fails is the magnitude. A rate this far above the ceiling usually means the alignment pools separate lineages or loci, or that the marker is under selection strong enough to break the clock assumption itself. Excluded from the composite GVI (still reported below) -- otherwise it would saturate mu's normalization ceiling and contribute maximum weight precisely because it is impossible. Verify the input before trusting this rate.
+  - dN/dS (excluded from composite GVI): the pooled dN/dS is 1.755 but the Nei-Gojobori Z-test cannot distinguish it from neutrality (Z=1.369, two-tailed p=0.1709, verdict NOT_SIGNIFICANT), so it is not evidence of positive selection. An unqualified ratio above 1 on few codons is at least as likely to be a frameshift or misalignment artifact -- a shifted reading frame turns synonymous change into apparent nonsynonymous change. Excluded from the composite GVI (still reported below); confirm the reading frame and gene boundaries (--gff) before treating this as selection.
+
+-- Warnings --
+  - --trim-to-covered: Alignment trimmed to the 615 of 636 columns (97%) covered by all 11 sequences; longest contiguous block 615 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - No --gff supplied; predicted 2 open reading frame(s) natively from the reference sequence (ATG...stop 6-frame scan, >= 30 codons, kept if within 30% of the longest one found -- 2 candidate(s) before that filter) instead of treating the whole sequence as one ORF -- a real but simpler technique than a trained gene-finder (no coding-potential model, no splice handling); supply --gff for definitive gene coordinates if available.
+  - --trim-to-covered: remapped 2 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (44.23%, from 'PQ899713.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - GC_Deviation: organism-class is 'eukaryotic_parasite', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.
+  - Data quality advisory -- dN/dS/CAI premise: no --gff was supplied, so gene boundaries for this dN/dS (1.755) and any CAI result were auto-predicted by a 6-frame ORF scan, not confirmed as real coding sequence. That scan finds SOME ATG...stop run by chance in most alignments, including genuinely non-coding markers (rRNA, ITS, intergenic regions) -- this caveat applies even when the number itself looks biologically plausible, not just when it looks extreme. If this marker is not protein-coding, exclude dnds/cai via --indices instead of trusting this value; if it is, supply --gff for real gene coordinates.
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/theileriosis.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/theileriosis.csv

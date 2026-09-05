@@ -1,0 +1,2 @@
+##gff-version 3
+alignment	manual	CDS	133	1188	.	-	0	ID=ompH_cds;gene=ompH;product=outer membrane protein H

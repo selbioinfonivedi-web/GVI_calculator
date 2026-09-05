@@ -1,0 +1,9 @@
+sequence_id,collection_date,location,host,strain,organism,length,description
+KY436382.1,1962,Egypt,cattle,PM/VSVRI/1962,Pasteurella multocida,912,"Pasteurella multocida strain PM/VSVRI/1962 outer membrane protein (ompH) gene, partial cds"
+AJ459785.1,,India:Mukteswar,,P52,Pasteurella multocida,942,Pasteurella multocida partial ompH gene for outer membrane protein H
+JQ082509.1,,,cattle,XJ149,Pasteurella multocida,984,"Pasteurella multocida strain XJ149 outer membrane protein H (ompH) gene, complete cds"
+MW142232.1,2019,India,buffalo,IndNIVEDIPm34,Pasteurella multocida,960,"UNVERIFIED: Pasteurella multocida strain IndNIVEDIPm34 outer membrane protein H-like (ompH) gene, partial sequence"
+MK183754.1,,Indonesia,buffalo,PM029,Pasteurella multocida,894,"Pasteurella multocida strain PM029 outer membrane protein H (ompH) gene, partial cds"
+PX462726.1,,Viet Nam,bovine,Pbu.1,Pasteurella multocida,828,"Pasteurella multocida strain Pbu.1 OmpH (ompH) gene, partial cds"
+KP212399.1,,Russia,cattle,YK-59,Pasteurella multocida,984,"Pasteurella multocida strain YK-59 outer membrane protein (ompH) gene, partial cds"
+KY403515.1,2015,Egypt,cattle,PM/VSVRI/2015,Pasteurella multocida,966,"Pasteurella multocida strain PM/VSVRI/2015 outer membrane protein (ompH) gene, partial cds"

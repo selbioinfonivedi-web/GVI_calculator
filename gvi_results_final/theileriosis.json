@@ -1,0 +1,163 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.23224282268376623,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 0.9910319673889724,
+      "normalizedValue" : 0.33034398912965746,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.38585209003215426,
+      "contribution" : 0.12746391863523757
+    }, {
+      "key" : "PI",
+      "rawValue" : 0.010406504065040649,
+      "normalizedValue" : 0.5203252032520325,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12861736334405147,
+      "contribution" : 0.06692285572373409
+    }, {
+      "key" : "MB",
+      "rawValue" : 5.3,
+      "normalizedValue" : 0.053,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.27652733118971057,
+      "contribution" : 0.01465594855305466
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.008706030656182584,
+      "normalizedValue" : 0.17412061312365168,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12861736334405147,
+      "contribution" : 0.022394934163813725
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.22764227642276538,
+      "normalizedValue" : 0.02276422764227654,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.03536977491961415,
+      "contribution" : 8.051656079261798E-4
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.04501607717041801,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU", "DNDS", "CAI" ],
+    "effectiveWeightSum" : 0.713302752293578,
+    "diagnostics" : [ "Excluded (no data supplied): mu, dN/dS, CAI -- remaining weights renormalized to sum to 1 (was 0.713 of full scheme)", "6 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 5.3,
+      "category" : "Within-household transmission (Days); Genetic link confirmable -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 11.00]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 1.7550203396986959,
+      "category" : "Positive selection (dN/dS > 1): adaptive advantage (pooled across 10 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 10 sequence(s)", "Pooled Nei-Gojobori counts across 10 result(s) (not an average of individual ratios)", "dN and dS not significantly different (Nei-Gojobori Z-test, Z=1.369, two-tailed p=0.1709) -- neutral evolution cannot be rejected", "Nei-Gojobori Z-test on the pooled counts: Z=1.369, two-tailed p=0.1709, verdict=NOT_SIGNIFICANT. dN and dS not significantly different (Nei-Gojobori Z-test, Z=1.369, two-tailed p=0.1709) -- neutral evolution cannot be rejected" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.008706030656182584,
+      "category" : "Separate introduction event (1-3 months, confidence: Moderate) -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 0.01810]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.22764227642276538,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 0.4878]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 0.007861154234709367,
+      "rSquared" : 0.6424714992393044,
+      "pointsUsed" : 11,
+      "timeSpanYears" : 2.42021857923487,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Rooting the temporal (root-to-tip) regression at 'OQ640227.1' (earliest collection date, 2022.20) instead of the pipeline reference 'PQ899713.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'PQ899713.1'.", "Negative branch length (-1.4125008500971876E-5) clamped to 0 for leaf/clade 'PQ899713.1'", "Negative branch length (-8.82813031310688E-6) clamped to 0 for leaf/clade 'PQ899712.1'", "Negative branch length (-6.196943980477099E-6) clamped to 0 for leaf/clade 'PP894807.1'", "Negative branch length (-5.513941761149763E-6) clamped to 0 for leaf/clade 'PP894805.1'", "Built a 11-taxon Neighbor-Joining tree rooted at 'OQ640227.1'", "Temporal signal R^2=0.642 over 2.42 years (n=11)", "Date randomization passed: the fitted rate (0.00786115) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0099, range [-0.00745682, 0.00747735]) -- the collection dates, not lineage structure alone, explain the divergence." ],
+      "temporalSignalConfirmed" : true
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2024-08-15",
+      "reMean" : 0.9910319673889724,
+      "interval" : {
+        "lower" : 0.9450761639133234,
+        "upper" : 1.0420939712508046,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : null,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Rooting the temporal (root-to-tip) regression at 'OQ640227.1' (earliest collection date, 2022.20) instead of the pipeline reference 'PQ899713.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'PQ899713.1'.", "Negative branch length (-1.4125008500971876E-5) clamped to 0 for leaf/clade 'PQ899713.1'", "Negative branch length (-8.82813031310688E-6) clamped to 0 for leaf/clade 'PQ899712.1'", "Negative branch length (-6.196943980477099E-6) clamped to 0 for leaf/clade 'PP894807.1'", "Negative branch length (-5.513941761149763E-6) clamped to 0 for leaf/clade 'PP894805.1'", "Built a 11-taxon Neighbor-Joining tree rooted at 'OQ640227.1'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9910, 95% likelihood-ratio interval [0.95, 1.04]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.003; log-likelihood=6.1622 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 0.010406504065040649,
+      "sequenceCount" : 11,
+      "alignmentLength" : 615,
+      "pairsUsed" : 55,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.00514412416851441,
+        "upper" : 0.015966001478196604,
+        "level" : 0.95
+      },
+      "category" : "Endemic circulation (High diversity; years of transmission); Likely antigenically variable; vaccine updates needed",
+      "diagnostics" : [ "55 of 55 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.06666666666666667,
+      "globalPhiStatistic" : 0.03636363636363636,
+      "pValue" : 1.0,
+      "informativeSitesUsed" : 11,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "11 informative biallelic sites; 30 pairs within 100bp window (of 55 total pairs); 1000 permutations run", "windowed PHI=0.0667, global PHI=0.0364, one-sided permutation p=1.0000" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.2214685394887349,
+    "gviAtHighWeight" : 0.24237879374986096
+  }, {
+    "key" : "PI",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.22401701843819408,
+    "gviAtHighWeight" : 0.2403361193703711
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.22013311299124277,
+    "gviAtHighWeight" : 0.24484055254196774
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.2306099554284932,
+    "gviAtHighWeight" : 0.23390242407007292
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.23072578328502108,
+    "gviAtHighWeight" : 0.23376618787227116
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.23224282268376623,
+    "gviAtLowWeight" : 0.23008826892721312,
+    "gviAtHighWeight" : 0.2344088988223564
+  } ],
+  "skipped" : [ "CAI: not computed for organism-class 'eukaryotic_parasite'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.", "mu (excluded from composite GVI): the fitted rate is 0.007861 sub/site/yr, which the reference table classifies as implausible for a DNA genome -- no known DNA virus replicates faster than about 1e-05, and the fastest credible band (small ssDNA, no proofreading) tops out there. Note this is NOT a weak-signal problem: the temporal-signal checks may well have passed, because the dates genuinely do explain the divergence. What fails is the magnitude. A rate this far above the ceiling usually means the alignment pools separate lineages or loci, or that the marker is under selection strong enough to break the clock assumption itself. Excluded from the composite GVI (still reported below) -- otherwise it would saturate mu's normalization ceiling and contribute maximum weight precisely because it is impossible. Verify the input before trusting this rate.", "dN/dS (excluded from composite GVI): the pooled dN/dS is 1.755 but the Nei-Gojobori Z-test cannot distinguish it from neutrality (Z=1.369, two-tailed p=0.1709, verdict NOT_SIGNIFICANT), so it is not evidence of positive selection. An unqualified ratio above 1 on few codons is at least as likely to be a frameshift or misalignment artifact -- a shifted reading frame turns synonymous change into apparent nonsynonymous change. Excluded from the composite GVI (still reported below); confirm the reading frame and gene boundaries (--gff) before treating this as selection." ],
+  "warnings" : [ "--trim-to-covered: Alignment trimmed to the 615 of 636 columns (97%) covered by all 11 sequences; longest contiguous block 615 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "No --gff supplied; predicted 2 open reading frame(s) natively from the reference sequence (ATG...stop 6-frame scan, >= 30 codons, kept if within 30% of the longest one found -- 2 candidate(s) before that filter) instead of treating the whole sequence as one ORF -- a real but simpler technique than a trained gene-finder (no coding-potential model, no splice handling); supply --gff for definitive gene coordinates if available.", "--trim-to-covered: remapped 2 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (44.23%, from 'PQ899713.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'eukaryotic_parasite', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.", "Data quality advisory -- dN/dS/CAI premise: no --gff was supplied, so gene boundaries for this dN/dS (1.755) and any CAI result were auto-predicted by a 6-frame ORF scan, not confirmed as real coding sequence. That scan finds SOME ATG...stop run by chance in most alignments, including genuinely non-coding markers (rRNA, ITS, intergenic regions) -- this caveat applies even when the number itself looks biologically plausible, not just when it looks extreme. If this marker is not protein-coding, exclude dnds/cai via --indices instead of trusting this value; if it is, supply --gff for real gene coordinates." ]
+}

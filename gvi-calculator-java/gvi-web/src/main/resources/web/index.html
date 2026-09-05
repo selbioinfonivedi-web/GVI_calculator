@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GVI Calculator</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 20V10l4-4 4 4v10M13 20V6l4-4 4 4v14"/></svg>
+      <!-- The page needs one real heading: it is the document's accessible name and the first thing
+           a screen reader announces. The two visual lines are the same string, split for typography. -->
+      <h1 style="margin:0; font-weight:400;">
+        <span style="display:block; font-size:15px; font-weight:700; letter-spacing:-0.02em; line-height:1.15;">GVI</span>
+        <span style="display:block; font-size:9.5px; letter-spacing:0.06em; text-transform:uppercase;">Genomic Virulence Index Calculator</span>
+      </h1>
+    </div>
+    <div class="topbar-meta">
+      <div class="meta-item"><span class="meta-label">Engine</span><span class="meta-value"><strong id="engineLabel">local pipeline</strong></span></div>
+      <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value"><strong id="statusLabel">awaiting input</strong></span></div>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="selfTestBtn" type="button">Self-test</button>
+      <button class="btn btn-ghost btn-sm" id="formulaBtn" type="button">Formula</button>
+      <button class="btn btn-primary btn-sm" id="runBtn" type="button">Compute GVI</button>
+    </div>
+  </header>
+
+  <!-- Metric strip: the reference platform's value-first cell (number, label, qualifier).
+       The 1px grid gap over the border colour is what draws the hairline dividers. -->
+  <div class="meta-row" id="datasetMeta">
+    <div class="meta-item"><span class="metric" id="mSeqs">&mdash;</span><span class="metric-label">Sequences</span><span class="metric-sub" id="mSeqsSub">no alignment loaded</span></div>
+    <div class="meta-item"><span class="metric" id="mLen">&mdash;</span><span class="metric-label">Alignment</span><span class="metric-sub">columns</span></div>
+    <div class="meta-item"><span class="metric" id="mOrg">&mdash;</span><span class="metric-label">Organism class</span><span class="metric-sub">gates CAI</span></div>
+    <div class="meta-item"><span class="metric" id="mGenome">&mdash;</span><span class="metric-label">Genome type</span><span class="metric-sub">sets the &mu; ceiling</span></div>
+    <div class="meta-item"><span class="metric" id="mCov">&mdash;</span><span class="metric-label">Coverage</span><span class="metric-sub" id="mCovSub">of the weighting scheme</span></div>
+    <div class="meta-item"><span class="metric" id="mExcl">&mdash;</span><span class="metric-label">Excluded</span><span class="metric-sub" id="mExclSub">indices gated out</span></div>
+  </div>
+
+  <div class="body-grid">
+    <div class="main-col">
+      <div class="tabbar" role="tablist" aria-label="Analysis views">
+        <button class="tab" role="tab" id="tab-input"     aria-controls="panel-input"     aria-selected="true">Input</button>
+        <button class="tab" role="tab" id="tab-overview"  aria-controls="panel-overview"  aria-selected="false">Composite</button>
+        <button class="tab" role="tab" id="tab-indices"   aria-controls="panel-indices"   aria-selected="false">Indices</button>
+        <button class="tab" role="tab" id="tab-phylogeny" aria-controls="panel-phylogeny" aria-selected="false">Phylogeny</button>
+        <button class="tab" role="tab" id="tab-genome"    aria-controls="panel-genome"    aria-selected="false">Genome</button>
+        <button class="tab" role="tab" id="tab-temporal"  aria-controls="panel-temporal"  aria-selected="false">Temporal signal</button>
+        <button class="tab" role="tab" id="tab-gating"    aria-controls="panel-gating"    aria-selected="false">Quality gating<span class="tab-badge warn hidden" id="gateBadge"></span></button>
+        <button class="tab" role="tab" id="tab-report"    aria-controls="panel-report"    aria-selected="false">Report</button>
+      </div>
+
+      <div class="content">
+        <!-- ---------------------------- INPUT ---------------------------- -->
+        <div class="tabpanel padded" id="panel-input" role="tabpanel" aria-labelledby="tab-input">
+          <div class="card">
+          <div class="grid2" style="gap:0 32px; align-items:start;">
+            <div>
+              <div class="field">
+                <label for="fastaFile">Aligned multi-FASTA <span class="req">required</span></label>
+                <div class="dropzone" id="fastaDrop">
+                  <input type="file" id="fastaFile" accept=".fasta,.fa,.fas,.aln,.txt" hidden>
+                  <p><button type="button" class="link" id="fastaBrowse">Choose a file</button> or drop it here</p>
+                  <p class="hint" id="fastaStatus">No file loaded</p>
+                </div>
+                <details>
+                  <summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Paste instead</summary>
+                  <textarea id="fastaText" rows="6" placeholder="&gt;seq1&#10;ATGC&hellip;"></textarea>
+                  <button class="btn btn-sm" id="fastaUse" type="button" style="margin-top:6px;">Use pasted sequences</button>
+                </details>
+                <p class="hint">Sequences must already be <strong>aligned</strong>. Every position-wise index (&pi;, MB, GD, dN/dS, &mu;) assumes column <em>i</em> is homologous across all sequences.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="organismClass">Organism class</label>
+                  <select id="organismClass">
+                    <option value="">Not specified</option>
+                    <option value="virus">Virus</option>
+                    <option value="bacterium">Bacterium</option>
+                    <option value="parasite">Eukaryotic parasite</option>
+                  </select>
+                  <p class="hint">Gates CAI &mdash; a host codon table only means something for an organism that translates on host ribosomes.</p>
+                </div>
+                <div class="field">
+                  <label for="genomeType">Genome type</label>
+                  <select id="genomeType">
+                    <option value="">Not specified</option>
+                    <option value="rna">RNA</option>
+                    <option value="dna">DNA</option>
+                  </select>
+                  <p class="hint">Sets the ceiling &mu; is normalised against. A DNA rate judged on the RNA scale contributes almost nothing however fast it is for a DNA genome.</p>
+                </div>
+              </div>
+              <div class="callout warn hidden" id="unsetWarning">
+                <strong>Organism class and genome type are unset.</strong> Neither can be inferred from sequence and both change what the numbers mean. The run will proceed, but CAI is computed on an unverified assumption and &mu; is judged on the RNA scale.
+              </div>
+            </div>
+
+            <div>
+              <div class="field">
+                <label for="metadataFile">Metadata CSV <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; needed for &mu; and Re</span></label>
+                <input type="file" id="metadataFile" accept=".csv,.tsv,.txt">
+                <details><summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Paste instead</summary>
+                  <textarea id="metadataText" rows="4" placeholder="sequence_id,collection_date,location,host"></textarea>
+                  <button class="btn btn-sm" id="metadataUse" type="button" style="margin-top:6px;">Use pasted metadata</button>
+                </details>
+                <p class="hint">Columns: <code>sequence_id, collection_date, location, host</code>. Without dates &mu; cannot be estimated at all.</p>
+              </div>
+              <div class="field">
+                <label for="gffFile">GFF3 annotation <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; needed for dN/dS and CAI</span></label>
+                <input type="file" id="gffFile" accept=".gff,.gff3,.txt">
+                <p class="hint">CDS features. Without it both coding indices are skipped.</p>
+              </div>
+              <div class="field">
+                <label for="codonSpecies">Host codon table <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; needed for CAI</span></label>
+                <select id="codonSpecies">
+                  <option value="">None &mdash; CAI will be skipped</option>
+                </select>
+                <p class="hint">CAI measures adaptation to the <em>host's</em> translational machinery, so pick the host this pathogen infects.</p>
+              </div>
+              <div class="field" style="border-top:1px solid var(--border-lt); padding-top:13px;">
+                <label for="generationTime">Generation time <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; drives Re</span></label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="number" id="generationTime" min="0.1" step="0.1" placeholder="days" style="max-width:120px;">
+                  <select id="pathogenId" style="flex:1 1 auto;">
+                    <option value="">Or look up a pathogen&hellip;</option>
+                  </select>
+                </div>
+                <p class="hint">The birth&ndash;death process is scaled by 365.25 / generation&nbsp;time, so a value wrong by a factor of <em>k</em> moves Re by roughly the same factor &mdash; and Re carries the largest weight in the scheme. Left empty, the run uses 5&nbsp;days, which suits a fast respiratory virus and little else.</p>
+              </div>
+
+              <div class="field">
+                <label for="incidenceFile">Case incidence CSV <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; the accurate Re path</span></label>
+                <input type="file" id="incidenceFile" accept=".csv,.txt">
+                <p class="hint">Columns: <code>date, new_cases</code>. With real case counts Re is estimated by the Cori renewal equation, which recovers a known Re to within 0.02. Without them Re is inferred from tree shape alone, which is far weaker.</p>
+              </div>
+
+              <details style="margin-bottom:14px;">
+                <summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Advanced</summary>
+                <div style="padding-top:10px;">
+                  <div class="grid2">
+                    <div class="field">
+                      <label for="referenceId">Reference sequence</label>
+                      <input type="text" id="referenceId" placeholder="default: first sequence">
+                      <p class="hint">MB and GD are measured against this record.</p>
+                    </div>
+                    <div class="field">
+                      <label for="gdMethod">Distance correction</label>
+                      <select id="gdMethod">
+                        <option value="">Jukes-Cantor (default)</option>
+                        <option value="k80">Kimura two-parameter</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="referenceGc">Reference GC%</label>
+                    <input type="number" id="referenceGc" step="0.01" placeholder="default: this alignment's own reference">
+                    <p class="hint">GC deviation is measured from this baseline. Left empty it uses the alignment's own reference sequence, which measures deviation from <em>this dataset</em> rather than from an external host-genome target.</p>
+                  </div>
+                </div>
+              </details>
+
+              <label class="check"><input type="checkbox" id="trimToCovered">
+                <span>Trim to fully-covered columns<span class="hint">Drops positions where any sequence has no data, so indices compare observed bases rather than absent coverage. Use when sequences cover different windows of the locus.</span></span></label>
+              <label class="check"><input type="checkbox" id="perSequence">
+                <span>Report per-sequence detail<span class="hint">Adds a row per genome to the report.</span></span></label>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px; padding-top:14px; border-top:1px solid var(--border-light);">
+            <button class="btn btn-primary btn-sm" id="runBtn2" type="button">Compute GVI</button>
+            <button class="btn btn-sm" id="clearBtn" type="button">Clear</button>
+            <span class="hint" style="margin-left:6px;">Runs locally in this process &mdash; the same pipeline as the command-line tool.</span>
+          </div>
+          <div class="busy hidden" id="busy"><span class="spinner"></span> <span id="busyText">Running analysis&hellip;</span></div>
+          <div class="callout danger hidden" id="errorBox" style="margin-top:14px; margin-bottom:0;"></div>
+          </div>
+        </div>
+
+        <div class="tabpanel" id="panel-overview"  role="tabpanel" aria-labelledby="tab-overview"  hidden></div>
+        <div class="tabpanel padded" id="panel-indices" role="tabpanel" aria-labelledby="tab-indices" hidden></div>
+        <div class="tabpanel" id="panel-phylogeny" role="tabpanel" aria-labelledby="tab-phylogeny" hidden></div>
+        <div class="tabpanel" id="panel-genome"   role="tabpanel" aria-labelledby="tab-genome"   hidden></div>
+        <div class="tabpanel" id="panel-temporal" role="tabpanel" aria-labelledby="tab-temporal" hidden></div>
+        <div class="tabpanel padded" id="panel-gating"  role="tabpanel" aria-labelledby="tab-gating"  hidden></div>
+        <div class="tabpanel padded" id="panel-report"  role="tabpanel" aria-labelledby="tab-report"  hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="statusbar">
+    <span>GVI <strong id="sbGvi">&mdash;</strong></span>
+    <span>COVERAGE <strong id="sbCov">&mdash;</strong></span>
+    <span>INDICES <strong id="sbIdx">&mdash;</strong></span>
+    <span style="margin-left:auto;" id="sbEngine">pipeline idle</span>
+  </footer>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="modalTitle">Title</h3><button class="modal-close" id="modalCloseBtn" type="button">&#10005;</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot" style="display:none;"></div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

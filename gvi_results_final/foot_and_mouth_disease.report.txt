@@ -1,0 +1,75 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.4834   [8 of 9 indices, 88% of the weighting scheme]
+
+  Re             raw=1.00124      norm=0.3337 weight=0.3141 contribution=0.1048
+  pi             raw=0.0825074    norm=1.0000 weight=0.1047 contribution=0.1047
+  MB             raw=63.7500      norm=0.6375 weight=0.2251 contribution=0.1435
+  dN/dS          raw=0.0677784    norm=0.0226 weight=0.1571 contribution=0.0035
+  GD             raw=0.107103     norm=1.0000 weight=0.1047 contribution=0.1047
+  CAI            raw=0.707505     norm=0.7075 weight=0.0288 contribution=0.0204
+  GC_Deviation   raw=0.586854     norm=0.0587 weight=0.0288 contribution=0.0017
+  RI             raw=0.00000      norm=0.0000 weight=0.0366 contribution=0.0000
+  excluded: [MU]
+
+-- Component index detail (dataset-wide) --
+  mu             value=0.00693223   category=RNA (low-fidelity) (Influenza, SARS-CoV-2, HIV); immune escape 6-18 months
+      * Negative branch length (-6.093586371013699E-4) clamped to 0 for leaf/clade 'OR354927'
+      * Negative branch length (-1.647127431371495E-4) clamped to 0 for leaf/clade 'PZ294434'
+      * Built a 9-taxon Neighbor-Joining tree rooted at 'JF916985'
+      * Temporal signal R^2=0.804 over 15.02 years (n=9)
+      * Date randomization FAILED: 16 of 100 shuffled date assignments reproduced a rate at least as high as the fitted one (0.00693223); empirical p=0.1683, threshold 0.05, randomized range [-0.00295096, 0.00768271]. Randomly reassigned dates reproduce this rate, so it reflects the divergence structure of the alignment rather than elapsed time. The usual cause is several independently introduced lineages pooled into one alignment -- split them per lineage and re-run. A high R2 does not rescue this: R2 measures how tightly the points sit on a line, not whether the dates are what put them there.
+  Re             value=1.00124      category=Endemic (Stable circulation -> Stable); Routine vaccination
+      * Negative branch length (-6.093586371013699E-4) clamped to 0 for leaf/clade 'OR354927'
+      * Negative branch length (-1.647127431371495E-4) clamped to 0 for leaf/clade 'PZ294434'
+      * Built a 9-taxon Neighbor-Joining tree rooted at 'JF916985'
+      * Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=1.0012, 95% likelihood-ratio interval [0.99, 1.01]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-128.4477 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.
+      * Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number.
+  pi             value=0.0825074    category=Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets
+      * 36 of 36 sampled pairs had at least one comparable site
+  RI             value=0.00000      category=Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis
+      * 68 informative biallelic sites; 656 pairs within 100bp window (of 2278 total pairs); 1000 permutations run
+      * windowed PHI=0.0412, global PHI=0.0320, one-sided permutation p=0.8931
+  MB             value=63.7500      category=Pandemic variant (6-18 months) (6-18 months); Variant of concern (VOC); major public health action -- mean across 8 sequence(s)
+      * Mean of 8 per-sequence value(s); range [58.00, 71.00]
+  dN/dS          value=0.0677784    category=Purifying selection (dN/dS < 1): functional constraint (pooled across 8 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 8 sequence(s)
+      * Pooled Nei-Gojobori counts across 8 result(s) (not an average of individual ratios)
+      * dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-16.808, two-tailed p=0.0000) -- purifying/negative selection
+      * Nei-Gojobori Z-test on the pooled counts: Z=-16.808, two-tailed p=0.000, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-16.808, two-tailed p=0.0000) -- purifying/negative selection
+  GD             value=0.107103     category=Different strain / serotype (>1 year, confidence: Low (ambiguous without tree)) -- mean across 8 sequence(s)
+      * Mean of 8 per-sequence value(s); range [0.09675, 0.1203]
+  CAI            value=0.707505     category=Adapted (Established circulation; Months-years) -- mean across 8 sequence(s)
+      * Mean of 8 per-sequence value(s); range [0.6951, 0.7200]
+  GC_Deviation   value=0.586854     category=Native (No compositional anomaly; Stable, expected) -- mean across 8 sequence(s)
+      * Mean of 8 per-sequence value(s); range [0.000, 1.095]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  dN/dS          GVI range [0.4667, 0.5003]  (spread=0.0336, base=0.4834)
+  Re             GVI range [0.4706, 0.4965]  (spread=0.0259, base=0.4834)
+  pi             GVI range [0.4715, 0.4953]  (spread=0.0238, base=0.4834)
+  GD             GVI range [0.4715, 0.4953]  (spread=0.0238, base=0.4834)
+  MB             GVI range [0.4747, 0.4920]  (spread=0.0173, base=0.4834)
+  RI             GVI range [0.4797, 0.4871]  (spread=0.0073, base=0.4834)
+  GC_Deviation   GVI range [0.4809, 0.4859]  (spread=0.0050, base=0.4834)
+  CAI            GVI range [0.4821, 0.4847]  (spread=0.0026, base=0.4834)
+
+-- Per-sequence detail omitted (8 sequence(s) -- pass --per-sequence to include it) --
+
+-- Skipped --
+  - mu (excluded from composite GVI): the date-randomization test failed -- randomly reshuffled collection dates reproduce this rate, so it reflects the alignment's divergence structure rather than elapsed time (usually several independently-introduced lineages pooled together). A high R² does not rescue this: R² measures how tightly the points sit on a line, not whether the dates are what put them there. Excluded from the composite GVI (still reported below); split by lineage and re-run.
+
+-- Warnings --
+  - --trim-to-covered: No trimming needed: every column is covered by every sequence.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - CAI: no --codon-usage supplied; using the bundled 'cattle' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (55.24%, from 'JF916985') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.
+  - mu remedy -- Lineage structure detected: the 9 sequences separate into 3 groups at a 5% p-distance cut-off, which is where this tool's own distance table places "different strain / serotype". A single molecular-clock rate across groups measures the distance BETWEEN them, not substitution accumulated over time. Estimate a rate within each group separately: [group 1, 1 seq: JF916985] [group 2, 4 seq: OR354929, OR354927, OR354928, OR354930] [group 3, 4 seq: PZ294434, PZ294438, PZ294442, PZ294437]
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/foot_and_mouth_disease.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/foot_and_mouth_disease.csv

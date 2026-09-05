@@ -1,0 +1,158 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.16880988846365227,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 0.9961381677751555,
+      "normalizedValue" : 0.3320460559250518,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.3896103896103896,
+      "contribution" : 0.12936859321755265
+    }, {
+      "key" : "PI",
+      "rawValue" : 9.746588693957114E-4,
+      "normalizedValue" : 0.04873294346978557,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12987012987012989,
+      "contribution" : 0.006328953697374751
+    }, {
+      "key" : "MB",
+      "rawValue" : 1.125,
+      "normalizedValue" : 0.01125,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.2792207792207792,
+      "contribution" : 0.003141233766233766
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.0024715254286890335,
+      "normalizedValue" : 0.04943050857378067,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12987012987012989,
+      "contribution" : 0.006419546568023464
+    }, {
+      "key" : "CAI",
+      "rawValue" : 0.6402551175138668,
+      "normalizedValue" : 0.6402551175138668,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.03571428571428571,
+      "contribution" : 0.022866254196923813
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.19188596491227994,
+      "normalizedValue" : 0.019188596491227995,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.03571428571428571,
+      "contribution" : 6.853070175438569E-4
+    } ],
+    "excludedIndices" : [ "MU", "DNDS", "RI" ],
+    "effectiveWeightSum" : 0.7064220183486238,
+    "diagnostics" : [ "Excluded (no data supplied): mu, dN/dS, RI -- remaining weights renormalized to sum to 1 (was 0.706 of full scheme)", "6 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 1.125,
+      "category" : "Within-household transmission (Days); Genetic link confirmable -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [1.000, 2.000]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 4.856618448020174,
+      "category" : "Positive selection (dN/dS > 1): adaptive advantage (pooled across 8 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 8 sequence(s)", "Pooled Nei-Gojobori counts across 8 result(s) (not an average of individual ratios)", "No synonymous differences were observed in 773.3333333333329 synonymous sites, so dS is 0 and dN/dS is mathematically UNDEFINED. A continuity correction (add-0.5) was applied to keep the ratio finite, but the resulting omega is an arbitrary lower bound set by the site count and the pseudo-count -- NOT a point estimate, and NOT evidence of positive selection. Zero synonymous change is the expected result of very low overall divergence (synonymous sites are ~1/4 of a codon), not a signature of selection. Treat this gene as having insufficient divergence to estimate omega; add more divergent sequences or a longer coding region.", "Selection test inconclusive: No synonymous differences were observed (Sd=0.0 in 773.3 synonymous sites, Nd=9.0 in 2874.7 nonsynonymous sites). The Jukes-Cantor variance of a zero proportion is exactly zero, which would give that distance infinite apparent precision and manufacture a significant Z from no evidence. A zero count means no information, not perfect information -- the normal approximation does not hold at the boundary, so no selection verdict is issued. Add more divergent sequences or a longer coding region.", "Nei-Gojobori Z-test on the pooled counts: Z=NaN, two-tailed p=NaN, verdict=NOT_SIGNIFICANT. Selection test inconclusive: No synonymous differences were observed (Sd=0.0 in 773.3 synonymous sites, Nd=9.0 in 2874.7 nonsynonymous sites). The Jukes-Cantor variance of a zero proportion is exactly zero, which would give that distance infinite apparent precision and manufacture a significant Z from no evidence. A zero count means no information, not perfect information -- the normal approximation does not hold at the boundary, so no selection verdict is issued. Add more divergent sequences or a longer coding region." ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.0024715254286890335,
+      "category" : "Linked outbreak cluster (1-4 weeks, confidence: High) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.002196, 0.004399]" ]
+    },
+    "CAI" : {
+      "indexName" : "CAI",
+      "primaryValue" : 0.6402551175138668,
+      "category" : "Intermediate (Emerging; partial adaptation; Weeks-months) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.6403, 0.6403]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.19188596491227994,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 0.2193]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 1.8451342786758156E-4,
+      "rSquared" : 0.4715560330930536,
+      "pointsUsed" : 9,
+      "timeSpanYears" : 11.227397260273847,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Negative branch length (-4.607086190010212E-7) clamped to 0 for leaf/clade 'KR024780.1'", "Negative branch length (-2.687466944172985E-7) clamped to 0 for leaf/clade 'MN845071.1'", "Negative branch length (-1.6124801665044416E-7) clamped to 0 for leaf/clade 'MN879402.1'", "Negative branch length (-1.007800104065005E-7) clamped to 0 for leaf/clade 'MN879403.1'", "Negative branch length (-6.718667360433367E-8) clamped to 0 for leaf/clade 'PZ284714.1'", "Negative branch length (-5.039000520325025E-8) clamped to 0 for leaf/clade 'LC853218.1'", "Negative branch length (-5.039000520325025E-8) clamped to 0 for leaf/clade 'PX685744.1'", "Built a 9-taxon Neighbor-Joining tree rooted at 'KR024778.1'", "Temporal signal R^2=0.472 over 11.23 years (n=9)", "Date randomization passed: the fitted rate (0.000184513) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0099, range [-0.000184493, 0.000184510]) -- the collection dates, not lineage structure alone, explain the divergence." ],
+      "temporalSignalConfirmed" : true
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2025-10-15",
+      "reMean" : 0.9961381677751555,
+      "interval" : {
+        "lower" : 0.9859257670027892,
+        "upper" : 1.0114567689337053,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : null,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Negative branch length (-4.607086190010212E-7) clamped to 0 for leaf/clade 'KR024780.1'", "Negative branch length (-2.687466944172985E-7) clamped to 0 for leaf/clade 'MN845071.1'", "Negative branch length (-1.6124801665044416E-7) clamped to 0 for leaf/clade 'MN879402.1'", "Negative branch length (-1.007800104065005E-7) clamped to 0 for leaf/clade 'MN879403.1'", "Negative branch length (-6.718667360433367E-8) clamped to 0 for leaf/clade 'PZ284714.1'", "Negative branch length (-5.039000520325025E-8) clamped to 0 for leaf/clade 'LC853218.1'", "Negative branch length (-5.039000520325025E-8) clamped to 0 for leaf/clade 'PX685744.1'", "Built a 9-taxon Neighbor-Joining tree rooted at 'KR024778.1'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9961, 95% likelihood-ratio interval [0.99, 1.01]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-114.2813 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 9.746588693957114E-4,
+      "sequenceCount" : 9,
+      "alignmentLength" : 456,
+      "pairsUsed" : 36,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.0,
+        "upper" : 0.0024366471734892786,
+        "level" : 0.95
+      },
+      "category" : "Established outbreak (Moderate diversity; chains of transmission); Multiple lineages co-circulate; endemic risk",
+      "diagnostics" : [ "36 of 36 sampled pairs had at least one comparable site" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.15068793064328984,
+    "gviAtHighWeight" : 0.18582286910425072
+  }, {
+    "key" : "PI",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.16540455816461977,
+    "gviAtHighWeight" : 0.1722728827762152
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.15806847092457452,
+    "gviAtHighWeight" : 0.17999919735059203
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.16542434080969212,
+    "gviAtHighWeight" : 0.17225276514257704
+  }, {
+    "key" : "CAI",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.16534781678228913,
+    "gviAtHighWeight" : 0.17225709648447965
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.16880988846365227,
+    "gviAtLowWeight" : 0.16771585741615821,
+    "gviAtHighWeight" : 0.16990863675072324
+  } ],
+  "skipped" : [ "RI: PHI test needs at least 4 informative biallelic sites, found 0. This alignment may be too conserved or too small to assess recombination.", "mu (excluded from composite GVI): the fitted rate is 0.0001845 sub/site/yr, which the reference table classifies as implausible for a DNA genome -- no known DNA virus replicates faster than about 1e-05, and the fastest credible band (small ssDNA, no proofreading) tops out there. Note this is NOT a weak-signal problem: the temporal-signal checks may well have passed, because the dates genuinely do explain the divergence. What fails is the magnitude. A rate this far above the ceiling usually means the alignment pools separate lineages or loci, or that the marker is under selection strong enough to break the clock assumption itself. Excluded from the composite GVI (still reported below) -- otherwise it would saturate mu's normalization ceiling and contribute maximum weight precisely because it is impossible. Verify the input before trusting this rate.", "dN/dS (excluded from composite GVI): the pooled dN/dS is 4.857 but the Nei-Gojobori Z-test could not be evaluated at all (Selection test inconclusive: No synonymous differences were observed (Sd=0.0 in 773.3 synonymous sites, Nd=9.0 in 2874.7 nonsynonymous sites). The Jukes-Cantor variance of a zero proportion is exactly zero, which would give that distance infinite apparent precision and manufacture a significant Z from no evidence. A zero count means no information, not perfect information -- the normal approximation does not hold at the boundary, so no selection verdict is issued. Add more divergent sequences or a longer coding region.), so it is not evidence of positive selection. An unqualified ratio above 1 on few codons is at least as likely to be a frameshift or misalignment artifact -- a shifted reading frame turns synonymous change into apparent nonsynonymous change. Excluded from the composite GVI (still reported below); confirm the reading frame and gene boundaries (--gff) before treating this as selection." ],
+  "warnings" : [ "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:1 [KR024778.1] - Header gave only a year, not a full date; using 2014-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:22 [KR024780.1] - Header gave only a year, not a full date; using 2015-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:43 [MN845071.1] - Header gave only a year, not a full date; using 2018-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:64 [MN879402.1] - Header gave only a year, not a full date; using 2018-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:85 [MN879403.1] - Header gave only a year, not a full date; using 2019-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:106 [PZ284714.1] - Header gave only a year, not a full date; using 2022-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:127 [LC853218.1] - Header gave only a year, not a full date; using 2024-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "fasta: /home/ubantu/ICAR_miniProjects/GVI_calculator/pathogen_data/viruses/lsd/aligned.fasta:148 [PX898068.1] - Header gave only a year, not a full date; using 2025-07-02 (the middle of that year) as a reduced-precision estimate for temporal indices (mu, Re)", "--trim-to-covered: Alignment trimmed to the 456 of 1146 columns (40%) covered by all 9 sequences; longest contiguous block 426 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "--trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "CAI: no --codon-usage supplied; using the bundled 'cattle' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (28.51%, from 'KR024778.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.", "Data quality advisory -- dN/dS: the whole-file estimate (4.857) is high enough to suggest either strong positive selection or, more commonly, a misalignment/frameshift artifact (a shifted reading frame turns synonymous change into apparent nonsynonymous change). If this gene is expected to be conserved, double-check the coding frame and gene boundaries (--gff) before trusting this value." ]
+}

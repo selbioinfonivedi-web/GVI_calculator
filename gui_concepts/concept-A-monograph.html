@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept A — Monograph</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#faf8f4; --ink:#1c1a17; --ink-2:#4a463f; --ink-3:#837d72;
+  --rule:#ded7ca; --rule-2:#efeae0;
+  --accent:#7a3b12;      /* burnt sienna — used only for the thing that matters */
+  --accent-bg:#f6ece2;
+  --ok:#3c5f43;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.sheet{max-width:760px;margin:0 auto;padding:0 40px 120px}
+
+/* masthead */
+header{padding:56px 0 28px;border-bottom:1px solid var(--ink);margin-bottom:40px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+h1{font-family:var(--serif);font-size:44px;font-weight:500;line-height:1.1;margin:0 0 10px;letter-spacing:-.01em}
+.byline{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+
+/* the headline result, set as a display figure not a widget */
+.verdict{display:flex;gap:36px;align-items:flex-start;margin:44px 0 12px;padding-bottom:28px;border-bottom:1px solid var(--rule)}
+.verdict .num{font-family:var(--serif);font-size:84px;line-height:.9;font-weight:400;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.verdict .meta{padding-top:8px}
+.verdict .meta dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
+.verdict .meta dd{margin:0 0 14px;font-size:14.5px;color:var(--ink-2)}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:2px;border:1px solid var(--ok);color:var(--ok);background:#eef3ee}
+
+h2{font-family:var(--serif);font-size:25px;font-weight:500;margin:52px 0 6px;letter-spacing:-.01em}
+.dek{color:var(--ink-3);font-size:14px;margin:0 0 26px;max-width:62ch}
+p{max-width:66ch;color:var(--ink-2)}
+
+/* index table, set like a results table in a paper */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 0}
+thead th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  text-align:left;padding:0 10px 9px 0;border-bottom:1px solid var(--ink)}
+thead th.r,td.r{text-align:right;padding-right:0}
+tbody td{padding:11px 10px 11px 0;border-bottom:1px solid var(--rule-2);vertical-align:baseline}
+tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+.name{font-weight:500}
+.gloss{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+/* contribution shown as a hairline bar behind the number — quantity, not decoration */
+.bar{position:relative;min-width:120px}
+.bar i{position:absolute;left:0;top:50%;transform:translateY(-50%);height:15px;background:#e6ddd0;display:block}
+.bar span{position:relative;padding-left:6px}
+tr.out td{color:var(--ink-3)}
+tr.out .name{font-weight:400}
+tr.out .num{text-decoration:line-through;text-decoration-thickness:1px}
+
+/* the excluded-index note, set as a sidenote not an alert box */
+.note{border-left:2px solid var(--accent);padding:2px 0 2px 20px;margin:30px 0;max-width:62ch}
+.note h3{font-family:var(--sans);font-size:13px;font-weight:600;margin:0 0 6px;color:var(--accent)}
+.note p{font-size:13.5px;margin:0;color:var(--ink-2)}
+
+/* the input step, deliberately understated: a caption line, not a form */
+.intake{margin:56px 0 0;padding:26px 28px;background:#fff;border:1px solid var(--rule)}
+.intake .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+.field{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule-2)}
+.field:last-of-type{border-bottom:0}
+.field label{width:210px;font-size:13.5px;flex:none}
+.field .val{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);flex:1}
+.field .val.set{color:var(--ink)}
+.req{color:var(--accent);font-size:11px;font-family:var(--mono)}
+.run{margin-top:22px;display:flex;gap:12px;align-items:center}
+button{font-family:var(--sans);font-size:14px;padding:11px 26px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;letter-spacing:.01em}
+button.ghost{background:transparent;color:var(--ink)}
+figcaption{font-size:12.5px;color:var(--ink-3);margin-top:10px;font-style:italic}
+</style></head><body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">Concept A · Monograph</div>
+  <h1>Bluetongue virus</h1>
+  <div class="byline">9 sequences · 639 bp alignment · analysed 01 Sep 2026</div>
+</header>
+
+<div class="verdict">
+  <div class="num">0.3203</div>
+  <dl class="meta">
+    <dt>Composite GVI</dt>
+    <dd>Built from <strong>9 of 9</strong> indices — 100% of the weighting scheme.</dd>
+    <dt>Comparability</dt>
+    <dd><span class="pill">Comparable across datasets</span></dd>
+  </dl>
+</div>
+
+<h2>Component indices</h2>
+<p class="dek">Contribution is the index’s normalised value times its effective weight. The bar is that quantity, drawn to scale.</p>
+
+<table>
+  <thead><tr><th>Index</th><th class="r">Value</th><th class="r">Norm.</th><th>Contribution</th></tr></thead>
+  <tbody>
+    <tr><td class="name">Re<span class="gloss">Effective reproduction number — BDSKY fit</span></td><td class="r num">1.0180</td><td class="r num">0.339</td><td class="bar"><i style="width:100%"></i><span class="num">0.0934</span></td></tr>
+    <tr><td class="name">π<span class="gloss">Nucleotide diversity</span></td><td class="r num">0.0181</td><td class="r num">0.905</td><td class="bar"><i style="width:89%"></i><span class="num">0.0830</span></td></tr>
+    <tr><td class="name">MB<span class="gloss">Mutation burden, mean per sequence</span></td><td class="r num">39.25</td><td class="r num">0.393</td><td class="bar"><i style="width:83%"></i><span class="num">0.0774</span></td></tr>
+    <tr><td class="name">GD<span class="gloss">Genetic distance, Jukes–Cantor</span></td><td class="r num">0.0136</td><td class="r num">0.271</td><td class="bar"><i style="width:27%"></i><span class="num">0.0249</span></td></tr>
+    <tr><td class="name">μ<span class="gloss">Substitution rate, subs/site/yr</span></td><td class="r num">0.001820</td><td class="r num">0.182</td><td class="bar"><i style="width:24%"></i><span class="num">0.0225</span></td></tr>
+    <tr><td class="name">CAI<span class="gloss">Codon adaptation, host reference</span></td><td class="r num">0.6593</td><td class="r num">0.659</td><td class="bar"><i style="width:18%"></i><span class="num">0.0166</span></td></tr>
+    <tr><td class="name">dN/dS<span class="gloss">Selection pressure, Nei–Gojobori</span></td><td class="r num">0.0385</td><td class="r num">0.013</td><td class="bar"><i style="width:2%"></i><span class="num">0.0018</span></td></tr>
+    <tr><td class="name">GC<span class="gloss">GC deviation from reference</span></td><td class="r num">0.2558</td><td class="r num">0.026</td><td class="bar"><i style="width:1%"></i><span class="num">0.0006</span></td></tr>
+    <tr><td class="name">RI<span class="gloss">Recombination, PHI test — not significant</span></td><td class="r num">0.0000</td><td class="r num">0.000</td><td class="bar"><span class="num">0.0000</span></td></tr>
+  </tbody>
+</table>
+
+<h2>Quality gating</h2>
+<p class="dek">No index was excluded from this score. For contrast, the same view when gating fires:</p>
+
+<table>
+  <thead><tr><th>Index</th><th class="r">Value</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr class="out"><td class="name">μ</td><td class="r num">0.2090</td><td>Excluded — alignment integrity</td></tr>
+    <tr class="out"><td class="name">π</td><td class="r num">0.2298</td><td>Excluded — alignment integrity</td></tr>
+    <tr class="out"><td class="name">dN/dS</td><td class="r num">1.0671</td><td>Excluded — not distinguishable from neutrality</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <h3>Why these were dropped</h3>
+  <p>The alignment is 38% gap characters and the mean mutation burden is 38% of its length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. This is usually partial coverage rather than misalignment — re-running MAFFT will not help, because the aligner already placed the sequences correctly. Trim to the shared coverage window instead.</p>
+</div>
+
+<div class="intake">
+  <div class="lab">Analysis intake</div>
+  <div class="field"><label>Aligned FASTA <span class="req">required</span></label><div class="val set">blue_tongue/aligned.fasta · 9 seq · 639 bp</div></div>
+  <div class="field"><label>Organism class</label><div class="val set">virus</div></div>
+  <div class="field"><label>Genome type</label><div class="val set">rna</div></div>
+  <div class="field"><label>Collection dates</label><div class="val set">metadata.csv · 9 of 9 dated</div></div>
+  <div class="field"><label>Gene annotation</label><div class="val">derived — 1 ORF predicted</div></div>
+  <div class="run"><button>Run analysis</button><button class="ghost">Export figures</button></div>
+</div>
+<figcaption>Concept A — the analysis presented as a document. One column, no tabs, no chrome; the reader scrolls the argument from result to evidence to caveat.</figcaption>
+
+</div></body></html>

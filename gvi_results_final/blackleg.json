@@ -1,0 +1,139 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.44477467391632014,
+    "components" : [ {
+      "key" : "PI",
+      "rawValue" : 0.05438359859724842,
+      "normalizedValue" : 1.0,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.1593625498007968,
+      "contribution" : 0.1593625498007968
+    }, {
+      "key" : "MB",
+      "rawValue" : 20.7,
+      "normalizedValue" : 0.207,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.34262948207171307,
+      "contribution" : 0.0709243027888446
+    }, {
+      "key" : "DNDS",
+      "rawValue" : 0.6771337303501154,
+      "normalizedValue" : 0.22571124345003846,
+      "configuredWeight" : 0.13761467889908255,
+      "effectiveWeight" : 0.23904382470119517,
+      "contribution" : 0.05395487891235978
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.06590407311621523,
+      "normalizedValue" : 1.0,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.1593625498007968,
+      "contribution" : 0.1593625498007968
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.2670623145400626,
+      "normalizedValue" : 0.026706231454006257,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.04382470119521912,
+      "contribution" : 0.0011703926135221865
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.055776892430278883,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU", "RE", "CAI" ],
+    "effectiveWeightSum" : 0.5756880733944955,
+    "diagnostics" : [ "Excluded (no data supplied): mu, Re, CAI -- remaining weights renormalized to sum to 1 (was 0.576 of full scheme)", "6 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 20.7,
+      "category" : "Established outbreak (months) (1-3 months); Variant of interest (VOI) classification -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 34.00]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 0.6771337303501154,
+      "category" : "Purifying selection (dN/dS < 1): functional constraint (pooled across 10 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 10 sequence(s)", "Pooled Nei-Gojobori counts across 10 result(s) (not an average of individual ratios)", "dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-2.262, two-tailed p=0.0237) -- purifying/negative selection", "Nei-Gojobori Z-test on the pooled counts: Z=-2.262, two-tailed p=0.02371, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-2.262, two-tailed p=0.0237) -- purifying/negative selection" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.06590407311621523,
+      "category" : "Different strain / serotype (>1 year, confidence: Low (ambiguous without tree)) -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 0.1084]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.2670623145400626,
+      "category" : "Native (No HGT signal; Stable, expected) -- mean across 10 sequence(s)",
+      "diagnostics" : [ "Mean of 10 per-sequence value(s); range [0.000, 0.2967]" ]
+    }
+  },
+  "population_indices" : {
+    "PI" : {
+      "pi" : 0.05438359859724842,
+      "sequenceCount" : 11,
+      "alignmentLength" : 337,
+      "pairsUsed" : 55,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.038837334772052874,
+        "upper" : 0.07284326949015374,
+        "level" : 0.95
+      },
+      "category" : "Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets",
+      "diagnostics" : [ "55 of 55 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.0,
+      "globalPhiStatistic" : 0.0,
+      "pValue" : 1.0,
+      "informativeSitesUsed" : 34,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "34 informative biallelic sites; 476 pairs within 100bp window (of 561 total pairs); 1000 permutations run", "windowed PHI=0.0000, global PHI=0.0000, one-sided permutation p=1.0000" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "PI",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.424996231809005,
+    "gviAtHighWeight" : 0.4639727580729072
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.4251868384888521,
+    "gviAtHighWeight" : 0.46583481274838506
+  }, {
+    "key" : "DNDS",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.43290938065159307,
+    "gviAtHighWeight" : 0.45721162721507
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.424996231809005,
+    "gviAtHighWeight" : 0.4639727580729072
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.44102977514706077,
+    "gviAtHighWeight" : 0.4485482581562594
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.44477467391632014,
+    "gviAtLowWeight" : 0.4396733875397979,
+    "gviAtHighWeight" : 0.4499261000663434
+  } ],
+  "skipped" : [ "mu: Cannot estimate mu: need at least 2 distinct collection dates with usable distances, found 1. Provide a temporally spread dataset.", "Re: Phylodynamic Re fallback needs at least 5 dated sequences, got 3", "CAI: not computed for organism-class 'bacterium'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it." ],
+  "warnings" : [ "--trim-to-covered: Alignment trimmed to the 337 of 756 columns (45%) covered by all 11 sequences; longest contiguous block 337 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "Re: the birth-death (BDSKY) fit was unavailable for this dataset (BDSKY-ML Re needs every sequence dated (8 missing); use the phylodynamic fallback instead), so Re falls back to the lineages-through-time regression, which is markedly less able to distinguish growth rates -- treat the resulting Re as indicative only.", "--trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (31.75%, from 'MN737045.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "NOT COMPARABLE: this GVI of 0.4448 was computed from only 6 of 9 indices, 58% of the weighting scheme (threshold for cross-dataset comparison is 60%). The surviving indices were renormalized to sum to 1, so the score still falls in [0,1] and still looks like a normal GVI -- but it summarizes a different, much smaller set of evidence than a fully-populated score does. Do NOT rank this value against other pathogens' GVIs. A LOW value here is especially easy to misread: it can mean the contributing indices happened to be small, not that virulence is low. Resolve the exclusions listed under 'Skipped' and re-run before drawing any comparative conclusion." ]
+}

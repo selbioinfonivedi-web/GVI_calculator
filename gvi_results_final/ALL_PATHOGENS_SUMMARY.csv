@@ -1,0 +1,17 @@
+pathogen,GVI,comparable,coverage_pct,indices_scored,MU,MU_scored,RE,RE_scored,PI,PI_scored,MB,MB_scored,DNDS,DNDS_scored,GD,GD_scored,RI,RI_scored,CAI,CAI_scored,GC,GC_scored
+foot_and_mouth_disease,0.483399,yes,87.6,8,0.0,no,0.0,yes,0.0,yes,63.75,yes,0.06777841,yes,0.1071026,yes,0.0,yes,0.70750468,yes,0.58685446,yes
+classical_swine_fever,0.44486,yes,87.6,8,0.0,no,0.0,yes,0.0,yes,50.28571429,yes,0.07191928,yes,0.04638444,yes,0.0,yes,0.70238267,yes,0.24256351,yes
+sheep_goat_pox,0.34452,yes,87.6,8,0.0,no,0.0,yes,0.0,yes,24.28571429,yes,0.21064503,yes,0.02416543,yes,0.0,yes,0.63592024,yes,0.30454042,yes
+blue_tongue,0.319445,yes,100.0,9,0.0,yes,0.0,yes,0.0,yes,39.0,yes,0.03846048,yes,0.01375433,yes,0.0,yes,0.65934911,yes,0.25025889,yes
+babesiosis,0.315682,yes,71.3,6,0.0,no,0.0,yes,0.0,yes,14.0,yes,,,0.02113854,yes,0.0,yes,,,0.29761905,yes
+ppr,0.27643,yes,100.0,9,0.0,yes,0.0,yes,0.0,yes,17.0,yes,0.08286018,yes,0.01097999,yes,0.0,yes,0.66964617,yes,0.19954649,yes
+theileriosis,0.232243,yes,71.3,6,0.0,no,0.0,yes,0.0,yes,5.3,yes,1.75502034,no,0.00870603,yes,0.0,yes,,,0.22764228,yes
+lumpy_skin_disease,0.16881,yes,70.6,6,0.0,no,0.0,yes,0.0,yes,1.125,yes,4.85661845,no,0.00247153,yes,,,0.64025512,yes,0.19188596,yes
+african_swine_fever,0.165248,yes,84.4,7,0.0,no,0.0,yes,0.0,yes,4.125,yes,0.03834306,yes,0.00214544,yes,,,0.67863911,yes,0.02575992,yes
+anthrax,0.0,NO,54.4,5,,,,,0.0,yes,0.0,yes,0.0,yes,0.0,yes,,,,,0.0,yes
+black_quarter,0.419389,NO,57.6,6,,,,,0.0,yes,15.0,yes,0.69588457,yes,0.04771146,yes,0.0,yes,,,0.25434506,yes
+blackleg,0.444775,NO,57.6,6,,,,,0.0,yes,20.7,yes,0.67713373,yes,0.06590407,yes,0.0,yes,,,0.26706231,yes
+enterotoxaemia,0.052921,NO,5.7,2,0.0,no,0.0,no,0.0,no,220.33333333,no,0.97511641,no,0.61037035,no,0.0,yes,,,1.20274914,yes
+fascioliasis,0.280374,NO,33.3,3,0.0,no,0.0,yes,0.0,no,91.25,no,0.85874141,no,0.41269033,no,0.0,yes,,,0.54945055,yes
+haemorrhagic_septicaemia,0.051841,NO,5.7,2,0.0,no,,,0.0,no,268.42857143,no,0.72566501,no,0.77021523,no,0.0,yes,,,1.17820324,yes
+trypanosomiasis,0.290486,NO,57.6,6,0.0,no,0.0,no,0.0,yes,9.33333333,yes,0.23037671,yes,0.02461063,yes,0.0,yes,,,0.535815,yes

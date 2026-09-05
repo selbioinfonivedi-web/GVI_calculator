@@ -1,0 +1,11 @@
+sequence_id,collection_date,location,host,strain,organism,length,description
+JX010451.1,,,,NCTC 6121,Clostridium perfringens,1119,"Clostridium perfringens strain NCTC 6121 epsilon toxin (etx) gene, complete cds"
+AJ250956.1,,India,,,Clostridium perfringens D,843,Clostridium perfringens D partial etx gene for epsilon toxin
+MF471361.1,02-Feb-2017,India,sheep,Ind_Ap_WG_CpD1,Clostridium perfringens,1008,"Clostridium perfringens strain Ind_Ap_WG_CpD1 epsilon toxin (etx) gene, partial cds"
+MF471362.1,06-Feb-2017,India,sheep,Ind_AP_WGCp2,Clostridium perfringens,1008,"Clostridium perfringens strain Ind_AP_WGCp2 epsilon toxin (etx) gene, partial cds"
+MT946874.1,2019,Pakistan: Punjab,buffalo,B06,Clostridium perfringens,605,"Clostridium perfringens strain B06 epsilon toxin (etx) gene, partial cds"
+MT946875.1,2019,Pakistan: Punjab,buffalo,B02/CHK,Clostridium perfringens,605,"Clostridium perfringens strain B02/CHK epsilon toxin (etx) gene, partial cds"
+MT946876.1,2019,Pakistan: Punjab,cattle,C03,Clostridium perfringens,605,"Clostridium perfringens strain C03 epsilon toxin (etx) gene, partial cds"
+MT946877.1,2019,Pakistan: Punjab,cattle,C4,Clostridium perfringens,605,"Clostridium perfringens strain C4 epsilon toxin (etx) gene, partial cds"
+MT946878.1,2019,Pakistan: Punjab,cattle,C05,Clostridium perfringens,605,"Clostridium perfringens strain C05 epsilon toxin (etx) gene, partial cds"
+MT946879.1,2019,Pakistan: Punjab,cattle,C01,Clostridium perfringens,605,"Clostridium perfringens strain C01 epsilon toxin (etx) gene, partial cds"

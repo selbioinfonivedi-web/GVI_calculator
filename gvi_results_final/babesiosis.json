@@ -1,0 +1,157 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.31568175723542935,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 0.9961381677751555,
+      "normalizedValue" : 0.3320460559250518,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.38585209003215426,
+      "contribution" : 0.12812066466561484
+    }, {
+      "key" : "PI",
+      "rawValue" : 0.014526643990929707,
+      "normalizedValue" : 0.7263321995464853,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12861736334405147,
+      "contribution" : 0.09341893241755439
+    }, {
+      "key" : "MB",
+      "rawValue" : 14.0,
+      "normalizedValue" : 0.14,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.27652733118971057,
+      "contribution" : 0.038713826366559484
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.02113853856871495,
+      "normalizedValue" : 0.42277077137429897,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.12861736334405147,
+      "contribution" : 0.05437566191309312
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.29761904761904984,
+      "normalizedValue" : 0.029761904761904982,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.03536977491961415,
+      "contribution" : 0.0010526718726075717
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.04501607717041801,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU", "DNDS", "CAI" ],
+    "effectiveWeightSum" : 0.713302752293578,
+    "diagnostics" : [ "Excluded (no data supplied): mu, dN/dS, CAI -- remaining weights renormalized to sum to 1 (was 0.713 of full scheme)", "6 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 14.0,
+      "category" : "Community chain (1-2 weeks) (1-2 weeks); Traceable contact history -- mean across 6 sequence(s)",
+      "diagnostics" : [ "Mean of 6 per-sequence value(s); range [9.000, 17.00]" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.02113853856871495,
+      "category" : "Different geographic source (3-12 months, confidence: Low-moderate) -- mean across 6 sequence(s)",
+      "diagnostics" : [ "Mean of 6 per-sequence value(s); range [0.01351, 0.02573]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.29761904761904984,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 6 sequence(s)",
+      "diagnostics" : [ "Mean of 6 per-sequence value(s); range [0.000, 0.5952]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 8.450397451586603E-4,
+      "rSquared" : 0.5711172325601813,
+      "pointsUsed" : 7,
+      "timeSpanYears" : 20.0,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Built a 7-taxon Neighbor-Joining tree rooted at 'JQ437262.1'", "Temporal signal R^2=0.571 over 20.00 years (n=7)", "Date randomization passed: the fitted rate (0.000845040) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0099, range [-0.000903641, 0.000809688]) -- the collection dates, not lineage structure alone, explain the divergence." ],
+      "temporalSignalConfirmed" : true
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2023-06-15",
+      "reMean" : 0.9961381677751555,
+      "interval" : {
+        "lower" : 0.9859257670027892,
+        "upper" : 1.006350568547522,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : null,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Built a 7-taxon Neighbor-Joining tree rooted at 'JQ437262.1'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9961, 95% likelihood-ratio interval [0.99, 1.01]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-191.3565 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 0.014526643990929707,
+      "sequenceCount" : 7,
+      "alignmentLength" : 672,
+      "pairsUsed" : 21,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.00864512471655329,
+        "upper" : 0.020905966553287983,
+        "level" : 0.95
+      },
+      "category" : "Endemic circulation (High diversity; years of transmission); Likely antigenically variable; vaccine updates needed",
+      "diagnostics" : [ "21 of 21 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.6666666666666666,
+      "globalPhiStatistic" : 0.5333333333333333,
+      "pValue" : 1.0,
+      "informativeSitesUsed" : 6,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "6 informative biallelic sites; 6 pairs within 100bp window (of 15 total pairs); 1000 permutations run", "windowed PHI=0.6667, global PHI=0.5333, one-sided permutation p=1.0000" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.3138844943204434,
+    "gviAtHighWeight" : 0.3173725430236538
+  }, {
+    "key" : "PI",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.30395618712196,
+    "gviAtHighWeight" : 0.3272184428791435
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.30381263440786244,
+    "gviAtHighWeight" : 0.32802920460056467
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.31262397471703995,
+    "gviAtHighWeight" : 0.3186902826495566
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.31361113192404694,
+    "gviAtHighWeight" : 0.31776101669329593
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.31568175723542935,
+    "gviAtLowWeight" : 0.31275312715736237,
+    "gviAtHighWeight" : 0.3186260493941024
+  } ],
+  "skipped" : [ "CAI: not computed for organism-class 'eukaryotic_parasite'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.", "mu (excluded from composite GVI): the fitted rate is 0.0008450 sub/site/yr, which the reference table classifies as implausible for a DNA genome -- no known DNA virus replicates faster than about 1e-05, and the fastest credible band (small ssDNA, no proofreading) tops out there. Note this is NOT a weak-signal problem: the temporal-signal checks may well have passed, because the dates genuinely do explain the divergence. What fails is the magnitude. A rate this far above the ceiling usually means the alignment pools separate lineages or loci, or that the marker is under selection strong enough to break the clock assumption itself. Excluded from the composite GVI (still reported below) -- otherwise it would saturate mu's normalization ceiling and contribute maximum weight precisely because it is impossible. Verify the input before trusting this rate." ],
+  "warnings" : [ "--trim-to-covered: Alignment trimmed to the 672 of 1662 columns (40%) covered by all 7 sequences; longest contiguous block 288 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "No --gff supplied; predicted 3 open reading frame(s) natively from the reference sequence (ATG...stop 6-frame scan, >= 30 codons, kept if within 30% of the longest one found -- 3 candidate(s) before that filter) instead of treating the whole sequence as one ORF -- a real but simpler technique than a trained gene-finder (no coding-potential model, no splice handling); supply --gff for definitive gene coordinates if available.", "--trim-to-covered: remapped 0 gene annotation(s) onto the trimmed coordinates; dropped 3 gene(s) whose span was entirely discarded (orf_fwd2_1, orf_rev1_1, orf_rev2_1). Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (52.68%, from 'JQ437262.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'eukaryotic_parasite', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is." ]
+}

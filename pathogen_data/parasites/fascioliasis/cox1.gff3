@@ -1,0 +1,2 @@
+##gff-version 3
+alignment	GVI_validation	CDS	8	437	.	+	0	ID=cds1;gene=cox1;Name=cox1

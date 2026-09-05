@@ -1,0 +1,70 @@
+# ─── Build output ────────────────────────────────────────────────────────────
+target/
+*.class
+*.jar
+!**/src/**/*.jar
+
+# ─── IDE and tooling ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+.claude/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# ─── OS noise ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*~
+.~lock.*#
+
+# ─── Logs and scratch ────────────────────────────────────────────────────────
+*.log
+err*.log
+nohup.out
+
+# ─── Corpus datasets: track the inputs, ignore the download residue ──────────
+# run_corpus.sh reads exactly three files per dataset (aligned.fasta,
+# metadata.csv and a GFF3). Everything else in a dataset directory is either a
+# raw NCBI download or an intermediate that the fetch scripts regenerate, and
+# together they are ~43 MB against ~660 KB of actual input. Ignoring them keeps
+# the corpus reproducible from tracked files without carrying the downloads.
+pathogen_data/**/raw*.fasta
+# Every GenBank file under pathogen_data is a raw NCBI download; the driver
+# reads none of them (0 references in run_corpus.sh).
+pathogen_data/**/*.gb
+pathogen_data/**/*.gbk
+pathogen_data/**/filtered.fasta
+pathogen_data/**/meta_raw.csv
+pathogen_data/**/ids*.txt
+pathogen_data/**/*_result.json
+pathogen_data/**/*_result.csv
+pathogen_data/**/result.json
+pathogen_data/**/result.csv
+
+# The 36 MB scratch tree the corpus no longer depends on. Its two live datasets
+# (anthrax, blackleg) now sit under pathogen_data/bacteria/ with the other
+# fourteen; what remains here is raw downloads and fetch scripts.
+gvi_test_run/
+
+# ─── Result snapshots ────────────────────────────────────────────────────────
+# gvi_results_final/ IS tracked: it is the baseline the corpus regression job
+# diffs against, so a change to any index shows up as a reviewable diff rather
+# than as silent drift. The dated and superseded snapshots are history, kept on
+# disk but not in the repository.
+gvi_results_2*/
+gvi_results_superseded_*/
+
+# Editor and hand-made backups. These matter more than usual here: anything left
+# in gvi-web/src/main/resources/web/ is packaged into the jar AND served by the
+# static handler, so a stray index.html.bak ships old code to every visitor.
+*.bak
+*.orig
+*.rej
+*~
+
+# ─── Local scratch ───────────────────────────────────────────────────────────
+/gvi_dossier_preview.html
+/gvi_result_view.html
+/gvi_redesign.html.bak

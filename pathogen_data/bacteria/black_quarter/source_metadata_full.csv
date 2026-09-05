@@ -1,0 +1,9 @@
+sequence_id,collection_date,location,host,strain,organism,length,description
+MN737043.1,2019,Iraq,cattle,IQ-123,Clostridium chauvoei,582,"Clostridium chauvoei isolate IQ-123 flagellin (fliC) gene, partial cds"
+MN737044.1,2019,Iraq,cattle,IQ-124,Clostridium chauvoei,582,"Clostridium chauvoei isolate IQ-124 flagellin (fliC) gene, partial cds"
+MN737045.1,2019,Iraq,cattle,IQ-125,Clostridium chauvoei,582,"Clostridium chauvoei isolate IQ-125 flagellin (fliC) gene, partial cds"
+GU266538.1,,,,BS171-00,Clostridium chauvoei,588,"Clostridium chauvoei strain BS171-00 flagellin (fliC) gene, partial cds"
+GU266539.1,,,,BC138-06,Clostridium chauvoei,588,"Clostridium chauvoei strain BC138-06 flagellin (fliC) gene, partial cds"
+KC533146.1,,India,cattle,OR1/11,Clostridium chauvoei,511,"Clostridium chauvoei strain OR1/11 flagellin (fliC) gene, partial cds"
+KC533144.1,,India,cattle,TN6/10,Clostridium chauvoei,511,"Clostridium chauvoei strain TN6/10 flagellin (fliC) gene, partial cds"
+KC533141.1,,India,cattle,OR2/11,Clostridium chauvoei,416,"Clostridium chauvoei strain OR2/11 flagellin (fliC) gene, partial cds"

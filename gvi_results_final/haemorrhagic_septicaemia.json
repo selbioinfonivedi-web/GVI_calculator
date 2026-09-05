@@ -1,0 +1,101 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.05184094256259194,
+    "components" : [ {
+      "key" : "GC",
+      "rawValue" : 1.178203240058908,
+      "normalizedValue" : 0.11782032400589079,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.43999999999999995,
+      "contribution" : 0.05184094256259194
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.56,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU", "RE", "PI", "MB", "DNDS", "GD", "CAI" ],
+    "effectiveWeightSum" : 0.05733944954128441,
+    "diagnostics" : [ "Excluded (no data supplied): mu, Re, pi, MB, dN/dS, GD, CAI -- remaining weights renormalized to sum to 1 (was 0.057 of full scheme)", "2 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 268.42857142857144,
+      "category" : "Beyond reference table (> 18 months / possible novel lineage); Full genomic + epidemiological re-investigation warranted -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [76.00, 303.0]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 0.7256650060959202,
+      "category" : "Purifying selection (dN/dS < 1): functional constraint (pooled across 7 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 7 sequence(s)", "Pooled Nei-Gojobori counts across 7 result(s) (not an average of individual ratios)", "dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-3.952, two-tailed p=0.0001) -- purifying/negative selection", "Nei-Gojobori Z-test on the pooled counts: Z=-3.952, two-tailed p=7.765e-05, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-3.952, two-tailed p=0.0001) -- purifying/negative selection" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.7702152345556276,
+      "category" : "Different strain / serotype (>1 year, confidence: Low (ambiguous without tree)) -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [0.1435, 0.8885]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 1.178203240058908,
+      "category" : "Minor drift (Minor recombination / reassortment; Possible but not recent) -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [0.6873, 2.749]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 0.009897641427419971,
+      "rSquared" : 0.45551561392350615,
+      "pointsUsed" : 3,
+      "timeSpanYears" : 57.0,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Built a 8-taxon Neighbor-Joining tree rooted at 'KY436382.1'", "5 sequence(s) excluded: no collection_date in metadata", "Temporal signal R^2=0.456 over 57.00 years (n=3)", "Date randomization FAILED: 15 of 100 shuffled date assignments reproduced a rate at least as high as the fitted one (0.00989764); empirical p=0.1584, threshold 0.05, randomized range [-0.0146036, 0.00989764]. Randomly reassigned dates reproduce this rate, so it reflects the divergence structure of the alignment rather than elapsed time. The usual cause is several independently introduced lineages pooled into one alignment -- split them per lineage and re-run. A high R2 does not rescue this: R2 measures how tightly the points sit on a line, not whether the dates are what put them there." ],
+      "temporalSignalConfirmed" : false
+    },
+    "PI" : {
+      "pi" : 0.26797987236131565,
+      "sequenceCount" : 8,
+      "alignmentLength" : 582,
+      "pairsUsed" : 28,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.2515939494354442,
+        "upper" : 0.28626810260186547,
+        "level" : 0.95
+      },
+      "category" : "Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets",
+      "diagnostics" : [ "28 of 28 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.016868046417035532,
+      "globalPhiStatistic" : 0.018734139423794597,
+      "pValue" : 0.2017982017982018,
+      "informativeSitesUsed" : 232,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "232 informative biallelic sites; 8359 pairs within 100bp window (of 26796 total pairs); 1000 permutations run", "windowed PHI=0.0169, global PHI=0.0187, one-sided permutation p=0.2018", "Permutation p=0.2018 is not significant at the 0.05 threshold -- ri is reported as 0.0 (no detected recombination signal) rather than the raw windowed/global PHI ratio (0.0996), which is not statistically distinguishable from noise here" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "GC",
+    "baseGvi" : 0.05184094256259194,
+    "gviAtLowWeight" : 0.04533042669142782,
+    "gviAtHighWeight" : 0.05733025861924914
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.05184094256259194,
+    "gviAtLowWeight" : 0.046432130970186954,
+    "gviAtHighWeight" : 0.058574220147962215
+  } ],
+  "skipped" : [ "Re: Phylodynamic Re fallback needs at least 5 dated sequences, got 3", "CAI: not computed for organism-class 'bacterium'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.", "MB (excluded from composite GVI): the mean mutation burden is 46% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "GD (excluded from composite GVI): the mean mutation burden is 46% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "dN/dS (excluded from composite GVI): the mean mutation burden is 46% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "pi (excluded from composite GVI): the mean mutation burden is 46% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "mu (excluded from composite GVI): the mean mutation burden is 46% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run." ],
+  "warnings" : [ "--trim-to-covered: Alignment trimmed to the 582 of 1353 columns (43%) covered by all 8 sequences; longest contiguous block 70 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "Re: the birth-death (BDSKY) fit was unavailable for this dataset (BDSKY-ML Re needs every sequence dated (5 missing); use the phylodynamic fallback instead), so Re falls back to the lineages-through-time regression, which is markedly less able to distinguish growth rates -- treat the resulting Re as indicative only.", "--trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (40.38%, from 'KY436382.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "NOT COMPARABLE: this GVI of 0.0518 was computed from only 2 of 9 indices, 6% of the weighting scheme (threshold for cross-dataset comparison is 60%). The surviving indices were renormalized to sum to 1, so the score still falls in [0,1] and still looks like a normal GVI -- but it summarizes a different, much smaller set of evidence than a fully-populated score does. Do NOT rank this value against other pathogens' GVIs. A LOW value here is especially easy to misread: it can mean the contributing indices happened to be small, not that virulence is low. Resolve the exclusions listed under 'Skipped' and re-run before drawing any comparative conclusion.", "Data quality advisory -- mutation burden: the average 268.4 variant events per sequence is 46% of the 582 bp alignment length, implausibly high for sequences assumed to be closely related. Likely causes: a misalignment (see the alignment-quality advisory above if present), the wrong reference sequence selected (check Reference sequence id), or the sequences genuinely aren't as closely related as assumed.", "mu remedy -- Lineage structure detected: the 8 sequences separate into 5 groups at a 5% p-distance cut-off, which is where this tool's own distance table places \"different strain / serotype\". A single molecular-clock rate across groups measures the distance BETWEEN them, not substitution accumulated over time. Estimate a rate within each group separately: [group 1, 1 seq: KY436382.1] [group 2, 4 seq: AJ459785.1, MW142232.1, MK183754.1, PX462726.1] [group 3, 1 seq: JQ082509.1] [group 4, 1 seq: KP212399.1] [group 5, 1 seq: KY403515.1]" ]
+}

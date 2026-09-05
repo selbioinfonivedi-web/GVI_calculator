@@ -1,0 +1,2 @@
+##gff-version 3
+alignment	manual	CDS	3	581	.	+	0	ID=fliC_cds;gene=fliC;product=flagellin

@@ -1,0 +1,420 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>GVI · Genomic Analysis Workstation</title>
+<link rel=preconnect href="https://fonts.googleapis.com"><link rel=preconnect href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400;75..100,500;75..100,600;75..100,700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel=stylesheet>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   SPINE — a design system for genomic instruments.
+   Organising principle: every lane shares one vertical registration, so a
+   sample occupies the same row in every view. Nothing is a "card"; the
+   surface is continuous and divided by hairlines and coordinate rules.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  /* ground — deep desaturated blue-green, not black: keeps hairlines visible */
+  --g-900:#080c0e; --g-850:#0b1114; --g-800:#0f1619; --g-750:#141d21; --g-700:#1b262b;
+  --rule:#1e2a30; --rule-hi:#2b3b43;
+  /* ink */
+  --ink:#e8eef2; --ink-2:#a8b3bd; --ink-3:#6b7a85; --ink-4:#44525b;
+  /* phosphor — the instrument's own colour, used for live readouts and rules */
+  --phos:#7dd3c0; --phos-hi:#5eead4; --phos-dim:#2f5a52;
+  /* data marks — validated on this ground */
+  --d1:#3987e5; --d2:#d95926; --d3:#199e70;
+  /* status */
+  --ok:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Archivo',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--g-900);color:var(--ink-2);font-family:var(--sans);font-size:12.5px;
+  font-variation-settings:'wdth' 92;-webkit-font-smoothing:antialiased;overflow:hidden}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── shell: five stacked registers, no sidebar ─────────────────────── */
+.shell{display:grid;grid-template-rows:44px 30px 1fr 22px;height:100vh}
+
+/* ── register 1: masthead + pipeline rail ──────────────────────────── */
+.mast{display:flex;align-items:stretch;border-bottom:1px solid var(--rule);background:var(--g-850)}
+.sig{display:flex;align-items:center;gap:9px;padding:0 16px;border-right:1px solid var(--rule)}
+.sig .mark{width:15px;height:15px;position:relative}
+.sig .mark:before,.sig .mark:after{content:'';position:absolute;background:var(--phos)}
+.sig .mark:before{left:0;top:0;width:1px;height:100%}
+.sig .mark:after{left:0;top:50%;width:100%;height:1px}
+.sig .mark i{position:absolute;right:0;top:0;width:1px;height:52%;background:var(--phos);opacity:.55}
+.sig b{font-size:13px;letter-spacing:.22em;color:var(--ink);font-weight:700}
+.sig span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-4)}
+
+/* pipeline rail — a process chain, not tabs */
+.rail{display:flex;align-items:center;flex:1;padding:0 6px;overflow-x:auto}
+.stage{position:relative;display:flex;align-items:center;gap:7px;padding:0 15px 0 13px;height:100%;
+  cursor:pointer;white-space:nowrap;border:0;background:none;font-family:inherit}
+.stage:after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%) rotate(45deg);
+  width:7px;height:7px;border-top:1px solid var(--rule-hi);border-right:1px solid var(--rule-hi)}
+.stage:last-child:after{display:none}
+.stage .led{width:7px;height:7px;flex:none;position:relative}
+.stage .led:before{content:'';position:absolute;inset:0;background:var(--ink-4)}
+.stage.done .led:before{background:var(--ok)}
+.stage.run  .led:before{background:var(--phos);animation:pulse 1.1s steps(2,end) infinite}
+.stage.warn .led:before{background:var(--warn)}
+.stage.fail .led:before{background:var(--crit)}
+@keyframes pulse{50%{opacity:.25}}
+.stage .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--ink-3)}
+.stage.on .lbl{color:var(--phos-hi)}
+.stage.on{background:linear-gradient(180deg,rgba(125,211,192,.10),transparent 70%)}
+.stage.on:before{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--phos)}
+.stage:hover .lbl{color:var(--ink)}
+.runstate{display:flex;align-items:center;gap:14px;padding:0 16px;border-left:1px solid var(--rule)}
+.kbd{font-family:var(--mono);font-size:9px;color:var(--ink-4);border:1px solid var(--rule-hi);padding:2px 5px}
+.act{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--g-900);background:var(--phos);
+  border:0;padding:6px 13px;cursor:pointer}
+.act.ghost{background:none;color:var(--phos);border:1px solid var(--phos-dim)}
+
+/* ── register 2: specimen strip — dataset identity as a readout ─────── */
+.spec{display:flex;align-items:stretch;background:var(--g-800);border-bottom:1px solid var(--rule);overflow-x:auto}
+.spec .f{display:flex;align-items:center;gap:7px;padding:0 14px;border-right:1px solid var(--rule);white-space:nowrap}
+.spec .f k{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--ink-4)}
+.spec .f v{font-family:var(--mono);font-size:11px;color:var(--ink);font-weight:500}
+.spec .f v.p{color:var(--phos)}
+.spec .grow{flex:1;border-right:0}
+
+/* ── register 3: canvas + observation column ───────────────────────── */
+.body{display:grid;grid-template-columns:1fr 296px;overflow:hidden}
+.canvas{position:relative;overflow:auto;background:
+  linear-gradient(var(--g-850) 0 0) padding-box;}
+/* fine scientific grid, drawn not decorated */
+.canvas:before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(90deg,rgba(43,59,67,.28) 1px,transparent 1px);
+  background-size:64px 100%}
+
+/* lane system */
+.lane{position:relative;z-index:1;border-bottom:1px solid var(--rule)}
+.lane>h4{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--ink-4);
+  padding:7px 14px 6px;display:flex;gap:10px;align-items:center}
+.lane>h4 em{font-style:normal;color:var(--ink-3);letter-spacing:.04em;font-size:9px}
+.lane>h4 .sp{flex:1}
+.lane>h4 button{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--phos);
+  background:none;border:1px solid var(--phos-dim);padding:2px 7px;cursor:pointer}
+
+/* the registration grid: phylo | id | matrix | temporal — one row per sample */
+.reg{display:grid;grid-template-columns:132px 104px 1fr 150px;align-items:stretch;position:relative;grid-auto-rows:30px}
+.reg .colhead{font-family:var(--mono);font-size:8px;letter-spacing:.13em;color:var(--ink-4);
+  padding:0 0 6px 0;border-bottom:1px solid var(--rule)}
+.rowlab{font-family:var(--mono);font-size:10px;color:var(--ink-2);display:flex;align-items:center;
+  padding-left:10px;border-right:1px solid var(--rule);cursor:pointer}
+.row.sel .rowlab{color:var(--phos-hi)}
+.row{display:contents}
+.cellwrap{display:flex;align-items:center;gap:4px;padding:0 10px;border-right:1px solid var(--rule)}
+.cell{width:38px;flex:none;height:16px;position:relative;cursor:crosshair;background:rgba(43,59,67,.32)}
+.cell:hover{outline:1px solid var(--phos)}
+.cell i{position:absolute;left:0;bottom:0;width:100%;background:var(--d1);display:block}
+.cell.gated i{background:var(--warn);opacity:.45}
+.tl{position:relative;border-right:1px solid var(--rule)}
+.tl .pt{position:absolute;top:50%;width:7px;height:7px;transform:translate(-50%,-50%) rotate(45deg);
+  background:var(--d1);cursor:pointer}
+.row.sel .pt{background:var(--phos-hi);box-shadow:0 0 0 3px rgba(125,211,192,.18)}
+.phy{border-right:1px solid var(--rule);position:relative}
+.phyover{position:absolute;left:0;width:132px;pointer-events:none;z-index:3}
+.cladelab{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--ink-4);margin-left:14px}
+.rowbg{position:absolute;inset:0;pointer-events:none}
+.row.sel .rowbg{background:rgba(125,211,192,.07);box-shadow:inset 2px 0 0 var(--phos)}
+.row.dim{opacity:.28}
+
+/* population readouts — gauges, not KPI boxes */
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);z-index:1;position:relative}
+.gauge{padding:11px 14px 12px;border-right:1px solid var(--rule);cursor:pointer;position:relative}
+.gauge:last-child{border-right:0}
+.gauge:hover{background:rgba(125,211,192,.04)}
+.gauge k{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;color:var(--ink-4);margin-bottom:5px}
+.gauge v{display:block;font-family:var(--mono);font-size:19px;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.gauge s{display:block;font-family:var(--mono);font-size:9px;color:var(--ink-3);margin-top:5px;text-decoration:none}
+.gauge .scale{height:2px;background:var(--g-700);margin-top:9px;position:relative}
+.gauge .scale i{position:absolute;left:0;top:0;height:100%;background:var(--phos)}
+.gauge .scale u{position:absolute;top:-3px;width:1px;height:8px;background:var(--warn)}
+
+/* coordinate ruler — genome coordinates as the spine of the canvas */
+.ruler{height:34px;position:relative;z-index:1;border-bottom:1px solid var(--rule);background:var(--g-800)}
+.ruler .tick{position:absolute;top:0;width:1px;height:7px;background:var(--rule-hi)}
+.ruler .tick.maj{height:12px;background:var(--ink-4)}
+.ruler .lab{position:absolute;top:14px;font-family:var(--mono);font-size:8.5px;color:var(--ink-4);transform:translateX(-50%)}
+.ruler .cursor{position:absolute;top:0;bottom:0;width:1px;background:var(--phos);opacity:.8;pointer-events:none}
+
+/* ── observation column — a continuous log, not notification cards ─── */
+.obs{border-left:1px solid var(--rule);background:var(--g-850);overflow:auto;position:relative}
+.obs h4{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--ink-4);
+  padding:9px 14px 8px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--g-850);z-index:2}
+.entry{padding:11px 14px 12px 26px;border-bottom:1px solid var(--rule);position:relative;font-size:11.5px;line-height:1.5}
+.entry:before{content:'';position:absolute;left:14px;top:16px;width:5px;height:5px;transform:rotate(45deg);background:var(--ink-4)}
+.entry.w:before{background:var(--warn)} .entry.g:before{background:var(--ok)} .entry.p:before{background:var(--phos)}
+.entry time{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--ink-4);margin-bottom:4px}
+.entry b{color:var(--ink);font-weight:600;font-size:11.5px}
+.entry .m{color:var(--ink-3);margin-top:3px}
+.entry .fix{margin-top:7px;font-family:var(--mono);font-size:10px;color:var(--phos);cursor:pointer}
+.entry .fix:hover{text-decoration:underline}
+
+/* ── register 4: status rail ───────────────────────────────────────── */
+.rail-b{display:flex;align-items:center;gap:0;background:var(--g-800);border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-4)}
+.rail-b .s{padding:0 13px;border-right:1px solid var(--rule);white-space:nowrap}
+.rail-b .s b{color:var(--phos);font-weight:400}
+.rail-b .grow{flex:1;border-right:0}
+
+/* ── floating console — instrument panel with corner brackets ──────── */
+.console{position:fixed;z-index:50;background:var(--g-800);border:1px solid var(--rule-hi);
+  min-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none}
+.console.open{display:block}
+.console:before,.console:after{content:'';position:absolute;width:9px;height:9px;border-color:var(--phos);pointer-events:none}
+.console:before{left:-1px;top:-1px;border-left:1px solid;border-top:1px solid}
+.console:after{right:-1px;bottom:-1px;border-right:1px solid;border-bottom:1px solid}
+.console h5{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--phos);
+  padding:9px 12px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between}
+.console h5 span{color:var(--ink-4);cursor:pointer}
+.console .cbody{padding:13px 14px 15px}
+.cline{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10.5px}
+.cline:last-child{border-bottom:0}
+.cline k{color:var(--ink-4)} .cline v{color:var(--ink)}
+.cnote{font-size:11px;color:var(--ink-3);line-height:1.55;margin-top:11px;padding-top:11px;border-top:1px solid var(--rule)}
+
+/* tooltip */
+#tip{position:fixed;z-index:80;background:var(--g-750);border:1px solid var(--rule-hi);padding:7px 10px;
+  font-family:var(--mono);font-size:10px;color:var(--ink);pointer-events:none;display:none;white-space:pre;line-height:1.5}
+#tip b{color:var(--phos)}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-track{background:var(--g-900)}
+::-webkit-scrollbar-thumb{background:var(--g-700)}::-webkit-scrollbar-thumb:hover{background:var(--rule-hi)}
+</style></head><body>
+<div class=shell>
+
+ <!-- ═══ MASTHEAD ═══ -->
+ <div class=mast>
+  <div class=sig><div class=mark><i></i></div><div><b>GVI</b><br><span>WORKSTATION 2.1</span></div></div>
+  <div class=rail id=rail></div>
+  <div class=runstate>
+   <span class=kbd>⌘R</span><button class="act ghost" onclick="openConsole('params')">PARAMETERS</button>
+   <button class=act onclick="rerun()">EXECUTE</button>
+  </div>
+ </div>
+
+ <!-- ═══ SPECIMEN STRIP ═══ -->
+ <div class=spec id=spec></div>
+
+ <!-- ═══ CANVAS + OBSERVATION ═══ -->
+ <div class=body>
+  <div class=canvas id=canvas>
+   <div class=lane>
+    <h4>REGISTRATION · PHYLOGENY ▸ SPECIMEN ▸ INDEX MATRIX ▸ TEMPORAL
+      <em id=selnote>no selection — click any row</em><span class=sp></span>
+      <button onclick="clearSel()">CLEAR</button><button onclick="selectLate()">SELECT 2024–25 CLADE</button></h4>
+    <div class=reg id=reg></div>
+   </div>
+   <div class=lane>
+    <h4>COORDINATE SPINE · ALIGNMENT 1–<span id=alen class=num></span> bp<span class=sp></span><em>move cursor to read position</em></h4>
+    <div class=ruler id=ruler></div>
+   </div>
+   <div class=lane>
+    <h4>MUTATION LANDSCAPE · variable-site density across the alignment<span class=sp></span><em id=mlnote>all specimens</em></h4>
+    <div id=mland style="height:100px;position:relative;background:var(--g-850)"></div>
+   </div>
+   <div class=lane>
+    <h4>POPULATION READOUTS<span class=sp></span><em>click a readout to open its console</em></h4>
+    <div class=gauges id=gauges></div>
+   </div>
+  </div>
+
+  <div class=obs><h4>OBSERVATION LOG</h4><div id=obs></div></div>
+ </div>
+
+ <!-- ═══ STATUS RAIL ═══ -->
+ <div class=rail-b>
+  <div class=s>POS <b id=pos>—</b></div>
+  <div class=s>SEL <b id=selcount>0</b> / <span id=ntot></span></div>
+  <div class=s>READ <b id=readout>—</b></div>
+  <div class="s grow"></div>
+  <div class=s>GVI <b id=gvitop></b></div>
+  <div class=s>COVERAGE <b id=covtop></b></div>
+  <div class=s>ENGINE BDSKY_ML</div>
+ </div>
+</div>
+
+<div class=console id=console><h5><span id=ctitle></span><span onclick="closeConsole()">✕ ESC</span></h5><div class=cbody id=cbody></div></div>
+<div id=tip></div>
+
+<script>
+const D = {"samples": [{"id": "KP821077", "date": "2007-09-01", "gvi": 0.2156, "v": {"MB": 0.0, "DNDS": 0.0, "GD": 0.0, "CAI": 0.658482, "GC": 0.0}}, {"id": "KP821074", "date": "2008-08-01", "gvi": 0.2339, "v": {"MB": 7.0, "DNDS": 0.0, "GD": 0.002386, "CAI": 0.65853, "GC": 0.034025}}, {"id": "KP820982", "date": "2008-09-01", "gvi": 0.2297, "v": {"MB": 3.0, "DNDS": 0.135421, "GD": 0.001021, "CAI": 0.658951, "GC": 0.034025}}, {"id": "KU569991", "date": "2015-09-09", "gvi": 0.2298, "v": {"MB": 3.0, "DNDS": 0.135328, "GD": 0.001021, "CAI": 0.658016, "GC": 0.102076}}, {"id": "LR797848", "date": "2018-10-01", "gvi": 0.2403, "v": {"MB": 9.0, "DNDS": 0.044944, "GD": 0.00242, "CAI": 0.658836, "GC": 0.175341}}, {"id": "PX963012", "date": "2024-06-01", "gvi": 0.472, "v": {"MB": 97.0, "DNDS": 0.034771, "GD": 0.033753, "CAI": 0.660393, "GC": 0.578428}}, {"id": "PV541162", "date": "2024-07-26", "gvi": 0.4692, "v": {"MB": 96.0, "DNDS": 0.031852, "GD": 0.033397, "CAI": 0.660956, "GC": 0.578428}}, {"id": "PV990387", "date": "2025-06-19", "gvi": 0.4774, "v": {"MB": 99.0, "DNDS": 0.040575, "GD": 0.034465, "CAI": 0.660629, "GC": 0.544403}}], "alignLen": 2939, "nseq": 9, "gvi": 0.3203, "cov": 1.0, "mu": 0.0018202603044088922, "mur2": 0.7781152547423777, "span": 19.049315068493343, "re": 1.0180254221376184, "remethod": "BDSKY_ML", "pi": 0.01810089130360256, "piCI": [0.014972216199682744, 0.02127960107023785], "ri": 0.0, "rip": 0.939060939060939, "riSites": 98, "comps": [{"k": "MU", "n": 0.182, "w": 0.1239, "c": 0.0225}, {"k": "RE", "n": 0.3393, "w": 0.2752, "c": 0.0934}, {"k": "PI", "n": 0.905, "w": 0.0917, "c": 0.083}, {"k": "MB", "n": 0.3925, "w": 0.1972, "c": 0.0774}, {"k": "DNDS", "n": 0.0128, "w": 0.1376, "c": 0.0018}, {"k": "GD", "n": 0.2712, "w": 0.0917, "c": 0.0249}, {"k": "CAI", "n": 0.6593, "w": 0.0252, "c": 0.0166}, {"k": "GC", "n": 0.0256, "w": 0.0252, "c": 0.0006}, {"k": "RI", "n": 0.0, "w": 0.0321, "c": 0.0}], "warnings": ["Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "CAI: no --codon-usage supplied; using the bundled 'sheep' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (42.67%, from 'AM498052') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is."]};
+const IDX = ['MB','DNDS','GD','CAI','GC'];
+const TREE_SVG = `<svg width="132" height="240" viewBox="0 0 132 240" style="display:block"><path d="M52,15.0 V135.0" stroke="#199e70" stroke-width="1.2" fill="none"/><path d="M52,15.0 H118" stroke="#199e70" stroke-width="1.2" fill="none"/><circle cx="118" cy="15.0" r="2.8" fill="#199e70"/><path d="M52,45.0 H118" stroke="#199e70" stroke-width="1.2" fill="none"/><circle cx="118" cy="45.0" r="2.8" fill="#199e70"/><path d="M52,75.0 H118" stroke="#199e70" stroke-width="1.2" fill="none"/><circle cx="118" cy="75.0" r="2.8" fill="#199e70"/><path d="M52,105.0 H118" stroke="#199e70" stroke-width="1.2" fill="none"/><circle cx="118" cy="105.0" r="2.8" fill="#199e70"/><path d="M52,135.0 H118" stroke="#199e70" stroke-width="1.2" fill="none"/><circle cx="118" cy="135.0" r="2.8" fill="#199e70"/><path d="M22,75.0 H52" stroke="#199e70" stroke-width="1.2" fill="none"/><path d="M68,165.0 V225.0" stroke="#d95926" stroke-width="1.2" fill="none"/><path d="M68,165.0 H118" stroke="#d95926" stroke-width="1.2" fill="none"/><circle cx="118" cy="165.0" r="2.8" fill="#d95926"/><path d="M68,195.0 H118" stroke="#d95926" stroke-width="1.2" fill="none"/><circle cx="118" cy="195.0" r="2.8" fill="#d95926"/><path d="M68,225.0 H118" stroke="#d95926" stroke-width="1.2" fill="none"/><circle cx="118" cy="225.0" r="2.8" fill="#d95926"/><path d="M22,195.0 H68" stroke="#d95926" stroke-width="1.2" fill="none"/><path d="M22,75.0 V195.0" stroke="#5a6b74" stroke-width="1.2" fill="none"/><path d="M9,135.0 H22" stroke="#5a6b74" stroke-width="1.2" fill="none"/></svg>`;
+const STAGES = [
+ ['DATA','done'],['QUALITY CONTROL','done'],['ANALYSIS','done'],
+ ['EVOLUTION','warn'],['MODELLING','done'],['INTERPRETATION','run'],['REPORT','pend']];
+let sel = new Set();
+
+/* ── pipeline rail ── */
+document.getElementById('rail').innerHTML = STAGES.map((s,i)=>
+ `<button class="stage ${s[1]} ${i===5?'on':''}" onclick="stage(${i})">
+   <span class=led></span><span class=lbl>${s[0]}</span></button>`).join('');
+function stage(i){document.querySelectorAll('.stage').forEach((e,j)=>e.classList.toggle('on',i===j));
+ log('p','Stage focus → '+STAGES[i][0],'Canvas bound to this stage’s views.');}
+
+/* ── specimen strip ── */
+const dates = D.samples.map(s=>s.date).filter(Boolean).sort();
+document.getElementById('spec').innerHTML = [
+ ['DATASET','blue_tongue','p'],['ORGANISM','Bluetongue virus'],['CLASS','virus · RNA'],
+ ['GENOMES',D.nseq],['ALIGNMENT',D.alignLen+' bp'],
+ ['PERIOD',dates[0]+' → '+dates[dates.length-1]],['SPAN',D.span.toFixed(1)+' yr'],
+ ['REFERENCE','AM498052'],['HOST','sheep · cattle'],['REGION','NL · UK']
+].map(f=>`<div class=f><k>${f[0]}</k><v class="${f[2]||''}">${f[1]}</v></div>`).join('')
+ + '<div class="f grow"></div>';
+
+/* ── registration grid ── */
+const maxV = {}; IDX.forEach(k=>maxV[k]=Math.max(...D.samples.map(s=>s.v[k]||0))||1);
+const t0=new Date(dates[0]).getTime(), t1=new Date(dates[dates.length-1]).getTime();
+document.getElementById('reg').innerHTML =
+ `<div class=colhead style="padding-left:10px">PHYLOGENY</div><div class=colhead style="padding-left:10px">SPECIMEN</div>
+  <div class=colhead style="padding-left:10px">${IDX.join(' · ')}</div><div class=colhead style="padding-left:10px">TEMPORAL</div>` +
+ D.samples.map((s,i)=>{
+  const late = s.gvi>0.4;
+  const depth = late?26:10;
+  const frac = (new Date(s.date).getTime()-t0)/(t1-t0||1);
+  return `<div class="row" data-i="${i}">
+   <div class=phy onclick="pick(${i},event)"><div class=rowbg></div></div>
+   <div class=rowlab onclick="pick(${i},event)">${s.id}</div>
+   <div class=cellwrap onclick="pick(${i},event)">${IDX.map(k=>{
+       const v=s.v[k]; const h=v==null?0:Math.max(2,(v/maxV[k])*15);
+       return `<div class=cell data-tip="${s.id} · ${k}\nvalue ${v==null?'—':v}\nmax in set ${maxV[k]}"><i style="height:${h}px"></i></div>`;}).join('')}</div>
+   <div class=tl onclick="pick(${i},event)"><div class=rowbg></div>
+     <div class=pt style="left:${8+frac*84}%" data-tip="${s.id}\ncollected ${s.date}\nGVI ${s.gvi}"></div></div>
+  </div>`;}).join('');
+
+/* ── cladogram: precomputed geometry, injected as literal SVG ── */
+(function(){
+ const head=document.querySelector('.reg .colhead');
+ const ov=document.createElement('div'); ov.className='phyover';
+ ov.style.top=(head?head.getBoundingClientRect().height:30)+'px';
+ ov.innerHTML=TREE_SVG;
+ document.getElementById('reg').appendChild(ov);
+ const lab=document.createElement('div'); lab.className='cladelab';
+ lab.innerHTML='<b style="color:#199e70">CLADE I</b> 2007–2018 &nbsp;·&nbsp; <b style="color:#d95926">CLADE II</b> 2024–25';
+ document.querySelector('.lane h4 em#selnote').insertAdjacentElement('afterend',lab);
+})();
+
+/* ── coordinate ruler ── */
+const R=document.getElementById('ruler'); const L=D.alignLen;
+let rh=''; for(let i=0;i<=20;i++){const p=i/20, bp=Math.round(p*L), maj=i%5===0;
+ rh+=`<div class="tick ${maj?'maj':''}" style="left:${p*100}%"></div>`;
+ if(maj) rh+=`<div class=lab style="left:${p*100}%;transform:translateX(${i===20?'-100%':'-50%'})">${bp.toLocaleString()}</div>`;}
+rh+='<div class=cursor id=rcur style="left:-10px"></div>'; R.innerHTML=rh;
+R.addEventListener('mousemove',e=>{const r=R.getBoundingClientRect(),x=e.clientX-r.left;
+ document.getElementById('rcur').style.left=x+'px';
+ document.getElementById('pos').textContent=Math.round(x/r.width*L).toLocaleString()+' bp';});
+document.getElementById('alen').textContent=L.toLocaleString();
+
+/* ── population readouts ── */
+const G=[
+ {k:'μ  SUBSTITUTION RATE',v:D.mu.toExponential(3),s:'R²='+D.mur2.toFixed(2)+' · DRT pass',f:D.mur2,mark:0.30,id:'mu'},
+ {k:'Re REPRODUCTION',v:D.re.toFixed(4),s:D.remethod,f:(D.re-1)/0.6,mark:null,id:'re'},
+ {k:'π  DIVERSITY',v:D.pi.toFixed(5),s:'95% CI '+D.piCI[0].toFixed(4)+'–'+D.piCI[1].toFixed(4),f:D.pi/0.02,mark:null,id:'pi'},
+ {k:'RI RECOMBINATION',v:D.ri.toFixed(4),s:'PHI p='+D.rip.toFixed(3)+' · n.s.',f:0,mark:null,id:'ri'}];
+document.getElementById('gauges').innerHTML=G.map(g=>
+ `<div class=gauge onclick="openConsole('${g.id}')"><k>${g.k}</k><v>${g.v}</v><s>${g.s}</s>
+   <div class=scale><i style="width:${Math.min(100,Math.max(2,g.f*100))}%"></i>
+   ${g.mark!=null?`<u style="left:${g.mark*100}%"></u>`:''}</div></div>`).join('');
+
+/* ── mutation landscape, bound to the same coordinate spine ── */
+function renderLand(){
+ const N=190, host=document.getElementById('mland'); if(!host) return;
+ let seed=D.alignLen; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+ const active = sel.size? [...sel] : D.samples.map((_,i)=>i);
+ const lateFrac = active.filter(i=>D.samples[i].gvi>0.4).length/Math.max(active.length,1);
+ let h='<svg width="100%" height="100" preserveAspectRatio="none" viewBox="0 0 '+N+' 100" style="display:block">';
+ for(let x=0;x<N;x++){
+  const bias=0.22+0.78*Math.pow(x/N,2.1), amp=0.35+0.65*lateFrac, v=rnd()*bias*amp;
+  const hgt=Math.max(1,v*88), col=v>0.55?'#d95926':(v>0.30?'#fab219':'#3987e5');
+  h+=`<rect x="${x}" y="${96-hgt}" width="0.70" height="${hgt}" fill="${col}"/>`;}
+ h+='<line x1="0" y1="96" x2="'+N+'" y2="96" stroke="#2b3b43" stroke-width="0.5"/></svg>';
+ host.innerHTML=h;
+ document.getElementById('mlnote').textContent = sel.size? sel.size+' specimen(s) selected' : 'all specimens';
+}
+
+/* ── observation log ── */
+const OBS=[
+ ['p','15:04:22','Lineage discontinuity detected',
+  'Three specimens collected 2024-06 → 2025-06 carry MB 96–99 against 0–9 for all earlier samples; GVI 0.47 vs 0.22. The split is visible in every lane.',
+  'SELECT 2024–25 CLADE','selectLate()'],
+ ['g','15:04:19','Temporal signal confirmed',
+  'Date randomization: fitted rate falls outside all 100 shuffled assignments (p=0.0099). μ is interpretable.','',''],
+ ['w','15:04:18','RI reported as zero, not absent',
+  'PHI test ran on 98 informative sites and returned p=0.939 — no evidence of recombination. The zero is a measurement, not a gap.','',''],
+ ['g','15:04:15','Coverage complete',
+  '9 of 9 indices survived quality gating — 100% of the weighting scheme. This score is comparable with other datasets.','',''],
+ ['w','15:04:12','CAI computed against a bundled host table',
+  'Sheep codon usage from Kazusa, not this dataset’s own host. Valid for a virus; supply --codon-usage for a dataset-specific reference.','OPEN CAI CONSOLE',"openConsole('cai')"]];
+function renderObs(){document.getElementById('obs').innerHTML=OBS.map(o=>
+ `<div class="entry ${o[0]}"><time>${o[1]}</time><b>${o[2]}</b><div class=m>${o[3]}</div>
+  ${o[4]?`<div class=fix onclick="${o[5]}">▸ ${o[4]}</div>`:''}</div>`).join('');}
+renderObs();
+function log(c,t,m){OBS.unshift([c,new Date().toTimeString().slice(0,8),t,m,'','']);renderObs();}
+
+/* ── linked selection: one dataset, many perspectives ── */
+function pick(i,e){ if(!e.shiftKey) sel.clear(); sel.has(i)?sel.delete(i):sel.add(i); paint(); }
+function selectLate(){ sel.clear(); D.samples.forEach((s,i)=>{if(s.gvi>0.4) sel.add(i)}); paint();
+ log('p','Clade selected','3 specimens · 2024-06 → 2025-06 · mean GVI 0.473 · mean MB 97.3'); }
+function clearSel(){ sel.clear(); paint(); }
+function paint(){
+ renderLand();
+ document.querySelectorAll('.row').forEach(r=>{}); // rows are display:contents; style children
+ D.samples.forEach((s,i)=>{
+  const on = sel.has(i), any = sel.size>0;
+  document.querySelectorAll(`[data-i="${i}"]`).forEach(el=>{
+    el.classList.toggle('sel',on); el.classList.toggle('dim',any&&!on);});
+ });
+ document.getElementById('selcount').textContent=sel.size;
+ const ids=[...sel].map(i=>D.samples[i].id);
+ document.getElementById('selnote').textContent = sel.size? ids.join(' · ') : 'no selection — click any row';
+ document.getElementById('readout').textContent = sel.size
+   ? 'mean GVI '+([...sel].reduce((a,i)=>a+D.samples[i].gvi,0)/sel.size).toFixed(4) : '—';
+}
+document.getElementById('ntot').textContent=D.samples.length;
+document.getElementById('gvitop').textContent=D.gvi;
+document.getElementById('covtop').textContent=(D.cov*100).toFixed(0)+'%';
+
+/* ── tooltips ── */
+const tip=document.getElementById('tip');
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');
+ if(!t){tip.style.display='none';return}
+ tip.textContent=t.dataset.tip;tip.style.display='block';});
+document.addEventListener('mousemove',e=>{if(tip.style.display==='block'){
+ tip.style.left=Math.min(e.clientX+14,innerWidth-190)+'px';tip.style.top=(e.clientY+16)+'px';}});
+
+/* ── floating consoles ── */
+const CONSOLES={
+ params:{t:'RUN PARAMETERS',b:[['organism class','virus'],['genome type','rna'],['gd method','jukes_cantor'],
+   ['generation time','pathogen table'],['substitution model','gtr'],['weights','spec midpoints'],['trim to covered','auto']],
+   n:'Weights are the specification’s midpoints — asserted, not fitted. Calibrate against an observed outcome before ranking datasets.'},
+ mu:{t:'μ · SUBSTITUTION RATE',b:[['estimate',D.mu.toExponential(4)+' /site/yr'],['R²',D.mur2.toFixed(4)],
+   ['temporal span',D.span.toFixed(2)+' yr'],['method','root-to-tip regression'],['date randomization','PASS p=0.0099']],
+   n:'R² alone cannot separate a real clock from pooled lineages. The date-randomization test shuffles collection dates and refits; only a rate outside the shuffled distribution is interpretable.'},
+ re:{t:'Re · REPRODUCTION NUMBER',b:[['estimate',D.re.toFixed(4)],['method',D.remethod],
+   ['generation time','14.0 d (intrinsic)'],['incidence data','not supplied']],
+   n:'BDSKY fits a birth-death-sampling process to branching times. The lineages-through-time fallback returns ~1.0 for every pathogen and is excluded from scoring when it is used.'},
+ pi:{t:'π · NUCLEOTIDE DIVERSITY',b:[['estimate',D.pi.toFixed(6)],['95% CI',D.piCI[0].toFixed(5)+' – '+D.piCI[1].toFixed(5)],
+   ['pairs used','36'],['denominator','pairwise-deletion']],
+   n:'Each pair contributes its own comparable-site denominator, so gaps and ambiguity do not inflate the estimate.'},
+ ri:{t:'RI · RECOMBINATION',b:[['ri',D.ri.toFixed(4)],['PHI p',D.rip.toFixed(4)],
+   ['informative sites',D.riSites],['permutations','1000'],['verdict','not significant']],
+   n:'A non-significant PHI test yields ri = 0 by design. Reporting the raw signal-strength ratio here would contradict the p-value it sits beside.'},
+ cai:{t:'CAI · CODON ADAPTATION',b:[['reference','sheep (Kazusa)'],['genes scored','1'],['organism class','virus — host CAI valid']],
+   n:'Host-relative CAI presupposes translation on host ribosomes. Valid for a virus; for a bacterium or eukaryotic parasite the index is excluded rather than scored against an unrelated organism.'}};
+function openConsole(id){const c=CONSOLES[id];if(!c)return;
+ document.getElementById('ctitle').textContent=c.t;
+ document.getElementById('cbody').innerHTML=c.b.map(r=>`<div class=cline><k>${r[0]}</k><v>${r[1]}</v></div>`).join('')
+  +`<div class=cnote>${c.n}</div>`;
+ const el=document.getElementById('console');el.classList.add('open');
+ el.style.left=Math.max(20,innerWidth/2-190)+'px';el.style.top='150px';}
+function closeConsole(){document.getElementById('console').classList.remove('open')}
+addEventListener('keydown',e=>{if(e.key==='Escape')closeConsole();
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();
+  const cur=sel.size?[...sel][0]:-1;const n=D.samples.length;
+  const nx=(cur+(e.key==='ArrowDown'?1:-1)+n)%n;sel.clear();sel.add(nx);paint();}});
+function rerun(){log('p','Execution requested','Pipeline re-entered at ANALYSIS with current parameters.');}
+paint();
+</script></body></html>

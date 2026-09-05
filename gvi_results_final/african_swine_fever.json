@@ -1,0 +1,170 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.16524827111758014,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 0.9961381677751555,
+      "normalizedValue" : 0.3320460559250518,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.32608695652173914,
+      "contribution" : 0.10827588780164733
+    }, {
+      "key" : "PI",
+      "rawValue" : 0.0037208769820825443,
+      "normalizedValue" : 0.18604384910412722,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.10869565217391305,
+      "contribution" : 0.020222157511318176
+    }, {
+      "key" : "MB",
+      "rawValue" : 4.125,
+      "normalizedValue" : 0.04125,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.23369565217391305,
+      "contribution" : 0.009639945652173914
+    }, {
+      "key" : "DNDS",
+      "rawValue" : 0.03834306344462749,
+      "normalizedValue" : 0.012781021148209164,
+      "configuredWeight" : 0.13761467889908255,
+      "effectiveWeight" : 0.16304347826086957,
+      "contribution" : 0.002083862143729755
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.0021454445833060535,
+      "normalizedValue" : 0.042908891666121066,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.10869565217391305,
+      "contribution" : 0.004664009963708812
+    }, {
+      "key" : "CAI",
+      "rawValue" : 0.6786391137487006,
+      "normalizedValue" : 0.6786391137487006,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.029891304347826088,
+      "contribution" : 0.020285408291401377
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.025759917568263013,
+      "normalizedValue" : 0.0025759917568263014,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.029891304347826088,
+      "contribution" : 7.699975360078618E-5
+    } ],
+    "excludedIndices" : [ "MU", "RI" ],
+    "effectiveWeightSum" : 0.8440366972477064,
+    "diagnostics" : [ "Excluded (no data supplied): mu, RI -- remaining weights renormalized to sum to 1 (was 0.844 of full scheme)", "7 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 4.125,
+      "category" : "Within-household transmission (Days); Genetic link confirmable -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 30.00]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 0.03834306344462749,
+      "category" : "Purifying selection (dN/dS < 1): functional constraint (pooled across 8 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 8 sequence(s)", "Pooled Nei-Gojobori counts across 8 result(s) (not an average of individual ratios)", "dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-5.144, two-tailed p=0.0000) -- purifying/negative selection", "Nei-Gojobori Z-test on the pooled counts: Z=-5.144, two-tailed p=2.691e-07, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-5.144, two-tailed p=0.0000) -- purifying/negative selection" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.0021454445833060535,
+      "category" : "Linked outbreak cluster (1-4 weeks, confidence: High) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 0.01562]" ]
+    },
+    "CAI" : {
+      "indexName" : "CAI",
+      "primaryValue" : 0.6786391137487006,
+      "category" : "Intermediate (Emerging; partial adaptation; Weeks-months) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.6773, 0.6791]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.025759917568263013,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 0.1030]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 2.082572367874025E-4,
+      "rSquared" : 0.06330782083927779,
+      "pointsUsed" : 9,
+      "timeSpanYears" : 17.485208473688317,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Negative branch length (-1.0848105816956694E-6) clamped to 0 for leaf/clade 'FR682468'", "Negative branch length (-6.780066135594681E-7) clamped to 0 for leaf/clade 'MH681419'", "Negative branch length (-4.5200440903963635E-7) clamped to 0 for leaf/clade 'MH766894'", "Negative branch length (-3.3900330677972727E-7) clamped to 0 for leaf/clade 'PQ932065'", "Negative branch length (-3.3900330677972727E-7) clamped to 0 for leaf/clade 'PQ932062'", "Built a 9-taxon Neighbor-Joining tree rooted at 'FR682468'", "Temporal signal is weak (R^2=0.063 < 0.3) -- treat this mu estimate as unreliable, not a precise rate", "Date randomization passed: the fitted rate (0.000208257) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0297, range [-0.000700536, 0.000208298]) -- the collection dates, not lineage structure alone, explain the divergence." ],
+      "temporalSignalConfirmed" : true
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2024-11-25",
+      "reMean" : 0.9961381677751555,
+      "interval" : {
+        "lower" : 0.9910319673889724,
+        "upper" : 1.006350568547522,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : null,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Negative branch length (-1.0848105816956694E-6) clamped to 0 for leaf/clade 'FR682468'", "Negative branch length (-6.780066135594681E-7) clamped to 0 for leaf/clade 'MH681419'", "Negative branch length (-4.5200440903963635E-7) clamped to 0 for leaf/clade 'MH766894'", "Negative branch length (-3.3900330677972727E-7) clamped to 0 for leaf/clade 'PQ932065'", "Negative branch length (-3.3900330677972727E-7) clamped to 0 for leaf/clade 'PQ932062'", "Built a 9-taxon Neighbor-Joining tree rooted at 'FR682468'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=0.9961, 95% likelihood-ratio interval [0.99, 1.01]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-388.6040 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 0.0037208769820825443,
+      "sequenceCount" : 9,
+      "alignmentLength" : 1941,
+      "pairsUsed" : 36,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.002575991756826379,
+        "upper" : 0.005151983513652757,
+        "level" : 0.95
+      },
+      "category" : "Established outbreak (Moderate diversity; chains of transmission); Multiple lineages co-circulate; endemic risk",
+      "diagnostics" : [ "36 of 36 sampled pairs had at least one comparable site" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.15002558743573724,
+    "gviAtHighWeight" : 0.18004959421989855
+  }, {
+    "key" : "PI",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.16474866388801573,
+    "gviAtHighWeight" : 0.16574416216998306
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.1580936146843453,
+    "gviAtHighWeight" : 0.17253405753496157
+  }, {
+    "key" : "DNDS",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.1595169467423664,
+    "gviAtHighWeight" : 0.17104759538650932
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.16233096804162106,
+    "gviAtHighWeight" : 0.16818743628403576
+  }, {
+    "key" : "CAI",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.1620966344097588,
+    "gviAtHighWeight" : 0.16839388436891886
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.16524827111758014,
+    "gviAtLowWeight" : 0.1642515566554363,
+    "gviAtHighWeight" : 0.1662468941634273
+  } ],
+  "skipped" : [ "RI: PHI test needs at least 4 informative biallelic sites, found 0. This alignment may be too conserved or too small to assess recombination.", "mu (excluded from composite GVI): temporal signal is too weak to interpret a molecular clock (R²=0.06, threshold 0.30): the collection dates explain almost none of the divergence, usually because the sampling window is too short or the alignment pools independently-introduced lineages. Excluded from the composite GVI (still reported below)." ],
+  "warnings" : [ "--trim-to-covered: No trimming needed: every column is covered by every sequence.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "CAI: no --codon-usage supplied; using the bundled 'pig' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (44.20%, from 'FR682468') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.", "Data quality advisory -- mu: the evolutionary rate came out unreliable (R²=0.06, reliable threshold 0.30). A single molecular-clock rate is only meaningful when every sequence shares one continuously evolving lineage. Common causes: collection dates don't span enough real time, or the alignment pools multiple genetically distinct lineages/strains/serotypes that were introduced independently rather than evolving from each other. If your sequences span more than one lineage, split them into separate per-lineage alignments and re-run each separately." ]
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept C — Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#fff; --ink:#101828; --ink-2:#475467; --ink-3:#98a2b3;
+  --line:#e4e7ec; --line-2:#f2f4f7;
+  --teal:#0f766e; --teal-bg:#e6f4f1; --teal-2:#115e59;
+  --amber:#b45309; --amber-bg:#fef6ec;
+  --grn:#15803d; --grn-bg:#eaf6ee;
+  --sans:'Space Grotesk',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 28px 100px}
+
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.logo{display:flex;align-items:baseline;gap:10px}
+.logo b{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.logo span{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.06em}
+
+/* the protocol rail — steps as a horizontal progress spine */
+.spine{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;margin-bottom:22px}
+.step{flex:1;display:flex;align-items:center;gap:11px;padding:12px 16px;border-radius:8px;position:relative}
+.step.done{color:var(--ink-2)} .step.now{background:var(--teal-bg)}
+.step .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;
+  font-family:var(--mono);font-size:11px;font-weight:500;background:var(--line);color:var(--ink-3)}
+.step.done .dot{background:var(--grn);color:#fff}
+.step.now .dot{background:var(--teal);color:#fff}
+.step .lbl{font-size:13.5px;font-weight:500}
+.step .sub{display:block;font-size:11.5px;font-weight:400;color:var(--ink-3);margin-top:1px}
+.step.now .lbl{color:var(--teal-2)}
+.step+.step:before{content:'';position:absolute;left:0;top:50%;width:1px;height:24px;background:var(--line);transform:translateY(-50%)}
+
+.cols{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:16px}
+.card h2{font-size:15px;font-weight:600;margin:0 0 3px;letter-spacing:-.01em}
+.card .hint{font-size:12.5px;color:var(--ink-3);margin:0 0 18px}
+
+/* headline */
+.result{background:linear-gradient(180deg,#fff,#fbfcfd);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:16px}
+.rt{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.score{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.score small{display:block;font-size:11px;font-weight:500;color:var(--ink-3);letter-spacing:.1em;margin-top:7px;font-family:var(--mono)}
+.badge{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:20px;background:var(--grn-bg);color:var(--grn);white-space:nowrap}
+.badge.warn{background:var(--amber-bg);color:var(--amber)}
+.donut{display:flex;gap:3px;margin-top:20px;height:8px;border-radius:4px;overflow:hidden}
+.donut i{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.legend b{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+/* index rows */
+.ix{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.ix:last-child{border-bottom:0}
+.ix .k{width:62px;font-family:var(--mono);font-size:12.5px;font-weight:500;flex:none}
+.ix .track{flex:1;height:7px;background:var(--line-2);border-radius:4px;overflow:hidden}
+.ix .track i{display:block;height:100%;background:var(--teal);border-radius:4px}
+.ix .v{width:82px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;flex:none}
+.ix .tag{width:74px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--grn);flex:none}
+.ix.out{opacity:.62}
+.ix.out .track i{background:repeating-linear-gradient(45deg,var(--ink-3),var(--ink-3) 2px,transparent 2px,transparent 5px)}
+.ix.out .tag{color:var(--amber)}
+
+/* right column: what to do */
+.todo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.todo h3{font-size:13px;font-weight:600;margin:0 0 14px}
+.act{border:1px solid var(--line);border-radius:9px;padding:13px 14px;margin-bottom:11px;background:#fcfcfd}
+.act .w{font-size:12.5px;font-weight:500;color:var(--amber);margin-bottom:5px}
+.act .d{font-size:12px;color:var(--ink-2);line-height:1.5}
+.act button{margin-top:10px;font-family:var(--sans);font-size:12px;font-weight:500;padding:7px 13px;border-radius:7px;
+  border:1px solid var(--teal);background:var(--teal);color:#fff;cursor:pointer}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:500;margin-bottom:6px}
+.field .box{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fcfcfd}
+.field .box.ok{border-color:var(--grn);background:var(--grn-bg)}
+.field .box .t{font-family:var(--mono);font-size:12px;color:var(--ink-2);flex:1}
+.field .req{font-family:var(--mono);font-size:10px;color:var(--amber);margin-left:6px}
+.cta{width:100%;font-family:var(--sans);font-size:14.5px;font-weight:600;padding:13px;border-radius:9px;border:0;
+  background:var(--teal);color:#fff;cursor:pointer;margin-top:4px}
+.note{font-size:11.5px;color:var(--ink-3);text-align:center;margin-top:9px}
+footer{margin-top:26px;font-size:12px;color:var(--ink-3);text-align:center}
+</style></head><body>
+<div class="wrap">
+
+<div class="top">
+  <div class="logo"><b>GVI</b><span>GENOMIC VIRULENCE INDEX</span></div>
+  <div style="font-family:var(--mono);font-size:11.5px;color:var(--ink-3)">blue_tongue · 9 seq · 01 Sep 2026</div>
+</div>
+
+<div class="spine">
+  <div class="step done"><div class="dot">✓</div><div><span class="lbl">Sequences</span><span class="sub">9 aligned · 639 bp</span></div></div>
+  <div class="step done"><div class="dot">✓</div><div><span class="lbl">Organism</span><span class="sub">virus · RNA</span></div></div>
+  <div class="step done"><div class="dot">✓</div><div><span class="lbl">Dates</span><span class="sub">9 of 9 dated</span></div></div>
+  <div class="step now"><div class="dot">4</div><div><span class="lbl">Result</span><span class="sub">9 of 9 indices scored</span></div></div>
+</div>
+
+<div class="cols">
+  <div>
+    <div class="result">
+      <div class="rt">
+        <div class="score">0.3203<small>COMPOSITE GVI</small></div>
+        <span class="badge">✓ Comparable · 100% of scheme</span>
+      </div>
+      <div class="donut">
+        <i style="background:#0f766e;flex:27.5"></i><i style="background:#158a80;flex:19.7"></i>
+        <i style="background:#1d9e92;flex:13.8"></i><i style="background:#26b2a4;flex:12.4"></i>
+        <i style="background:#38c3b5;flex:9.2"></i><i style="background:#54d1c4;flex:9.2"></i>
+        <i style="background:#7bded3;flex:3.2"></i><i style="background:#a5e9e1;flex:2.5"></i>
+        <i style="background:#c9f2ed;flex:2.5"></i>
+      </div>
+      <div class="legend"><span><b style="background:#0f766e"></b>each block = one index, width = its weight</span>
+        <span><b style="background:repeating-linear-gradient(45deg,#98a2b3,#98a2b3 2px,transparent 2px,transparent 4px)"></b>hatched = excluded</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Index breakdown</h2>
+      <p class="hint">Bar shows the normalised value; the tag shows whether it entered the score.</p>
+      <div class="ix"><div class="k">Re</div><div class="track"><i style="width:34%"></i></div><div class="v">1.0180</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">π</div><div class="track"><i style="width:91%"></i></div><div class="v">0.01810</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">MB</div><div class="track"><i style="width:39%"></i></div><div class="v">39.25</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">μ</div><div class="track"><i style="width:18%"></i></div><div class="v">1.82e-3</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">GD</div><div class="track"><i style="width:27%"></i></div><div class="v">0.01356</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">CAI</div><div class="track"><i style="width:66%"></i></div><div class="v">0.6593</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">dN/dS</div><div class="track"><i style="width:1%"></i></div><div class="v">0.0385</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">GC</div><div class="track"><i style="width:3%"></i></div><div class="v">0.2558</div><div class="tag">scored</div></div>
+      <div class="ix"><div class="k">RI</div><div class="track"><i style="width:0%"></i></div><div class="v">0.0000</div><div class="tag">scored</div></div>
+    </div>
+
+    <div class="card">
+      <h2>The same result when gating fires</h2>
+      <p class="hint">enterotoxaemia — 2 of 9 indices, 6% of the scheme.</p>
+      <div class="rt" style="margin-bottom:14px">
+        <div class="score" style="font-size:34px">0.0529<small>COMPOSITE GVI</small></div>
+        <span class="badge warn">⚠ Not comparable · 6% of scheme</span>
+      </div>
+      <div class="ix out"><div class="k">μ</div><div class="track"><i style="width:100%"></i></div><div class="v">0.2090</div><div class="tag">excluded</div></div>
+      <div class="ix out"><div class="k">π</div><div class="track"><i style="width:100%"></i></div><div class="v">0.2298</div><div class="tag">excluded</div></div>
+      <div class="ix out"><div class="k">dN/dS</div><div class="track"><i style="width:36%"></i></div><div class="v">1.0671</div><div class="tag">excluded</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="todo" style="margin-bottom:16px">
+      <h3>What to fix</h3>
+      <div class="act">
+        <div class="w">Alignment coverage</div>
+        <div class="d">Sequences cover different windows (ungapped 605–1119 bp). Position-wise indices are comparing real bases against absent data.</div>
+        <button>Trim to shared window — keeps 582 of 1234 columns</button>
+      </div>
+      <div class="act">
+        <div class="w">Re from weak fallback</div>
+        <div class="d">The lineages-through-time estimator returns ~1.0 for every pathogen and cannot carry the largest weight.</div>
+        <button>Add incidence data…</button>
+      </div>
+    </div>
+
+    <div class="todo">
+      <h3>Inputs</h3>
+      <div class="field"><label>Aligned FASTA <span class="req">REQUIRED</span></label>
+        <div class="box ok"><div class="t">aligned.fasta · 9 seq</div><span style="color:var(--grn)">✓</span></div></div>
+      <div class="field"><label>Organism class</label><div class="box ok"><div class="t">virus</div><span style="color:var(--grn)">✓</span></div></div>
+      <div class="field"><label>Genome type</label><div class="box ok"><div class="t">rna</div><span style="color:var(--grn)">✓</span></div></div>
+      <div class="field"><label>Collection dates</label><div class="box ok"><div class="t">metadata.csv · 9/9</div><span style="color:var(--grn)">✓</span></div></div>
+      <button class="cta">Run analysis</button>
+      <div class="note">Everything else is derived automatically</div>
+    </div>
+  </div>
+</div>
+
+<footer>Concept C — guided protocol. A step spine across the top, the result and its breakdown on the left, and a persistent “what to fix” column that turns every exclusion into an action.</footer>
+</div></body></html>

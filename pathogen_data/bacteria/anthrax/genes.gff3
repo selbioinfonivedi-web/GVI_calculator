@@ -1,0 +1,3 @@
+##gff-version 3
+##sequence-region alignment 1 597
+alignment	GVI-QA	CDS	1	597	.	+	0	ID=cds_pagA;gene=pagA;product=protective_antigen_partial

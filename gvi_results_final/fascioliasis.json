@@ -1,0 +1,127 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.2803735884886149,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 1.0012443681613388,
+      "normalizedValue" : 0.33374812272044624,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.8275862068965517,
+      "contribution" : 0.276205342941059
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.5494505494505493,
+      "normalizedValue" : 0.05494505494505493,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.07586206896551724,
+      "contribution" : 0.004168245547555891
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.09655172413793106,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU", "PI", "MB", "DNDS", "GD", "CAI" ],
+    "effectiveWeightSum" : 0.3325688073394495,
+    "diagnostics" : [ "Excluded (no data supplied): mu, pi, MB, dN/dS, GD, CAI -- remaining weights renormalized to sum to 1 (was 0.333 of full scheme)", "3 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 91.25,
+      "category" : "Pandemic variant (6-18 months) (6-18 months); Variant of concern (VOC); major public health action -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 183.0]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 0.8587414135379874,
+      "category" : "Purifying selection (dN/dS < 1): functional constraint (pooled across 8 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 8 sequence(s)", "Pooled Nei-Gojobori counts across 8 result(s) (not an average of individual ratios)", "dN and dS not significantly different (Nei-Gojobori Z-test, Z=-1.446, two-tailed p=0.1481) -- neutral evolution cannot be rejected", "Nei-Gojobori Z-test on the pooled counts: Z=-1.446, two-tailed p=0.1481, verdict=NOT_SIGNIFICANT. dN and dS not significantly different (Nei-Gojobori Z-test, Z=-1.446, two-tailed p=0.1481) -- neutral evolution cannot be rejected" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.4126903259774205,
+      "category" : "Different strain / serotype (>1 year, confidence: Low (ambiguous without tree)) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 0.8322]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.5494505494505493,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 8 sequence(s)",
+      "diagnostics" : [ "Mean of 8 per-sequence value(s); range [0.000, 1.099]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 0.12109732752275333,
+      "rSquared" : 0.8590289749197818,
+      "pointsUsed" : 9,
+      "timeSpanYears" : 8.263013698630175,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Implausible for a DNA genome (No known DNA virus replicates this fast); immune escape N/A",
+      "diagnostics" : [ "Rooting the temporal (root-to-tip) regression at 'ON798410.1' (earliest collection date, 2015.19) instead of the pipeline reference 'ON798413.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'ON798413.1'.", "Negative branch length (-0.004540738868927663) clamped to 0 for leaf/clade 'PZ501565.1'", "Negative branch length (-0.0027244433213566843) clamped to 0 for leaf/clade 'PZ501561.1'", "Negative branch length (-0.0020252579725815734) clamped to 0 for leaf/clade 'ON798412.1'", "Negative branch length (-0.0013501719817210084) clamped to 0 for leaf/clade 'ON798410.1'", "Built a 9-taxon Neighbor-Joining tree rooted at 'ON798410.1'", "Temporal signal R^2=0.859 over 8.26 years (n=9)", "Date randomization passed: the fitted rate (0.121097) sits in the upper tail of 100 shuffled date assignments (empirical p=0.0099, range [-0.105146, 0.120994]) -- the collection dates, not lineage structure alone, explain the divergence." ],
+      "temporalSignalConfirmed" : true
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2023-06-14",
+      "reMean" : 1.0012443681613388,
+      "interval" : {
+        "lower" : 0.9757133662304227,
+        "upper" : 1.0216691697060716,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : 2785.137076370602,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Rooting the temporal (root-to-tip) regression at 'ON798410.1' (earliest collection date, 2015.19) instead of the pipeline reference 'ON798413.1' -- an arbitrary or recent --reference-id can otherwise invert or discard a real molecular-clock signal. GD, GC deviation, and CAI are unaffected and still use 'ON798413.1'.", "Negative branch length (-0.004540738868927663) clamped to 0 for leaf/clade 'PZ501565.1'", "Negative branch length (-0.0027244433213566843) clamped to 0 for leaf/clade 'PZ501561.1'", "Negative branch length (-0.0020252579725815734) clamped to 0 for leaf/clade 'ON798412.1'", "Negative branch length (-0.0013501719817210084) clamped to 0 for leaf/clade 'ON798410.1'", "Built a 9-taxon Neighbor-Joining tree rooted at 'ON798410.1'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=1.0012, 95% likelihood-ratio interval [0.98, 1.02]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-33.1835 over 137 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 0.2782356532356533,
+      "sequenceCount" : 9,
+      "alignmentLength" : 364,
+      "pairsUsed" : 36,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.24998473748473748,
+        "upper" : 0.3075549450549451,
+        "level" : 0.95
+      },
+      "category" : "Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets",
+      "diagnostics" : [ "36 of 36 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.0,
+      "globalPhiStatistic" : 0.0,
+      "pValue" : 1.0,
+      "informativeSitesUsed" : 183,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "183 informative biallelic sites; 7922 pairs within 100bp window (of 16653 total pairs); 1000 permutations run", "windowed PHI=0.0000, global PHI=0.0000, one-sided permutation p=1.0000" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.2803735884886149,
+    "gviAtLowWeight" : 0.26599231528329287,
+    "gviAtHighWeight" : 0.290950649434791
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.2803735884886149,
+    "gviAtLowWeight" : 0.2769008452969928,
+    "gviAtHighWeight" : 0.28391924329727175
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.2803735884886149,
+    "gviAtLowWeight" : 0.27485336945997674,
+    "gviAtHighWeight" : 0.2860428049355484
+  } ],
+  "skipped" : [ "CAI: not computed for organism-class 'eukaryotic_parasite'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.", "MB (excluded from composite GVI): the mean mutation burden is 25% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "GD (excluded from composite GVI): the mean mutation burden is 25% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "dN/dS (excluded from composite GVI): the mean mutation burden is 25% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "pi (excluded from composite GVI): the mean mutation burden is 25% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run.", "mu (excluded from composite GVI): the mean mutation burden is 25% of the alignment length, so the sequences are not the closely-related, genuinely-aligned set these position-wise indices assume. Excluded from the composite GVI (still reported in full below). Re-align with e.g. \"mafft --auto input.fasta > aligned.fasta\", or split genuinely distinct lineages into separate alignments, then re-run." ],
+  "warnings" : [ "--trim-to-covered: Alignment trimmed to the 364 of 488 columns (75%) covered by all 9 sequences; longest contiguous block 111 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "--trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (36.54%, from 'ON798413.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'eukaryotic_parasite', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.", "NOT COMPARABLE: this GVI of 0.2804 was computed from only 3 of 9 indices, 33% of the weighting scheme (threshold for cross-dataset comparison is 60%). The surviving indices were renormalized to sum to 1, so the score still falls in [0,1] and still looks like a normal GVI -- but it summarizes a different, much smaller set of evidence than a fully-populated score does. Do NOT rank this value against other pathogens' GVIs. A LOW value here is especially easy to misread: it can mean the contributing indices happened to be small, not that virulence is low. Resolve the exclusions listed under 'Skipped' and re-run before drawing any comparative conclusion.", "Data quality advisory -- mutation burden: the average 91.3 variant events per sequence is 25% of the 364 bp alignment length, implausibly high for sequences assumed to be closely related. Likely causes: a misalignment (see the alignment-quality advisory above if present), the wrong reference sequence selected (check Reference sequence id), or the sequences genuinely aren't as closely related as assumed.", "mu remedy -- Lineage structure detected: the 9 sequences separate into 2 groups at a 5% p-distance cut-off, which is where this tool's own distance table places \"different strain / serotype\". A single molecular-clock rate across groups measures the distance BETWEEN them, not substitution accumulated over time. Estimate a rate within each group separately: [group 1, 5 seq: ON798413.1, ON798412.1, ON798411.1, ON798410.1, ON798409.1] [group 2, 4 seq: PZ501569.1, PZ501565.1, PZ501564.1, PZ501561.1]" ]
+}

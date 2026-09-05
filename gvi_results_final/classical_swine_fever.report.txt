@@ -1,0 +1,72 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.4449   [8 of 9 indices, 88% of the weighting scheme]
+
+  Re             raw=1.00380      norm=0.3346 weight=0.3141 contribution=0.1051
+  pi             raw=0.0400868    norm=1.0000 weight=0.1047 contribution=0.1047
+  MB             raw=50.2857      norm=0.5029 weight=0.2251 contribution=0.1132
+  dN/dS          raw=0.0719193    norm=0.0240 weight=0.1571 contribution=0.0038
+  GD             raw=0.0463844    norm=0.9277 weight=0.1047 contribution=0.0971
+  CAI            raw=0.702383     norm=0.7024 weight=0.0288 contribution=0.0202
+  GC_Deviation   raw=0.242564     norm=0.0243 weight=0.0288 contribution=0.0007
+  RI             raw=0.00000      norm=0.0000 weight=0.0366 contribution=0.0000
+  excluded: [MU]
+
+-- Component index detail (dataset-wide) --
+  mu             value=0.0112105    category=Ultra high error (Vesicular Stomatitis Virus (VSV)); immune escape Days-weeks
+      * Built a 8-taxon Neighbor-Joining tree rooted at 'MZ869037'
+      * Temporal signal is weak (R^2=0.154 < 0.3) -- treat this mu estimate as unreliable, not a precise rate
+      * Date randomization FAILED: 21 of 100 shuffled date assignments reproduced a rate at least as high as the fitted one (0.0112105); empirical p=0.2178, threshold 0.05, randomized range [-0.0229808, 0.0209995]. Randomly reassigned dates reproduce this rate, so it reflects the divergence structure of the alignment rather than elapsed time. The usual cause is several independently introduced lineages pooled into one alignment -- split them per lineage and re-run. A high R2 does not rescue this: R2 measures how tightly the points sit on a line, not whether the dates are what put them there.
+  Re             value=1.00380      category=Endemic (Stable circulation -> Stable); Routine vaccination
+      * Built a 8-taxon Neighbor-Joining tree rooted at 'MZ869037'
+      * Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=1.0038, 95% likelihood-ratio interval [0.97, 1.03]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-10.0349 over 136 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.
+      * Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number.
+  pi             value=0.0400868    category=Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets
+      * 28 of 28 sampled pairs had at least one comparable site
+  RI             value=0.00000      category=Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis
+      * 63 informative biallelic sites; 365 pairs within 100bp window (of 1953 total pairs); 1000 permutations run
+      * windowed PHI=0.1288, global PHI=0.1009, one-sided permutation p=0.9730
+  MB             value=50.2857      category=Pandemic variant (6-18 months) (6-18 months); Variant of concern (VOC); major public health action -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [41.00, 61.00]
+  dN/dS          value=0.0719193    category=Purifying selection (dN/dS < 1): functional constraint (pooled across 7 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 7 sequence(s)
+      * Pooled Nei-Gojobori counts across 7 result(s) (not an average of individual ratios)
+      * dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-14.815, two-tailed p=0.0000) -- purifying/negative selection
+      * Nei-Gojobori Z-test on the pooled counts: Z=-14.815, two-tailed p=0.000, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-14.815, two-tailed p=0.0000) -- purifying/negative selection
+  GD             value=0.0463844    category=Different geographic source (3-12 months, confidence: Low-moderate) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.03757, 0.05660]
+  CAI            value=0.702383     category=Adapted (Established circulation; Months-years) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.6971, 0.7096]
+  GC_Deviation   value=0.242564     category=Native (No compositional anomaly; Stable, expected) -- mean across 7 sequence(s)
+      * Mean of 7 per-sequence value(s); range [0.000, 0.4468]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  dN/dS          GVI range [0.4296, 0.4603]  (spread=0.0307, base=0.4449)
+  pi             GVI range [0.4320, 0.4576]  (spread=0.0256, base=0.4449)
+  GD             GVI range [0.4337, 0.4560]  (spread=0.0223, base=0.4449)
+  Re             GVI range [0.4354, 0.4545]  (spread=0.0191, base=0.4449)
+  RI             GVI range [0.4415, 0.4482]  (spread=0.0067, base=0.4449)
+  MB             GVI range [0.4416, 0.4481]  (spread=0.0065, base=0.4449)
+  GC_Deviation   GVI range [0.4424, 0.4473]  (spread=0.0050, base=0.4449)
+  CAI            GVI range [0.4433, 0.4464]  (spread=0.0030, base=0.4449)
+
+-- Per-sequence detail omitted (7 sequence(s) -- pass --per-sequence to include it) --
+
+-- Skipped --
+  - mu (excluded from composite GVI): the date-randomization test failed -- randomly reshuffled collection dates reproduce this rate, so it reflects the alignment's divergence structure rather than elapsed time (usually several independently-introduced lineages pooled together). A high R² does not rescue this: R² measures how tightly the points sit on a line, not whether the dates are what put them there. Excluded from the composite GVI (still reported below); split by lineage and re-run.
+
+-- Warnings --
+  - --trim-to-covered: No trimming needed: every column is covered by every sequence.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - CAI: no --codon-usage supplied; using the bundled 'pig' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (48.88%, from 'MZ869037') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.
+  - Data quality advisory -- mu: the evolutionary rate came out unreliable (R²=0.15, reliable threshold 0.30). A single molecular-clock rate is only meaningful when every sequence shares one continuously evolving lineage. Common causes: collection dates don't span enough real time, or the alignment pools multiple genetically distinct lineages/strains/serotypes that were introduced independently rather than evolving from each other. If your sequences span more than one lineage, split them into separate per-lineage alignments and re-run each separately.
+  - mu remedy -- Lineage structure detected: the 8 sequences separate into 2 groups at a 5% p-distance cut-off, which is where this tool's own distance table places "different strain / serotype". A single molecular-clock rate across groups measures the distance BETWEEN them, not substitution accumulated over time. Estimate a rate within each group separately: [group 1, 5 seq: MZ869037, MZ869026, MZ869038, MZ869033, MZ869041] [group 2, 3 seq: MZ869043, MZ869028, MZ869035]
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/classical_swine_fever.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/classical_swine_fever.csv

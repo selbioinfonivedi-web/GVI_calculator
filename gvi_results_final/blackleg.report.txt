@@ -1,0 +1,61 @@
+=== Genomic Virulence Index (GVI) Report ===
+
+############################################
+##  WHOLE-FILE RESULT (all sequences combined)
+############################################
+
+GVI = 0.4448   [6 of 9 indices, 58% of the weighting scheme]
+  *** NOT COMPARABLE across datasets -- too little of the weighting scheme survived quality
+      gating. See the warning below before ranking this value against anything. ***
+
+  pi             raw=0.0543836    norm=1.0000 weight=0.1594 contribution=0.1594
+  MB             raw=20.7000      norm=0.2070 weight=0.3426 contribution=0.0709
+  dN/dS          raw=0.677134     norm=0.2257 weight=0.2390 contribution=0.0540
+  GD             raw=0.0659041    norm=1.0000 weight=0.1594 contribution=0.1594
+  GC_Deviation   raw=0.267062     norm=0.0267 weight=0.0438 contribution=0.0012
+  RI             raw=0.00000      norm=0.0000 weight=0.0558 contribution=0.0000
+  excluded: [MU, RE, CAI]
+
+-- Component index detail (dataset-wide) --
+  pi             value=0.0543836    category=Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets
+      * 55 of 55 sampled pairs had at least one comparable site
+  RI             value=0.00000      category=Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis
+      * 34 informative biallelic sites; 476 pairs within 100bp window (of 561 total pairs); 1000 permutations run
+      * windowed PHI=0.0000, global PHI=0.0000, one-sided permutation p=1.0000
+  MB             value=20.7000      category=Established outbreak (months) (1-3 months); Variant of interest (VOI) classification -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 34.00]
+  dN/dS          value=0.677134     category=Purifying selection (dN/dS < 1): functional constraint (pooled across 10 sequence(s), no single gene-specific reference band applies)
+      * Pooled from the winning (max-omega) gene of each of 10 sequence(s)
+      * Pooled Nei-Gojobori counts across 10 result(s) (not an average of individual ratios)
+      * dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-2.262, two-tailed p=0.0237) -- purifying/negative selection
+      * Nei-Gojobori Z-test on the pooled counts: Z=-2.262, two-tailed p=0.02371, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-2.262, two-tailed p=0.0237) -- purifying/negative selection
+  GD             value=0.0659041    category=Different strain / serotype (>1 year, confidence: Low (ambiguous without tree)) -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 0.1084]
+  GC_Deviation   value=0.267062     category=Native (No HGT signal; Stable, expected) -- mean across 10 sequence(s)
+      * Mean of 10 per-sequence value(s); range [0.000, 0.2967]
+
+-- Sensitivity analysis (each index's weight perturbed +/-20%, most sensitive first) --
+  MB             GVI range [0.4252, 0.4658]  (spread=0.0406, base=0.4448)
+  pi             GVI range [0.4250, 0.4640]  (spread=0.0390, base=0.4448)
+  GD             GVI range [0.4250, 0.4640]  (spread=0.0390, base=0.4448)
+  dN/dS          GVI range [0.4329, 0.4572]  (spread=0.0243, base=0.4448)
+  RI             GVI range [0.4397, 0.4499]  (spread=0.0103, base=0.4448)
+  GC_Deviation   GVI range [0.4410, 0.4485]  (spread=0.0075, base=0.4448)
+
+-- Per-sequence detail omitted (10 sequence(s) -- pass --per-sequence to include it) --
+
+-- Skipped --
+  - mu: Cannot estimate mu: need at least 2 distinct collection dates with usable distances, found 1. Provide a temporally spread dataset.
+  - Re: Phylodynamic Re fallback needs at least 5 dated sequences, got 3
+  - CAI: not computed for organism-class 'bacterium'. Host-relative CAI measures adaptation to the host's tRNA pool, which only applies to organisms that translate on host ribosomes (viruses). This organism has its own ribosomes and tRNA genes, so a host codon table would measure similarity to an unrelated organism rather than host adaptation. A valid alternative is CAI against this organism's OWN highly-expressed genes (ribosomal proteins, elongation factors), which is how Sharp & Li originally defined it.
+
+-- Warnings --
+  - --trim-to-covered: Alignment trimmed to the 337 of 756 columns (45%) covered by all 11 sequences; longest contiguous block 337 bp. The discarded columns were positions where at least one sequence had no data, so every index now compares observed bases rather than absent coverage. Note this is NOT a re-alignment: the input was correctly aligned, it simply pooled sequences with different coverage windows.
+  - Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.
+  - Re: the birth-death (BDSKY) fit was unavailable for this dataset (BDSKY-ML Re needs every sequence dated (8 missing); use the phylodynamic fallback instead), so Re falls back to the lineages-through-time regression, which is markedly less able to distinguish growth rates -- treat the resulting Re as indicative only.
+  - --trim-to-covered: remapped 1 gene annotation(s) onto the trimmed coordinates. Gene spans supplied against the untrimmed alignment would otherwise fall outside it and be skipped, silently costing the dN/dS and CAI the trim was meant to recover.
+  - GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (31.75%, from 'MN737045.1') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.
+  - NOT COMPARABLE: this GVI of 0.4448 was computed from only 6 of 9 indices, 58% of the weighting scheme (threshold for cross-dataset comparison is 60%). The surviving indices were renormalized to sum to 1, so the score still falls in [0,1] and still looks like a normal GVI -- but it summarizes a different, much smaller set of evidence than a fully-populated score does. Do NOT rank this value against other pathogens' GVIs. A LOW value here is especially easy to misread: it can mean the contributing indices happened to be small, not that virulence is low. Resolve the exclusions listed under 'Skipped' and re-run before drawing any comparative conclusion.
+
+JSON report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/blackleg.json
+CSV report written to /tmp/claude-1000/-home-ubantu-ICAR-miniProjects-GVI-calculator/e630f13a-2d32-4b63-9ecf-783419277cdd/scratchpad/corpus_refit/blackleg.csv

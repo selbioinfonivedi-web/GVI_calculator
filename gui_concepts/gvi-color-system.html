@@ -1,0 +1,148 @@
+<!doctype html><html lang=en data-theme=dark><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>GVI · Colour System</title>
+<link rel=preconnect href="https://fonts.googleapis.com"><link rel=preconnect href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400;75..100,500;75..100,600;75..100,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel=stylesheet>
+<style>
+:root{--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Archivo',system-ui,sans-serif}
+html[data-theme=dark]{--bg:#0B1113;--surf:#111A1D;--raised:#172226;--rule:#1B272B;--rule-hi:#28383E;
+ --tx:#E6EDF0;--tx2:#A3B2BA;--tx3:#6B7C85;--phos:#17A89C}
+html[data-theme=light]{--bg:#F7F7F4;--surf:#FFFFFF;--raised:#FFFFFF;--rule:#E4E3DD;--rule-hi:#CFCEC6;
+ --tx:#12181B;--tx2:#41525B;--tx3:#6B7C85;--phos:#00776B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx2);font-family:var(--sans);font-size:13.5px;line-height:1.6;
+ font-variation-settings:'wdth' 94;-webkit-font-smoothing:antialiased}
+.w{max-width:1080px;margin:0 auto;padding:44px 34px 110px}
+h1{font-size:26px;color:var(--tx);letter-spacing:-.01em;font-weight:700}
+.sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--tx3);margin:6px 0 0}
+.lede{max-width:70ch;margin:22px 0 0;color:var(--tx2)}
+.lede b{color:var(--tx)}
+h2{font-size:11px;font-family:var(--mono);letter-spacing:.18em;color:var(--phos);margin:44px 0 4px;font-weight:500}
+h2 span{color:var(--tx3)}
+.dek{color:var(--tx3);font-size:12.5px;max-width:72ch;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--tx3);text-align:left;
+ padding:0 12px 8px 0;border-bottom:1px solid var(--rule-hi);font-weight:400}
+td{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.tok{font-family:var(--mono);color:var(--tx);white-space:nowrap}
+.use{color:var(--tx2)}
+.hx{font-family:var(--mono);font-size:11.5px;color:var(--tx2);white-space:nowrap}
+.hx i{display:inline-block;width:26px;height:13px;margin-right:8px;vertical-align:-2px}
+.n{font-family:var(--mono);text-align:right;color:var(--tx3)}
+.ramp{display:flex;height:34px;margin:6px 0 4px}
+.ramp i{flex:1;position:relative}
+.ramp i b{position:absolute;left:3px;bottom:3px;font-family:var(--mono);font-size:8px;font-weight:400;opacity:.75}
+.rule{border-left:2px solid var(--phos);padding-left:15px;margin:14px 0;max-width:74ch;font-size:12.5px}
+.rule b{color:var(--tx);display:block;margin-bottom:2px}
+.toggle{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+ background:var(--surf);color:var(--phos);border:1px solid var(--rule-hi);padding:8px 14px;cursor:pointer}
+.fin{display:flex;gap:20px;margin:10px 0 4px;flex-wrap:wrap}
+.fin div{text-align:center}
+.fin .box{width:74px;height:30px;margin-bottom:5px}
+.fin small{font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.08em}
+.note{font-size:12px;color:var(--tx3);margin-top:8px;max-width:74ch}
+.bad{color:#E05C55} .good{color:#2FA84F}
+</style></head><body>
+<button class=toggle onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">◐ TOGGLE MODE</button>
+<div class=w>
+
+<h1>GVI Colour System</h1>
+<p class=sub>STAIN · A COLOUR ARCHITECTURE FOR GENOMIC ANALYSIS · v1.0</p>
+
+<p class=lede>Hues are derived from <b>molecular-biology stains</b> — methylene blue, ethidium, malachite green, crystal violet, eosin, safranin — rather than from a screen palette. Two rules govern every application:
+<b>colour states what kind of claim a pixel is making</b>, and <b>finish states how far that claim can be trusted</b>. Every value below was run through a six-check validator (lightness band, chroma floor, CVD separation, normal-vision floor, contrast) on its own ground; the results are quoted, not asserted.</p>
+
+<h2>01 · BACKGROUND HIERARCHY <span>— depth by value, never by shadow or gradient</span></h2>
+<p class=dek>Six layers. The canvas sits <em>below</em> the workspace so visualizations read as recessed instrument glass; panels sit above. Separation is carried by value steps and hairlines.</p>
+<table><thead><tr><th>Layer</th><th>Use</th><th>Dark</th><th>Light</th></tr></thead><tbody><tr><td class=tok>canvas</td><td class=use>Deep visualization canvas — trees, genomes, networks</td>
+        <td class=hx><i style="background:#080D0F"></i>#080D0F</td>
+        <td class=hx><i style="background:#FFFFFF;outline:1px solid #ddd"></i>#FFFFFF</td></tr><tr><td class=tok>workspace</td><td class=use>Main scientific workspace (app ground)</td>
+        <td class=hx><i style="background:#0B1113"></i>#0B1113</td>
+        <td class=hx><i style="background:#F7F7F4;outline:1px solid #ddd"></i>#F7F7F4</td></tr><tr><td class=tok>surface</td><td class=use>Secondary analytical surface — lanes, tables</td>
+        <td class=hx><i style="background:#111A1D"></i>#111A1D</td>
+        <td class=hx><i style="background:#FFFFFF;outline:1px solid #ddd"></i>#FFFFFF</td></tr><tr><td class=tok>raised</td><td class=use>Floating analysis panels & consoles</td>
+        <td class=hx><i style="background:#172226"></i>#172226</td>
+        <td class=hx><i style="background:#FFFFFF;outline:1px solid #ddd"></i>#FFFFFF</td></tr><tr><td class=tok>hover</td><td class=use>Hover layer</td>
+        <td class=hx><i style="background:#1D2A2F"></i>#1D2A2F</td>
+        <td class=hx><i style="background:#EFEFEA;outline:1px solid #ddd"></i>#EFEFEA</td></tr><tr><td class=tok>select</td><td class=use>Selected layer</td>
+        <td class=hx><i style="background:#12312D"></i>#12312D</td>
+        <td class=hx><i style="background:#E3F0EC;outline:1px solid #ddd"></i>#E3F0EC</td></tr><tr><td class=tok>rule</td><td class=use>Hairline division</td>
+        <td class=hx><i style="background:#1B272B"></i>#1B272B</td>
+        <td class=hx><i style="background:#E4E3DD;outline:1px solid #ddd"></i>#E4E3DD</td></tr><tr><td class=tok>rule-hi</td><td class=use>Emphasised rule / console bracket</td>
+        <td class=hx><i style="background:#28383E"></i>#28383E</td>
+        <td class=hx><i style="background:#CFCEC6;outline:1px solid #ddd"></i>#CFCEC6</td></tr></tbody></table>
+
+<h2>02 · TEXT HIERARCHY <span>— contrast measured against each ground</span></h2>
+<table><thead><tr><th>Token</th><th>Use</th><th>Dark</th><th>Light</th><th class=n>Dark ratio</th><th class=n>Light ratio</th></tr></thead><tbody>
+<tr><td class=tok>primary</td><td class=use>Values, headings</td><td class=hx><i style="background:#E6EDF0"></i>#E6EDF0</td><td class=hx><i style="background:#12181B;outline:1px solid #ddd"></i>#12181B</td><td class=n>16.07:1</td><td class=n>16.69:1</td></tr><tr><td class=tok>secondary</td><td class=use>Body, labels</td><td class=hx><i style="background:#A3B2BA"></i>#A3B2BA</td><td class=hx><i style="background:#41525B;outline:1px solid #ddd"></i>#41525B</td><td class=n>8.73:1</td><td class=n>7.58:1</td></tr><tr><td class=tok>muted</td><td class=use>Captions, units</td><td class=hx><i style="background:#6B7C85"></i>#6B7C85</td><td class=hx><i style="background:#6B7C85;outline:1px solid #ddd"></i>#6B7C85</td><td class=n>4.39:1</td><td class=n>4.04:1</td></tr><tr><td class=tok>faint</td><td class=use>Non-text rules & ticks only</td><td class=hx><i style="background:#43535B"></i>#43535B</td><td class=hx><i style="background:#93A2AA;outline:1px solid #ddd"></i>#93A2AA</td><td class=n>2.38:1</td><td class=n>2.45:1</td></tr>
+</tbody></table>
+<p class=note><b class=good>Passes:</b> primary, secondary and muted all clear 4:1 in both modes. <span class=bad>faint</span> is deliberately below text contrast — it is licensed for rules, ticks and grid lines only, never for type.</p>
+
+<h2>03 · SIGNATURE <span>— the platform's own colour</span></h2>
+<table><tbody><tr><td class=tok>phosphor</td><td class=use>Live instrument state: cursor, active readout, selection edge</td><td class=hx><i style="background:#17A89C"></i>#17A89C</td><td class=hx><i style="background:#00776B;outline:1px solid #ddd"></i>#00776B</td></tr></tbody></table>
+<div class=rule><b>Phosphor is reserved for the interface, never for data.</b> It marks what is live: the cursor, the active readout, the selected edge. Testing showed it sits only ΔE 12.9 from series blue under all-pairs — so it was removed from the data palette entirely rather than allowed to impersonate a series.</div>
+
+<h2>04 · WORKFLOW STAGES <span>— one active at a time</span></h2>
+<p class=dek>An accent per stage, ordered <b>cool → warm as inference increases</b>: raw observation is neutral, direct measurement is cool, model-derived claims are warm, output returns to neutral.</p>
+<table><thead><tr><th>Stage</th><th>Claim type</th><th>Dark</th><th>Light</th></tr></thead><tbody><tr><td class=tok>DATA</td><td class=use>Raw observation — no inference</td>
+        <td class=hx><i style="background:#6E8794"></i>#6E8794</td>
+        <td class=hx><i style="background:#55707E;outline:1px solid #ddd"></i>#55707E</td></tr><tr><td class=tok>QUALITY CONTROL</td><td class=use>Instrument check</td>
+        <td class=hx><i style="background:#17A89C"></i>#17A89C</td>
+        <td class=hx><i style="background:#00776B;outline:1px solid #ddd"></i>#00776B</td></tr><tr><td class=tok>GENOMIC ANALYSIS</td><td class=use>Direct measurement</td>
+        <td class=hx><i style="background:#3E8FD4"></i>#3E8FD4</td>
+        <td class=hx><i style="background:#2A6FB0;outline:1px solid #ddd"></i>#2A6FB0</td></tr><tr><td class=tok>EVOLUTIONARY</td><td class=use>Model-fitted rate</td>
+        <td class=hx><i style="background:#1F9C79"></i>#1F9C79</td>
+        <td class=hx><i style="background:#1A9068;outline:1px solid #ddd"></i>#1A9068</td></tr><tr><td class=tok>NETWORK</td><td class=use>Relational structure</td>
+        <td class=hx><i style="background:#8C7BD8"></i>#8C7BD8</td>
+        <td class=hx><i style="background:#6A55B8;outline:1px solid #ddd"></i>#6A55B8</td></tr><tr><td class=tok>MODELLING</td><td class=use>Generative model</td>
+        <td class=hx><i style="background:#9A9422"></i>#9A9422</td>
+        <td class=hx><i style="background:#7D7A12;outline:1px solid #ddd"></i>#7D7A12</td></tr><tr><td class=tok>INTERPRETATION</td><td class=use>Inferred claim</td>
+        <td class=hx><i style="background:#D2683A"></i>#D2683A</td>
+        <td class=hx><i style="background:#B14E22;outline:1px solid #ddd"></i>#B14E22</td></tr><tr><td class=tok>REPORTING</td><td class=use>Output — no new claim</td>
+        <td class=hx><i style="background:#A89880"></i>#A89880</td>
+        <td class=hx><i style="background:#6B5D48;outline:1px solid #ddd"></i>#6B5D48</td></tr></tbody></table>
+<div class=rule><b>These tint the active canvas — they do not colour the workflow rail.</b> Measured under deuteranopia, MODELLING and INTERPRETATION sit ΔE 1.7 apart, and three re-hue attempts could not separate two adjacent warm stages. Rather than ship a rail whose stages are indistinguishable, the rail carries <em>status</em> colour only and stage identity comes from label and position. A stage accent appears only when its stage is active, so no two are ever on screen together and the adjacency problem cannot arise.</div>
+
+<h2>05 · ANALYTICAL STATUS <span>— reserved; never reused as a series</span></h2>
+<table><thead><tr><th>State</th><th>Glyph</th><th>Dark</th><th>Light</th><th class=n>Dark</th><th class=n>Light</th></tr></thead><tbody>
+<tr><td class=tok>complete</td><td class=use style="font-size:15px;color:#2FA84F">●</td><td class=hx><i style="background:#2FA84F"></i>#2FA84F</td><td class=hx><i style="background:#1E7A38;outline:1px solid #ddd"></i>#1E7A38</td><td class=n>6.19:1</td><td class=n>5.02:1</td></tr><tr><td class=tok>running</td><td class=use style="font-size:15px;color:#17A89C">◐</td><td class=hx><i style="background:#17A89C"></i>#17A89C</td><td class=hx><i style="background:#00776B;outline:1px solid #ddd"></i>#00776B</td><td class=n>6.45:1</td><td class=n>5.08:1</td></tr><tr><td class=tok>pending</td><td class=use style="font-size:15px;color:#6E8794">○</td><td class=hx><i style="background:#6E8794"></i>#6E8794</td><td class=hx><i style="background:#5A7280;outline:1px solid #ddd"></i>#5A7280</td><td class=n>5.03:1</td><td class=n>4.71:1</td></tr><tr><td class=tok>warning</td><td class=use style="font-size:15px;color:#E0A32E">▲</td><td class=hx><i style="background:#E0A32E"></i>#E0A32E</td><td class=hx><i style="background:#8A6410;outline:1px solid #ddd"></i>#8A6410</td><td class=n>8.56:1</td><td class=n>5.00:1</td></tr><tr><td class=tok>error</td><td class=use style="font-size:15px;color:#E05C55">✕</td><td class=hx><i style="background:#E05C55"></i>#E05C55</td><td class=hx><i style="background:#B03028;outline:1px solid #ddd"></i>#B03028</td><td class=n>5.28:1</td><td class=n>5.93:1</td></tr><tr><td class=tok>significant</td><td class=use style="font-size:15px;color:#C77DE0">◆</td><td class=hx><i style="background:#C77DE0"></i>#C77DE0</td><td class=hx><i style="background:#8A3FA8;outline:1px solid #ddd"></i>#8A3FA8</td><td class=n>6.74:1</td><td class=n>5.83:1</td></tr><tr><td class=tok>emerging</td><td class=use style="font-size:15px;color:#E0812F">▲</td><td class=hx><i style="background:#E0812F"></i>#E0812F</td><td class=hx><i style="background:#A8500C;outline:1px solid #ddd"></i>#A8500C</td><td class=n>6.66:1</td><td class=n>5.12:1</td></tr>
+</tbody></table>
+<p class=note>Every state clears 4.7:1 on both grounds. <b>Each ships with its glyph</b> — status is never carried by colour alone, so it survives greyscale printing and colour-vision deficiency.</p>
+
+<h2>06 · TRUST FINISH <span>— the system's distinguishing move</span></h2>
+<p class=dek>Colour encodes biology; <b>finish encodes whether the number can be trusted</b>. This keeps the two orthogonal, so a gated measurement never has to give up its identity hue to say it was gated.</p>
+<div class=fin>
+ <div><div class=box style="background:#3E8FD4"></div><small>MEASURED — solid</small></div>
+ <div><div class=box style="background:repeating-linear-gradient(45deg,#E0A32E,#E0A32E 2px,transparent 2px,transparent 6px);outline:1px solid #E0A32E"></div><small>GATED — 45° hatch</small></div>
+ <div><div class=box style="background:none;outline:1px dashed #6B7C85"></div><small>ABSENT — outline</small></div>
+ <div><div class=box style="background:#3E8FD4;opacity:.28"></div><small>OUT OF SELECTION — 28%</small></div>
+</div>
+
+<h2>07 · BIOLOGICAL SERIES <span>— lineages, clades, genes</span></h2>
+<p class=dek>Seven slots, assigned in fixed order and never cycled. Hues alternate cool/warm so no two same-family colours sit adjacent.</p>
+<table><thead><tr><th>Slot</th><th>Dark</th><th>Light</th></tr></thead><tbody>
+<tr><td class=tok>1 methylene blue</td><td class=hx><i style="background:#3E8FD4"></i>#3E8FD4</td><td class=hx><i style="background:#2A6FB0;outline:1px solid #ddd"></i>#2A6FB0</td></tr><tr><td class=tok>2 ethidium orange</td><td class=hx><i style="background:#D2683A"></i>#D2683A</td><td class=hx><i style="background:#B14E22;outline:1px solid #ddd"></i>#B14E22</td></tr><tr><td class=tok>3 malachite green</td><td class=hx><i style="background:#1F9C79"></i>#1F9C79</td><td class=hx><i style="background:#1A9068;outline:1px solid #ddd"></i>#1A9068</td></tr><tr><td class=tok>4 gram amber</td><td class=hx><i style="background:#A87A18"></i>#A87A18</td><td class=hx><i style="background:#8A5A08;outline:1px solid #ddd"></i>#8A5A08</td></tr><tr><td class=tok>5 crystal violet</td><td class=hx><i style="background:#8C7BD8"></i>#8C7BD8</td><td class=hx><i style="background:#6A55B8;outline:1px solid #ddd"></i>#6A55B8</td></tr><tr><td class=tok>6 eosin pink</td><td class=hx><i style="background:#CE6B85"></i>#CE6B85</td><td class=hx><i style="background:#A8425E;outline:1px solid #ddd"></i>#A8425E</td></tr><tr><td class=tok>7 safranin olive</td><td class=hx><i style="background:#7A9A1F"></i>#7A9A1F</td><td class=hx><i style="background:#6B8A16;outline:1px solid #ddd"></i>#6B8A16</td></tr>
+</tbody></table>
+<div class=rule><b>Caps, measured not guessed.</b> Adjacent forms (stacked bars, lines, trees): all seven slots pass in both modes. All-pairs forms (scatter, network, choropleth, small multiples): <b>the first three slots only</b> — past three, fold to “Other” or facet. An eighth series is never a generated hue.</div>
+
+<h2>08 · SELECTION PRESSURE <span>— diverging, grey midpoint</span></h2>
+<p class=dek>Purifying ↔ neutral ↔ positive. Two poles that read as opposite, with a neutral midpoint so “no selection” looks like nothing rather than like a third category.</p>
+<div class=ramp><i style="background:#2A6FB0"><b style="color:#fff">#2A6FB0</b></i><i style="background:#3E8FD4"><b style="color:#fff">#3E8FD4</b></i><i style="background:#6FB0E8"><b style="color:#fff">#6FB0E8</b></i><i style="background:#3A4247"><b style="color:#111">#3A4247</b></i><i style="background:#E09A72"><b style="color:#111">#E09A72</b></i><i style="background:#D2683A"><b style="color:#111">#D2683A</b></i><i style="background:#A8391A"><b style="color:#111">#A8391A</b></i></div>
+<div class=ramp><i style="background:#17497A"><b style="color:#fff">#17497A</b></i><i style="background:#2A6FB0"><b style="color:#fff">#2A6FB0</b></i><i style="background:#7FB2E4"><b style="color:#111">#7FB2E4</b></i><i style="background:#D8D6D0"><b style="color:#111">#D8D6D0</b></i><i style="background:#E0906A"><b style="color:#111">#E0906A</b></i><i style="background:#B14E22"><b style="color:#111">#B14E22</b></i><i style="background:#7A2F0E"><b style="color:#fff">#7A2F0E</b></i></div>
+<p class=note>dN/dS &lt; 1 → blue arm · ≈ 1 → grey · &gt; 1 → orange arm. <b>The orange arm is only used when the Nei–Gojobori Z-test clears</b>; an unsupported ω &gt; 1 stays grey and hatched.</p>
+
+<h2>09 · DIVERSITY <span>— sequential, one hue</span></h2>
+<p class=dek>π, coverage depth, heatmap magnitude. One hue, light→dark, validated ordinal so the step nearest the surface still clears 2:1.</p>
+<div class=ramp><i style="background:#1B5568"><b style="color:#fff">#1B5568</b></i><i style="background:#1E6D82"><b style="color:#fff">#1E6D82</b></i><i style="background:#22869B"><b style="color:#fff">#22869B</b></i><i style="background:#2E9BB0"><b style="color:#fff">#2E9BB0</b></i><i style="background:#4FB3C4"><b style="color:#111">#4FB3C4</b></i><i style="background:#7FCDD6"><b style="color:#111">#7FCDD6</b></i><i style="background:#AEE2E4"><b style="color:#111">#AEE2E4</b></i></div>
+<div class=ramp><i style="background:#CFE7EC"><b style="color:#111">#CFE7EC</b></i><i style="background:#A9D4DD"><b style="color:#111">#A9D4DD</b></i><i style="background:#7FBECC"><b style="color:#111">#7FBECC</b></i><i style="background:#4FA3B8"><b style="color:#111">#4FA3B8</b></i><i style="background:#2E869B"><b style="color:#fff">#2E869B</b></i><i style="background:#1E6478"><b style="color:#fff">#1E6478</b></i><i style="background:#134857"><b style="color:#fff">#134857</b></i></div>
+
+<h2>10 · RULES</h2>
+<div class=rule><b>Cool is measured, warm is inferred.</b> A warm hue on screen always means a model produced it. If a reader has to ask whether a number was observed or fitted, the colour has failed.</div>
+<div class=rule><b>Finish carries trust, hue carries identity.</b> Never recolour a gated value — hatch it. Its lineage identity is still true.</div>
+<div class=rule><b>Status colours are reserved.</b> They are never slot 8 of a series, and never appear without their glyph.</div>
+<div class=rule><b>Phosphor is interface-only.</b> If teal appears in a chart, something is wrong.</div>
+<div class=rule><b>Three slots for all-pairs forms, seven for adjacent forms.</b> Beyond the cap, fold to “Other” or facet — never generate an extra hue.</div>
+<div class=rule><b>Dark and light are one product.</b> Same hue family, same slot order, re-stepped for each ground. Light mode is not an inverted dark mode: greens and teals gain chroma on paper or they read grey, which is exactly what the validator caught twice here.</div>
+<div class=rule><b>No gradient grounds, no decorative shadow.</b> Depth comes from the six background values and hairlines. A shadow appears only on a floating console, where it signals detachment from the plane.</div>
+
+</div></body></html>

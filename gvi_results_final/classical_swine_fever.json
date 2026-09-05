@@ -1,0 +1,193 @@
+{
+  "dataset_gvi" : {
+    "gvi" : 0.444860147706,
+    "components" : [ {
+      "key" : "RE",
+      "rawValue" : 1.0037974683544304,
+      "normalizedValue" : 0.33459915611814345,
+      "configuredWeight" : 0.2752293577981651,
+      "effectiveWeight" : 0.3141361256544502,
+      "contribution" : 0.10510968255020212
+    }, {
+      "key" : "PI",
+      "rawValue" : 0.040086812204774676,
+      "normalizedValue" : 1.0,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.10471204188481677,
+      "contribution" : 0.10471204188481677
+    }, {
+      "key" : "MB",
+      "rawValue" : 50.285714285714285,
+      "normalizedValue" : 0.5028571428571429,
+      "configuredWeight" : 0.19724770642201833,
+      "effectiveWeight" : 0.225130890052356,
+      "contribution" : 0.11320867614061332
+    }, {
+      "key" : "DNDS",
+      "rawValue" : 0.07191927658318438,
+      "normalizedValue" : 0.023973092194394793,
+      "configuredWeight" : 0.13761467889908255,
+      "effectiveWeight" : 0.1570680628272251,
+      "contribution" : 0.0037654071509520613
+    }, {
+      "key" : "GD",
+      "rawValue" : 0.04638443578253786,
+      "normalizedValue" : 0.9276887156507572,
+      "configuredWeight" : 0.09174311926605505,
+      "effectiveWeight" : 0.10471204188481677,
+      "contribution" : 0.09714017964929396
+    }, {
+      "key" : "CAI",
+      "rawValue" : 0.7023826710392219,
+      "normalizedValue" : 0.7023826710392219,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.028795811518324606,
+      "contribution" : 0.020225679008982828
+    }, {
+      "key" : "GC",
+      "rawValue" : 0.24256351334099385,
+      "normalizedValue" : 0.024256351334099386,
+      "configuredWeight" : 0.025229357798165136,
+      "effectiveWeight" : 0.028795811518324606,
+      "contribution" : 6.984813211389875E-4
+    }, {
+      "key" : "RI",
+      "rawValue" : 0.0,
+      "normalizedValue" : 0.0,
+      "configuredWeight" : 0.03211009174311927,
+      "effectiveWeight" : 0.03664921465968587,
+      "contribution" : 0.0
+    } ],
+    "excludedIndices" : [ "MU" ],
+    "effectiveWeightSum" : 0.8761467889908257,
+    "diagnostics" : [ "Excluded (no data supplied): mu -- remaining weights renormalized to sum to 1 (was 0.876 of full scheme)", "8 of 9 weighted indices contributed to this GVI" ]
+  },
+  "dataset_indices" : {
+    "MB" : {
+      "indexName" : "MB",
+      "primaryValue" : 50.285714285714285,
+      "category" : "Pandemic variant (6-18 months) (6-18 months); Variant of concern (VOC); major public health action -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [41.00, 61.00]" ]
+    },
+    "DNDS" : {
+      "indexName" : "dN/dS",
+      "primaryValue" : 0.07191927658318438,
+      "category" : "Purifying selection (dN/dS < 1): functional constraint (pooled across 7 sequence(s), no single gene-specific reference band applies)",
+      "diagnostics" : [ "Pooled from the winning (max-omega) gene of each of 7 sequence(s)", "Pooled Nei-Gojobori counts across 7 result(s) (not an average of individual ratios)", "dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-14.815, two-tailed p=0.0000) -- purifying/negative selection", "Nei-Gojobori Z-test on the pooled counts: Z=-14.815, two-tailed p=0.000, verdict=PURIFYING_SELECTION. dS significantly exceeds dN (Nei-Gojobori Z-test, Z=-14.815, two-tailed p=0.0000) -- purifying/negative selection" ]
+    },
+    "GD" : {
+      "indexName" : "GD",
+      "primaryValue" : 0.04638443578253786,
+      "category" : "Different geographic source (3-12 months, confidence: Low-moderate) -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [0.03757, 0.05660]" ]
+    },
+    "CAI" : {
+      "indexName" : "CAI",
+      "primaryValue" : 0.7023826710392219,
+      "category" : "Adapted (Established circulation; Months-years) -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [0.6971, 0.7096]" ]
+    },
+    "GC" : {
+      "indexName" : "GC_Deviation",
+      "primaryValue" : 0.24256351334099385,
+      "category" : "Native (No compositional anomaly; Stable, expected) -- mean across 7 sequence(s)",
+      "diagnostics" : [ "Mean of 7 per-sequence value(s); range [0.000, 0.4468]" ]
+    }
+  },
+  "population_indices" : {
+    "MU" : {
+      "muSubPerSiteYear" : 0.011210483066851334,
+      "rSquared" : 0.15367022826432702,
+      "pointsUsed" : 8,
+      "timeSpanYears" : 1.9232876712328562,
+      "method" : "TREE_ROOT_TO_TIP",
+      "category" : "Ultra high error (Vesicular Stomatitis Virus (VSV)); immune escape Days-weeks",
+      "diagnostics" : [ "Built a 8-taxon Neighbor-Joining tree rooted at 'MZ869037'", "Temporal signal is weak (R^2=0.154 < 0.3) -- treat this mu estimate as unreliable, not a precise rate", "Date randomization FAILED: 21 of 100 shuffled date assignments reproduced a rate at least as high as the fitted one (0.0112105); empirical p=0.2178, threshold 0.05, randomized range [-0.0229808, 0.0209995]. Randomly reassigned dates reproduce this rate, so it reflects the divergence structure of the alignment rather than elapsed time. The usual cause is several independently introduced lineages pooled into one alignment -- split them per lineage and re-run. A high R2 does not rescue this: R2 measures how tightly the points sit on a line, not whether the dates are what put them there." ],
+      "temporalSignalConfirmed" : false
+    },
+    "RE" : {
+      "method" : "BDSKY_ML",
+      "estimateDate" : "2019-02-01",
+      "reMean" : 1.0037974683544304,
+      "interval" : {
+        "lower" : 0.9731602660373311,
+        "upper" : 1.0344346706715297,
+        "level" : 0.95
+      },
+      "series" : [ ],
+      "doublingTimeDays" : 912.6437877372564,
+      "category" : "Endemic (Stable circulation -> Stable); Routine vaccination",
+      "diagnostics" : [ "Built a 8-taxon Neighbor-Joining tree rooted at 'MZ869037'", "Native birth-death-sampling profile-likelihood fit (BDSKY-equivalent generative model, maximum likelihood rather than Bayesian MCMC): Re=1.0038, 95% likelihood-ratio interval [0.97, 1.03]. becomeUninfectiousRate held at 73.0500/yr, the reciprocal of the supplied 5.0-day generation time; samplingProportion profiled over [0.002, 0.80] and best at 0.002; log-likelihood=-10.0349 over 136 Re grid points. delta is held rather than fitted because (Re, delta, s) has a likelihood ridge along which a free three-parameter fit returns whatever its starting point happened to be near.", "Re is sensitive to the generation time: because delta = 365.25/generationTime scales the whole birth-death process, a generation time wrong by a factor of k moves Re by roughly the same factor. The 5.0-day value used here came from --generation-time-days or the bundled table; check it is right for this pathogen before quoting the number." ]
+    },
+    "PI" : {
+      "pi" : 0.040086812204774676,
+      "sequenceCount" : 8,
+      "alignmentLength" : 1119,
+      "pairsUsed" : 28,
+      "subsampled" : false,
+      "confidenceInterval" : {
+        "lower" : 0.032011202604366136,
+        "upper" : 0.047492978424613815,
+        "level" : 0.95
+      },
+      "category" : "Hyperendemic / highly recombinant (Very high diversity; multiple species/types); Complex epidemiology; multiple control targets",
+      "diagnostics" : [ "28 of 28 sampled pairs had at least one comparable site" ]
+    },
+    "RI" : {
+      "method" : "PHI_TEST_BREAKPOINT_SCAN",
+      "ri" : 0.0,
+      "windowedPhiStatistic" : 0.12876712328767123,
+      "globalPhiStatistic" : 0.10087045570916539,
+      "pValue" : 0.973026973026973,
+      "informativeSitesUsed" : 63,
+      "permutationsRun" : 1000,
+      "category" : "Single-lineage outbreak (No/minimal recombination); Simple phylogeny; standard analysis",
+      "diagnostics" : [ "63 informative biallelic sites; 365 pairs within 100bp window (of 1953 total pairs); 1000 permutations run", "windowed PHI=0.1288, global PHI=0.1009, one-sided permutation p=0.9730" ]
+    }
+  },
+  "ml_dnds_per_gene" : { },
+  "reassortment" : [ ],
+  "sensitivity" : [ {
+    "key" : "RE",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.4354036283304236,
+    "gviAtHighWeight" : 0.45452192683086884
+  }, {
+    "key" : "PI",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.43202318267814616,
+    "gviAtHighWeight" : 0.45762400234926237
+  }, {
+    "key" : "MB",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.44158435396430423,
+    "gviAtHighWeight" : 0.4480907422447425
+  }, {
+    "key" : "DNDS",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.4295975952078248,
+    "gviAtHighWeight" : 0.460261039235379
+  }, {
+    "key" : "GD",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.43369529723536016,
+    "gviAtHighWeight" : 0.45596141098838755
+  }, {
+    "key" : "CAI",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.4433375330401329,
+    "gviAtHighWeight" : 0.4463805356474461
+  }, {
+    "key" : "GC",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.442376943783278,
+    "gviAtHighWeight" : 0.44734698847078463
+  }, {
+    "key" : "RI",
+    "baseGvi" : 0.444860147706,
+    "gviAtLowWeight" : 0.44149437289168053,
+    "gviAtHighWeight" : 0.4482322422508915
+  } ],
+  "skipped" : [ "mu (excluded from composite GVI): the date-randomization test failed -- randomly reshuffled collection dates reproduce this rate, so it reflects the alignment's divergence structure rather than elapsed time (usually several independently-introduced lineages pooled together). A high R² does not rescue this: R² measures how tightly the points sit on a line, not whether the dates are what put them there. Excluded from the composite GVI (still reported below); split by lineage and re-run." ],
+  "warnings" : [ "--trim-to-covered: No trimming needed: every column is covered by every sequence.", "Re: no --incidence data and --generation-time-days was left at its default (5 days, tuned for a fast viral epidemic) -- Re is highly sensitive to this value and a wrong generation time can silently compress a real growth-rate difference toward Re=1, reading as false stability. Set --generation-time-days to a value appropriate for this pathogen's actual transmission cycle (e.g. much longer for a vector-borne parasite with a multi-week tick/vector cycle than for a directly-transmitted respiratory virus) before trusting this Re.", "CAI: no --codon-usage supplied; using the bundled 'pig' reference table (real data from the Kazusa Codon Usage Database, not this dataset's own host) -- supply --codon-usage for a genuine dataset-specific host reference instead.", "GC_Deviation: no --reference-gc supplied; using the alignment's own reference sequence's GC% (48.88%, from 'MZ869037') as the baseline instead -- deviation is measured from THIS dataset's reference, not an external host-genome target; supply --reference-gc explicitly for that.", "GC_Deviation: organism-class is 'virus', so a large GC deviation is NOT reported as horizontal gene transfer. Classical HGT (conjugation, transformation, transduction) is a documented mechanism in bacteria, but is not how viruses or eukaryotic parasites typically acquire compositional shifts -- for those, mutational pressure (e.g. APOBEC/ADAR editing) or host-driven composition bias is the usual explanation. The deviation value itself is unchanged; only its interpretation is.", "Data quality advisory -- mu: the evolutionary rate came out unreliable (R²=0.15, reliable threshold 0.30). A single molecular-clock rate is only meaningful when every sequence shares one continuously evolving lineage. Common causes: collection dates don't span enough real time, or the alignment pools multiple genetically distinct lineages/strains/serotypes that were introduced independently rather than evolving from each other. If your sequences span more than one lineage, split them into separate per-lineage alignments and re-run each separately.", "mu remedy -- Lineage structure detected: the 8 sequences separate into 2 groups at a 5% p-distance cut-off, which is where this tool's own distance table places \"different strain / serotype\". A single molecular-clock rate across groups measures the distance BETWEEN them, not substitution accumulated over time. Estimate a rate within each group separately: [group 1, 5 seq: MZ869037, MZ869026, MZ869038, MZ869033, MZ869041] [group 2, 3 seq: MZ869043, MZ869028, MZ869035]" ]
+}
