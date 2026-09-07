@@ -1,0 +1,224 @@
+name: CI
+
+# The corpus job runs on every push and pull request. It takes the longest of the
+# four by some margin, and it is the one that earns its runtime: the unit suite has
+# been green through defects that reached stored results twice — CAI silently
+# skipped on all seven datasets that could compute it, and RI/mu drifting behind the
+# source. Neither failed a test; both were obvious in a corpus diff.
+#
+# If it becomes a bottleneck, move `corpus` to a schedule and keep jobs 1 and 2 on
+# every push, rather than dropping it.
+on:
+  push:
+    branches: [master, main]
+    tags: ['v*']
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '17'
+  # Runners are memory-constrained; the parent POM caps surefire's own heap via
+  # surefire.heap so JaCoCo's agent flag survives. Never pass -DargLine here.
+  MAVEN_OPTS: -Xmx1g
+
+jobs:
+  # ── 1 ─────────────────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build and unit test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build and test
+        working-directory: gvi-calculator-java
+        run: mvn -B verify
+
+      - name: Summarise test results
+        if: always()
+        working-directory: gvi-calculator-java
+        run: |
+          total=$(grep -rh "Tests run:" */target/surefire-reports/*.txt 2>/dev/null \
+                  | awk -F'[ ,]+' '{t+=$3} END{print t+0}')
+          fail=$(grep -rh "Tests run:" */target/surefire-reports/*.txt 2>/dev/null \
+                  | awk -F'[ ,]+' '{f+=$5+$7} END{print f+0}')
+          echo "### Tests: $total run, $fail failed" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Coverage summary
+        if: always()
+        working-directory: gvi-calculator-java
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import glob, xml.etree.ElementTree as ET
+          rows, cov_t, mis_t = [], 0, 0
+          for f in sorted(glob.glob('*/target/site/jacoco/jacoco.xml')):
+              mod = f.split('/')[0]
+              for c in ET.parse(f).getroot().findall('counter'):
+                  if c.get('type') == 'INSTRUCTION':
+                      cov, mis = int(c.get('covered')), int(c.get('missed'))
+                      cov_t += cov; mis_t += mis
+                      rows.append((mod, 100 * cov / (cov + mis)))
+          print("### Coverage\n")
+          print("| Module | Instructions |")
+          print("|---|---|")
+          for m, p in rows:
+              print(f"| {m} | {p:.1f}% |")
+          if cov_t + mis_t:
+              print(f"| **Total** | **{100 * cov_t / (cov_t + mis_t):.1f}%** |")
+          # Baseline measured 2026-09-07: 74.4% overall. No gate is enforced yet --
+          # set a ratchet from a measured figure rather than picking a number, or the
+          # result is a wave of low-value tests written to hit it.
+          PY
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage
+          path: gvi-calculator-java/*/target/site/jacoco/
+          retention-days: 14
+
+      - name: Upload jars
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars
+          path: |
+            gvi-calculator-java/gvi-cli/target/gvi-calculator.jar
+            gvi-calculator-java/gvi-web/target/gvi-calculator-web.jar
+          retention-days: 14
+
+  # ── 2 ─────────────────────────────────────────────────────────────────────
+  self-test:
+    name: Self-test the built artifact
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          name: jars
+          path: jars
+
+      # Deliberately run against the assembled jar rather than the Maven classpath.
+      # A shipped binary that cannot validate itself is the failure this guards: the
+      # check has to exercise what users actually receive, including its resources.
+      - name: Run the 13 bundled diagnostic checks
+        run: |
+          java -jar jars/gvi-cli/target/gvi-calculator.jar --self-test | tee selftest.txt
+          grep -q "All self-tests passed" selftest.txt
+          echo "### Self-test: all 13 checks passed" >> "$GITHUB_STEP_SUMMARY"
+
+  # ── 3 ─────────────────────────────────────────────────────────────────────
+  corpus-regression:
+    name: Corpus regression (16 datasets)
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build the jars this job runs
+        working-directory: gvi-calculator-java
+        run: mvn -B -q install -DskipTests
+
+      - name: Run every dataset end to end
+        run: bash run_corpus.sh "$RUNNER_TEMP/corpus"
+
+      # The point of the job. A change to any estimator shows up as a reviewable diff
+      # rather than as silent drift in numbers nobody re-checked.
+      - name: Diff against the committed baseline
+        run: |
+          python3 - <<'PY'
+          import json, glob, os, sys
+          out = os.environ["RUNNER_TEMP"] + "/corpus"
+          drift, missing, rows = [], [], []
+          for f in sorted(glob.glob("gvi_results_final/*.json")):
+              name = os.path.basename(f)[:-5]
+              fresh = os.path.join(out, name + ".json")
+              if not os.path.exists(fresh):
+                  missing.append(name); continue
+              a = json.load(open(fresh))["dataset_gvi"]
+              b = json.load(open(f))["dataset_gvi"]
+              d_gvi = abs(a["gvi"] - b["gvi"])
+              d_cov = abs(a["effectiveWeightSum"] - b["effectiveWeightSum"])
+              same_excl = sorted(a["excludedIndices"]) == sorted(b["excludedIndices"])
+              if d_gvi > 1e-9 or d_cov > 1e-9 or not same_excl:
+                  drift.append((name, b["gvi"], a["gvi"], b["excludedIndices"], a["excludedIndices"]))
+              rows.append((name, a["gvi"], a["effectiveWeightSum"]))
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as s:
+              s.write("### Corpus regression\n\n")
+              if missing:
+                  s.write(f"**{len(missing)} dataset(s) produced no result:** {', '.join(missing)}\n\n")
+              if drift:
+                  s.write("| Dataset | Baseline | This run | Excluded (baseline -> now) |\n|---|---|---|---|\n")
+                  for n, ob, nb, eb, en in drift:
+                      s.write(f"| {n} | {ob:.6f} | {nb:.6f} | {eb} -> {en} |\n")
+              else:
+                  s.write(f"All {len(rows)} datasets match the committed baseline exactly.\n")
+
+          if missing or drift:
+              print(f"FAIL: {len(missing)} missing, {len(drift)} drifted from baseline")
+              for n, ob, nb, eb, en in drift:
+                  print(f"  {n}: {ob:.6f} -> {nb:.6f}   excluded {eb} -> {en}")
+              print()
+              print("If this change is intended, update gvi_results_final/ in the same "
+                    "pull request and state in the description which scientific decision "
+                    "moved the number. A green build after an unexplained baseline "
+                    "update is worse than no baseline at all.")
+              sys.exit(1)
+          print(f"OK: all {len(rows)} datasets match the baseline")
+          PY
+
+      - name: Upload this run's results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corpus-results
+          path: ${{ runner.temp }}/corpus
+          retention-days: 14
+
+  # ── 4 ─────────────────────────────────────────────────────────────────────
+  release:
+    name: Release on tag
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-and-test, self-test, corpus-regression]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          name: jars
+          path: jars
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            jars/gvi-cli/target/gvi-calculator.jar
+            jars/gvi-web/target/gvi-calculator-web.jar
+          generate_release_notes: true

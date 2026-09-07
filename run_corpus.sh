@@ -10,8 +10,19 @@
 # judged against. Getting either wrong silently changes the score.
 set -uo pipefail
 
-export JAVA_HOME="${JAVA_HOME:-$HOME/opt/jdk-17.0.20.1+1}"
-export PATH="$JAVA_HOME/bin:$PATH"
+# Honour an inherited JAVA_HOME (CI sets one); otherwise fall back to a local
+# install, and failing that to whatever java is already on PATH. The old
+# unconditional default pointed at one developer's home directory, which is fine
+# there and a confusing failure anywhere else.
+if [ -n "${JAVA_HOME:-}" ] && [ -x "${JAVA_HOME}/bin/java" ]; then
+  export PATH="$JAVA_HOME/bin:$PATH"
+elif [ -x "$HOME/opt/jdk-17.0.20.1+1/bin/java" ]; then
+  export JAVA_HOME="$HOME/opt/jdk-17.0.20.1+1"
+  export PATH="$JAVA_HOME/bin:$PATH"
+elif ! command -v java > /dev/null 2>&1; then
+  echo "No java found: set JAVA_HOME or put a JDK 17 on PATH." >&2
+  exit 1
+fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JAR="$ROOT/gvi-calculator-java/gvi-cli/target/gvi-calculator.jar"

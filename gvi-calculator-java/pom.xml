@@ -54,6 +54,20 @@
     <junit.version>5.10.3</junit.version>
     <assertj.version>3.26.3</assertj.version>
     <jacoco.version>0.8.12</jacoco.version>
+
+    <!--
+      Surefire's JVM arguments. JaCoCo's prepare-agent goal writes its javaagent flag
+      into the argLine property, so a build that passes argLine on the command line
+      replaces it and the agent silently never attaches. Coverage then reports 0% for
+      modules whose tests all pass: gvi-core measured 0.0% against 55 passing tests,
+      and gvi-composite 62% when it is really 94.6%.
+
+      The @{argLine} placeholder resolves late, after prepare-agent has run, so this
+      keeps the agent and caps the heap. The empty default below keeps the build
+      working when JaCoCo is skipped, since an unresolved placeholder fails surefire.
+    -->
+    <argLine />
+    <surefire.heap>-Xmx512m</surefire.heap>
     <javafx.version>21.0.2</javafx.version>
     <!-- Build machine's platform classifier for the JavaFX native jars (linux|win|mac). Override with
          -Djavafx.platform=win or =mac when building on/for another OS. -->
@@ -193,6 +207,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.3.0</version>
+          <configuration>
+            <argLine>@{argLine} ${surefire.heap}</argLine>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
