@@ -725,6 +725,20 @@ public final class GviPipeline {
                 incidence = r.points();
             }
 
+            // Resolve the generation time HERE rather than in a front end.
+            //
+            // It used to be resolved in GviCli before the config was built, so a pathogen whose
+            // table entry is still a stub aborted the whole run with exit 2 -- no GVI at all, not
+            // even the eight indices that need no generation time. That is the wrong disposal: a
+            // missing generation time is absent data, and every other gate in this pipeline
+            // excludes its own index and lets the rest score. MissingGenerationTimeException is a
+            // GviException, so the catch below now turns it into "Re: <reason>" in the skipped
+            // list, exactly like any other index that could not be computed.
+            double generationTimeDays = org.gvi.algorithms.re.GenerationTimeTable.resolve(
+                    config.generationTimeExplicit(), config.generationTimeDays(),
+                    config.pathogenId(), config.generationTimeDays(),
+                    org.gvi.algorithms.re.GenerationTimeTable.bundled());
+
             // Warn only when the generation time was neither typed explicitly nor resolved from the
             // per-pathogen table -- i.e. the run really is inheriting the historical 5-day default.
             boolean generationTimeUnsourced = !config.generationTimeExplicit()
@@ -758,7 +772,7 @@ public final class GviPipeline {
             // for larger trees and for any dataset where the fit fails.
             if (incidence.isEmpty()) {
                 try {
-                    ReResult r = new org.gvi.algorithms.re.bdsky.BdskyReEstimator().compute(alignment, config.generationTimeDays());
+                    ReResult r = new org.gvi.algorithms.re.bdsky.BdskyReEstimator().compute(alignment, generationTimeDays);
                     population.put(IndexKey.RE, r);
                     return;
                 } catch (GviException bdskyFailure) {
@@ -769,7 +783,7 @@ public final class GviPipeline {
                 }
             }
 
-            ReResult r = new ReCalculator().compute(incidence, alignment, config.generationTimeDays());
+            ReResult r = new ReCalculator().compute(incidence, alignment, generationTimeDays);
             population.put(IndexKey.RE, r);
         } catch (GviException e) {
             skipped.add("Re: " + e.getMessage());

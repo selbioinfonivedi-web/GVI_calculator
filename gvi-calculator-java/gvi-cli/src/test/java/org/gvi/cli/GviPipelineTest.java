@@ -225,4 +225,95 @@ class GviPipelineTest {
         PipelineResult result = new GviPipeline().run(config);
         assertThat(result.skipped()).noneMatch(s -> s.startsWith("CAI:"));
     }
+
+    /**
+     * A pathogen whose generation-time entry is still a stub must skip Re and let every other
+     * index score, not abort the run.
+     * <p>
+     * It used to abort. Resolution happened in {@code GviCli} before the config was built, so
+     * {@code --pathogen-id fmd} exited with code 2 and produced no GVI at all -- discarding the
+     * eight indices that need no generation time because of one that does. Every other gate in
+     * this pipeline excludes its own index and continues; a missing generation time is absent
+     * data, not a caller error, and is now disposed of the same way.
+     */
+    @Test
+    void aStubGenerationTimeSkipsReRatherThanAbortingTheRun() throws IOException {
+        Path fasta = tempDir.resolve("samples.fasta");
+        Files.writeString(fasta, """
+                >reference 2015-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG
+                >query1 2018-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG
+                >query2 2021-01-01
+                ATGGCCATTGTAATGGCCCGCTGAAAGGGTGCCCGATAC
+                >query3 2023-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCACGATAG
+                """);
+
+        // Specifically an UNKNOWN entry -- a generation time nobody has filled in yet. The table
+        // also carries FALSE entries, where Re is not merely unmeasured but meaningless: anthrax
+        // is acquired from environmental spores rather than from a preceding case, so it has no
+        // serial interval at all. Both must skip Re rather than abort, but they are different
+        // findings and the pipeline words them differently.
+        String stubId = org.gvi.algorithms.re.GenerationTimeTable.bundled().allEntries().stream()
+                .filter(e -> e.reApplicable() == org.gvi.algorithms.re.GenerationTimeTable.Applicability.UNKNOWN)
+                .map(org.gvi.algorithms.re.GenerationTimeTable.Entry::pathogenId)
+                .findFirst().orElseThrow();
+
+        PipelineConfig config = new PipelineConfig(
+                fasta, null, null, null, null, null, null, "reference",
+                Set.of("pi", "gd", "mb", "re"),
+                org.gvi.core.model.OrganismClass.VIRUS, stubId, false, 5.0,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, true, false,
+                null, GenomeType.RNA, Map.of(), null, false, 100, false, null);
+
+        PipelineResult result = new GviPipeline().run(config);
+
+        assertThat(result.datasetGvi()).as("the run must still produce a composite").isNotNull();
+        assertThat(result.skipped())
+                .as("Re should be skipped, naming the stub entry as the reason")
+                .anyMatch(sk -> sk.startsWith("Re:") && sk.contains("stub"));
+        assertThat(result.datasetGvi().components())
+                .as("the indices that need no generation time must still score")
+                .isNotEmpty();
+    }
+
+    /**
+     * The companion case: a pathogen for which Re is not merely unmeasured but meaningless. The
+     * table marks these {@code re_applicable: false} -- anthrax is acquired from environmental
+     * spores, not from a preceding case, so there is no transmission chain and no serial interval.
+     * The run must still complete and say so, rather than reporting a placeholder Re.
+     */
+    @Test
+    void aPathogenWithNoTransmissionChainSkipsReWithThatReason() throws IOException {
+        Path fasta = tempDir.resolve("nochain.fasta");
+        Files.writeString(fasta, """
+                >reference 2015-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG
+                >query1 2018-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG
+                >query2 2021-01-01
+                ATGGCCATTGTAATGGCCCGCTGAAAGGGTGCCCGATAC
+                >query3 2023-01-01
+                ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCACGATAG
+                """);
+
+        String notApplicableId = org.gvi.algorithms.re.GenerationTimeTable.bundled().allEntries().stream()
+                .filter(e -> e.reApplicable() == org.gvi.algorithms.re.GenerationTimeTable.Applicability.FALSE)
+                .map(org.gvi.algorithms.re.GenerationTimeTable.Entry::pathogenId)
+                .findFirst().orElseThrow();
+
+        PipelineConfig config = new PipelineConfig(
+                fasta, null, null, null, null, null, null, "reference",
+                Set.of("pi", "gd", "mb", "re"),
+                org.gvi.core.model.OrganismClass.BACTERIUM, notApplicableId, false, 5.0,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, true, false,
+                null, GenomeType.DNA, Map.of(), null, false, 100, false, null);
+
+        PipelineResult result = new GviPipeline().run(config);
+
+        assertThat(result.datasetGvi()).isNotNull();
+        assertThat(result.skipped())
+                .anyMatch(sk -> sk.startsWith("Re:") && sk.contains("not applicable"));
+    }
 }

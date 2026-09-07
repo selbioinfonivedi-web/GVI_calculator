@@ -64,13 +64,19 @@ public final class AnalysisService {
      * the command line. It used to live only in the CLI, so a web request carrying a pathogen id
      * silently ran on the 5-day default while the response claimed the bundled table had been used.
      */
-    static double resolveGenerationTimeDays(AnalyzeRequest r) {
-        return org.gvi.algorithms.re.GenerationTimeTable.resolve(
+    static Double resolveGenerationTimeDays(AnalyzeRequest r) {
+        try {
+            return org.gvi.algorithms.re.GenerationTimeTable.resolve(
                 r.generationTimeDays != null,
                 r.generationTimeDays != null ? r.generationTimeDays : DEFAULT_GENERATION_TIME_DAYS,
                 blankToNull(r.pathogenId),
                 DEFAULT_GENERATION_TIME_DAYS,
-                org.gvi.algorithms.re.GenerationTimeTable.bundled());
+                    org.gvi.algorithms.re.GenerationTimeTable.bundled());
+        } catch (org.gvi.algorithms.re.MissingGenerationTimeException e) {
+            // The table has no value for this pathogen. Re is skipped by the pipeline with that
+            // reason; the summary reports null rather than a number nobody supplied.
+            return null;
+        }
     }
 
     public AnalyzeResponse analyze(AnalyzeRequest request) throws IOException {
@@ -123,8 +129,8 @@ public final class AnalysisService {
                 indices,
                 OrganismClass.parse(blankToNull(r.organismClass)),
                 blankToNull(r.pathogenId),
-                true,                  // already resolved below, so the pipeline must not re-derive it
-                resolveGenerationTimeDays(r),
+                r.generationTimeDays != null,
+                r.generationTimeDays != null ? r.generationTimeDays : DEFAULT_GENERATION_TIME_DAYS,
                 parseGdMethod(r.gdMethod),
                 1.0, 2.0,
                 false,                 // high-accuracy mu: too slow for an interactive request
@@ -232,7 +238,8 @@ public final class AnalysisService {
         if (ds != null) {
             AnalyzeResponse.Summary s = new AnalyzeResponse.Summary();
             s.generationTimeDays = resolveGenerationTimeDays(request);
-            s.generationTimeSource = request.generationTimeDays != null ? "supplied"
+            s.generationTimeSource = s.generationTimeDays == null ? "unavailable for this pathogen"
+                    : request.generationTimeDays != null ? "supplied"
                     : (blankToNull(request.pathogenId) != null ? "bundled table (" + request.pathogenId + ")"
                                                                : "default");
             s.sequences = ds.sequenceCount();

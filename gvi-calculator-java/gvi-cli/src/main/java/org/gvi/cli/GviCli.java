@@ -374,17 +374,12 @@ public final class GviCli implements Callable<Integer> {
     }
 
     /**
-     * Resolves the serial-interval mean. Precedence: an explicit --generation-time-days always
-     * wins; otherwise --pathogen-id looks it up in the generation-time table, which fails loudly
-     * rather than substituting a default. With neither, the historical default is carried forward
-     * and {@link GviPipeline} warns about it.
+     * The generation time as the caller gave it. Resolution against the per-pathogen table now
+     * happens inside {@link GviPipeline}, so a pathogen whose table entry is still a stub skips
+     * Re and lets every other index score, instead of aborting the run.
      */
     private double resolveGenerationTimeDays(boolean explicit) {
-        var table = generationTimesPath != null
-                ? org.gvi.algorithms.re.GenerationTimeTable.fromFile(generationTimesPath)
-                : org.gvi.algorithms.re.GenerationTimeTable.bundled();
-        return org.gvi.algorithms.re.GenerationTimeTable.resolve(
-                explicit, generationTimeDays, pathogenId, generationTimeDays, table);
+        return generationTimeDays;
     }
 
     /**
