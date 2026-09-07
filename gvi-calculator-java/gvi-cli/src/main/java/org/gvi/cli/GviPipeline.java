@@ -69,6 +69,17 @@ public final class GviPipeline {
 
         SequenceAlignment alignment = SequenceAlignment.of(sequences, config.referenceId());
 
+        // Two cheap checks on the alignment itself, before anything is computed from it. Both come
+        // from corpus datasets that produced a confident-looking GVI from inputs that could not
+        // support one -- the diagnosis existed, but only scattered across per-index exclusions after
+        // the whole run. Stating it once up front, in the alignment's own terms, is a better place
+        // to learn it. Warnings, not gates: a deliberately divergent panel is a legitimate input.
+        org.gvi.core.util.AlignmentPreflight.Report preflight =
+                org.gvi.core.util.AlignmentPreflight.check(alignment);
+        for (String finding : preflight.findings()) {
+            warnings.add("Input: " + finding);
+        }
+
         // Optional trim to the shared coverage window. Must happen before any index runs, since the
         // whole point is that the discarded columns are absent data rather than observed difference.
         org.gvi.core.util.AlignmentTrimmer.Result trim = null;
