@@ -126,6 +126,38 @@ async function loadFasta(file) {
   $('mSeqs').textContent = aln.ids.length;
   $('mSeqsSub').textContent = file.name;
   $('mLen').textContent = aln.length;
+  runPreflight();
+}
+
+/*
+ * Ask the server what it makes of this alignment, before the user commits to a full run.
+ * Server-side deliberately: the thresholds and wording decide how a result is read, and a second
+ * implementation here would drift from the Java one.
+ */
+async function runPreflight() {
+  const box = $('preflightBox');
+  if (!state.fasta) { box.classList.add('hidden'); return; }
+  try {
+    const res = await fetch('/api/preflight', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fasta: state.fasta, referenceId: $('referenceId').value.trim() || null })
+    });
+    if (!res.ok) { box.classList.add('hidden'); return; }
+    const p = await res.json();
+    const stats = `Lowest pairwise identity ${(p.minPairwiseIdentity * 100).toFixed(0)}% · ` +
+                  `${p.fullyCoveredColumns} of ${p.length} columns covered by every sequence ` +
+                  `(${(p.fullyCoveredFraction * 100).toFixed(0)}%)`;
+    if (p.clean) {
+      box.className = 'callout hidden';
+      $('fastaStatus').innerHTML += ` · <span style="color:var(--green);">alignment looks usable</span>`;
+      return;
+    }
+    box.className = 'callout warn';
+    box.innerHTML = `<strong>Check this alignment before running.</strong> ${esc(stats)}` +
+      p.findings.map((f) => `<p style="margin:8px 0 0;">${esc(f)}</p>`).join('');
+  } catch (err) {
+    box.classList.add('hidden');   // pre-flight is advisory; never block on it
+  }
 }
 function parseFasta(text) {
   const seqs = {}, ids = [];
@@ -270,6 +302,7 @@ $('clearBtn').addEventListener('click', () => {
   state.fasta = state.metadata = state.gff = state.result = state.aln = state.incidence = null;
   state.meta = {};
   $('fastaStatus').textContent = 'No file loaded';
+  $('preflightBox').classList.add('hidden');
   $('fastaFile').value = $('metadataFile').value = $('gffFile').value = '';
   $('incidenceFile').value = '';
   ['generationTime', 'referenceId', 'referenceGc'].forEach((i) => { $(i).value = ''; });
@@ -836,6 +869,7 @@ $('selfTestBtn').addEventListener('click', async () => {
         $('mSeqs').textContent = aln.ids.length;
         $('mSeqsSub').textContent = 'pasted';
         $('mLen').textContent = aln.length;
+        runPreflight();
         hideError();
         showToast('Loaded ' + aln.ids.length + ' sequences', 'success');
       } catch (err) { showError(err.message); }

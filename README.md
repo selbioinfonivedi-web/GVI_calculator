@@ -68,7 +68,11 @@ mvn -Pdesktop install
 | `run_corpus.sh` | Runs every dataset end to end and rebuilds the summary |
 | `summarize_corpus.py` | Builds `ALL_PATHOGENS_SUMMARY.csv` from a results directory |
 | `Genomic_Indices_Detailed_Definitions.docx` | The source specification |
+| `.github/workflows/ci.yml` | Build, self-test, corpus regression, release on tag |
 | `gui_concepts/` | Interface design explorations |
+
+Every push runs the four CI jobs; the corpus job diffs all 16 datasets against
+`gvi_results_final/` and fails on any drift.
 
 ### Modules
 
@@ -93,7 +97,7 @@ type, so identical input scored differently depending on which front end ran it.
 
 ```bash
 cd gvi-calculator-java
-mvn test                      # 313 tests
+mvn test                      # 322 tests
 java -jar gvi-cli/target/gvi-calculator.jar --self-test
 bash ../run_corpus.sh /tmp/corpus_check    # all 16 datasets end to end
 ```

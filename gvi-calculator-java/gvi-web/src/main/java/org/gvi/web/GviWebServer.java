@@ -85,6 +85,7 @@ public final class GviWebServer {
         server.createContext("/api/health", this::handleHealth);
         server.createContext("/api/codon-species", this::handleCodonSpecies);
         server.createContext("/api/pathogens", this::handlePathogens);
+        server.createContext("/api/preflight", this::handlePreflight);
 
         ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(WORKER_THREADS);
         server.setExecutor(pool);
@@ -158,6 +159,34 @@ public final class GviWebServer {
             return row;
         }).toList();
         sendJson(exchange, 200, Map.of("pathogens", rows));
+    }
+
+    /**
+     * Runs the alignment pre-flight checks and nothing else, so the browser can show what it is
+     * holding before the user commits to a full analysis.
+     * <p>
+     * Deliberately server-side. The browser already computes display geometry from the alignment,
+     * but these findings carry thresholds and wording that decide how a result is read, and a second
+     * implementation in JavaScript would drift from the Java one. Same rule as everywhere else here:
+     * the client draws, the server decides.
+     */
+    private void handlePreflight(HttpExchange exchange) throws IOException {
+        if (!requireMethod(exchange, "POST")) return;
+        try {
+            AnalyzeRequest request;
+            try (InputStream in = exchange.getRequestBody()) {
+                request = mapper.readValue(in, AnalyzeRequest.class);
+            } catch (IOException e) {
+                sendError(exchange, 400, "Request body was not valid JSON: " + e.getMessage());
+                return;
+            }
+            sendJson(exchange, 200, service.preflight(request));
+        } catch (GviInputException e) {
+            sendError(exchange, 400, e.getMessage());
+        } catch (Exception e) {
+            log.error("Pre-flight failed", e);
+            sendError(exchange, 500, "Pre-flight could not run: " + e.getMessage());
+        }
     }
 
     /**

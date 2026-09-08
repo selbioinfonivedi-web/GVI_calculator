@@ -305,4 +305,39 @@ class GviWebServerTest {
         assertThat(body.at("/summary/generationTimeDays").asDouble()).isEqualTo(99.0);
         assertThat(body.at("/summary/generationTimeSource").asText()).isEqualTo("supplied");
     }
+
+    /**
+     * The pre-flight endpoint reports the alignment's shape without running any index, so the
+     * browser can show a pooled or patchy alignment before the user commits to a full analysis.
+     * It runs server-side on purpose: the thresholds and wording decide how a result is read, and
+     * a second implementation in the page would drift from the Java one.
+     */
+    @Test
+    void preflightReportsAPooledAlignmentAndPassesACleanOne() throws Exception {
+        // Two unrelated blocks in one file: identity within a block is high, across them it is not.
+        String a = "ACGT".repeat(60);
+        String b = "TGCA".repeat(60);
+        String pooled = ">a1\n" + a + "\n>a2\n" + a + "\n>b1\n" + b + "\n>b2\n" + b + "\n";
+
+        JsonNode dirty = mapper.readTree(post("/api/preflight",
+                mapper.writeValueAsString(java.util.Map.of("fasta", pooled))).body());
+        assertThat(dirty.get("clean").asBoolean()).isFalse();
+        assertThat(dirty.get("minPairwiseIdentity").asDouble()).isLessThan(0.70);
+        assertThat(dirty.get("findings")).isNotEmpty();
+
+        String clean = ">a\n" + a + "\n>b\n" + a.substring(0, 236) + "ACGA\n";
+        JsonNode ok = mapper.readTree(post("/api/preflight",
+                mapper.writeValueAsString(java.util.Map.of("fasta", clean))).body());
+        assertThat(ok.get("clean").asBoolean()).isTrue();
+        assertThat(ok.get("findings")).isEmpty();
+        assertThat(ok.get("fullyCoveredFraction").asDouble()).isEqualTo(1.0);
+    }
+
+    /** No FASTA is a caller error, not an empty result. */
+    @Test
+    void preflightRejectsAnEmptyRequest() throws Exception {
+        HttpResponse<String> res = post("/api/preflight", "{}");
+        assertThat(res.statusCode()).isEqualTo(400);
+        assertThat(mapper.readTree(res.body()).get("error").asText()).contains("FASTA");
+    }
 }

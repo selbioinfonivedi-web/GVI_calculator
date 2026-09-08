@@ -79,6 +79,33 @@ public final class AnalysisService {
         }
     }
 
+    /**
+     * The alignment pre-flight findings alone, without running any index. Cheap enough to call as
+     * soon as a file is loaded, so a pooled or patchy alignment is visible before a full analysis
+     * rather than after it.
+     */
+    public Map<String, Object> preflight(AnalyzeRequest request) {
+        if (request == null || request.fasta == null || request.fasta.isBlank()) {
+            throw new GviInputException("No FASTA supplied.");
+        }
+        checkSize("FASTA", request.fasta);
+        var parsed = org.gvi.core.io.FastaReader.read(
+                new java.io.StringReader(request.fasta), "uploaded alignment");
+        var alignment = org.gvi.core.model.SequenceAlignment.of(
+                parsed.sequences(), blankToNull(request.referenceId));
+        var report = org.gvi.core.util.AlignmentPreflight.check(alignment);
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("sequences", report.sequences());
+        out.put("length", report.length());
+        out.put("minPairwiseIdentity", report.minPairwiseIdentity());
+        out.put("fullyCoveredFraction", report.fullyCoveredFraction());
+        out.put("fullyCoveredColumns", report.fullyCoveredColumns());
+        out.put("findings", report.findings());
+        out.put("clean", report.clean());
+        return out;
+    }
+
     public AnalyzeResponse analyze(AnalyzeRequest request) throws IOException {
         if (request == null || request.fasta == null || request.fasta.isBlank()) {
             throw new GviInputException("No FASTA supplied. An aligned multi-FASTA is the one required input.");
