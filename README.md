@@ -110,7 +110,7 @@ type, so identical input scored differently depending on which front end ran it.
 
 ```bash
 cd gvi-calculator-java
-mvn test                      # 351 tests
+mvn test                      # 406 tests
 java -jar gvi-cli/target/gvi-calculator.jar --self-test
 bash ../run_corpus.sh /tmp/corpus_check    # all 16 datasets end to end
 ```
@@ -162,7 +162,10 @@ Nine of the sixteen corpus datasets currently clear the floor.
   its 27 entries.
 - **Case-incidence data is the accurate path for Re.** The Cori estimator recovers a
   known Re to within 0.02; tree-shape inference is far weaker. No corpus dataset
-  currently supplies incidence data.
+  currently supplies incidence data, so this path is exercised only by tests — one of
+  which now drives it end to end, from a CSV on disk through to the composite, and
+  checks that supplying case counts really does switch the estimator away from the
+  birth–death fit.
 - **π and GD saturate their normalisation ceilings** on inter-serotype alignments, so
   they contribute the maximum the scheme allows and carry no discriminating information.
   Measured on this corpus: π clamps on 6 of 13 scored datasets (peaking at 0.0825 against
