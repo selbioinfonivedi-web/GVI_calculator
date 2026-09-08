@@ -396,7 +396,7 @@ public final class GviPipeline {
             // plausible-looking dN/dS from a chance ORF in a non-coding marker (e.g. rRNA) is just as wrong as an
             // extreme one; a value that happens to look reasonable was previously never flagged at all.
             warnings.add(String.format(java.util.Locale.ROOT,
-                    "Data quality advisory -- dN/dS/CAI premise: no --gff was supplied, so gene boundaries for this "
+                    "Data quality advisory -- dN/dS/CAI premise: no usable gene annotation was available, so gene boundaries for this "
                             + "dN/dS (%.3f) and any CAI result were auto-predicted by a 6-frame ORF scan, not confirmed as "
                             + "real coding sequence. That scan finds SOME ATG...stop run by chance in most alignments, "
                             + "including genuinely non-coding markers (rRNA, ITS, intergenic regions) -- this caveat applies "
@@ -858,13 +858,24 @@ public final class GviPipeline {
                 r = GffReader.read(config.gffPath());
             } catch (GviException e) {
                 warnings.add("GFF3 (" + config.gffPath() + "): " + e.getMessage() + " -- falling back to native ORF prediction");
-                return new GeneLoadResult(predictOrfs(alignment, warnings), true);
+                return new GeneLoadResult(predictOrfs(alignment, warnings, GENES_GFF_UNREADABLE), true);
             }
             collectWarnings(warnings, "gff", r.report());
             if (!r.genes().isEmpty()) return new GeneLoadResult(r.genes(), false);
+            // A --gff that parsed but yielded no CDS record. Saying "no --gff supplied" here sends the
+            // user to add the flag they already passed; the actual fix is in the file's own contents
+            // (a space-separated GFF3 is the common one -- every row fails the 9-column check).
+            return new GeneLoadResult(predictOrfs(alignment, warnings, GENES_GFF_NO_CDS), true);
         }
-        return new GeneLoadResult(predictOrfs(alignment, warnings), true);
+        return new GeneLoadResult(predictOrfs(alignment, warnings, GENES_NO_GFF), true);
     }
+
+    /** Why {@link #predictOrfs} was reached -- these lead the warning it emits, so it must be accurate. */
+    private static final String GENES_NO_GFF = "No --gff supplied";
+    private static final String GENES_GFF_UNREADABLE = "The supplied --gff could not be read";
+    private static final String GENES_GFF_NO_CDS =
+            "The supplied --gff parsed but contained no usable CDS record (see the gff warnings above -- "
+                    + "a GFF3 saved with spaces instead of tabs fails every row this way)";
 
     /** Real ORFs in a compact viral genome are dramatically longer than the chance ORFs a 6-frame scan finds everywhere in a whole genome (an ~11kb sequence has dozens of >=30-codon runs by pure chance) -- keeping only ORFs within this fraction of the single longest one found is what actually separates real signal from that noise; confirmed empirically (real KFDV polyprotein: 3416 codons; next-longest, noise: 179 codons -- a 19x gap). */
     private static final double ORF_RELATIVE_LENGTH_THRESHOLD = 0.3;
@@ -885,10 +896,10 @@ public final class GviPipeline {
      * driven entirely by a handful of essentially meaningless codons in a
      * spurious 30-40 codon "ORF").
      */
-    private List<GeneAnnotation> predictOrfs(SequenceAlignment alignment, List<String> warnings) {
+    private List<GeneAnnotation> predictOrfs(SequenceAlignment alignment, List<String> warnings, String reason) {
         List<GeneAnnotation> allOrfs = new org.gvi.algorithms.orf.OrfFinder().findOrfs(alignment.getReference().getSequence());
         if (allOrfs.isEmpty()) {
-            warnings.add("No --gff supplied and native ORF prediction found no open reading frame >= "
+            warnings.add(reason + ", and native ORF prediction found no open reading frame >= "
                     + org.gvi.algorithms.orf.OrfFinder.DEFAULT_MIN_ORF_CODONS
                     + " codons on the reference sequence; falling back to treating the whole sequence as a single ORF");
             return List.of(new GeneAnnotation("whole_genome", 1, alignment.length(), '+'));
@@ -899,7 +910,7 @@ public final class GviPipeline {
                 .filter(g -> g.length() >= longest * ORF_RELATIVE_LENGTH_THRESHOLD)
                 .toList();
 
-        warnings.add("No --gff supplied; predicted " + predicted.size() + " open reading frame(s) natively from the "
+        warnings.add(reason + "; predicted " + predicted.size() + " open reading frame(s) natively from the "
                 + "reference sequence (ATG...stop 6-frame scan, >= " + org.gvi.algorithms.orf.OrfFinder.DEFAULT_MIN_ORF_CODONS
                 + " codons, kept if within " + (int) (ORF_RELATIVE_LENGTH_THRESHOLD * 100) + "% of the longest one found -- "
                 + allOrfs.size() + " candidate(s) before that filter) instead of treating the whole sequence as one ORF -- "

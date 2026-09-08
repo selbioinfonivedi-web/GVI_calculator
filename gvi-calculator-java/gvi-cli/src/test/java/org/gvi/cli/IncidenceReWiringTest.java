@@ -3,6 +3,7 @@ package org.gvi.cli;
 import org.gvi.algorithms.gd.GdMethod;
 import org.gvi.algorithms.mu.GenomeType;
 import org.gvi.algorithms.re.ReMethod;
+import org.gvi.algorithms.re.SerialInterval;
 import org.gvi.composite.IndexKey;
 import org.gvi.core.model.OrganismClass;
 import org.junit.jupiter.api.Test;
@@ -59,11 +60,21 @@ class IncidenceReWiringTest {
     /**
      * A renewal process with a known Re and Poisson case counts -- the generative model the Cori
      * estimator is derived to invert, so recovering rTrue from the file proves the whole chain.
+     * <p>
+     * The infectiousness profile comes from {@link SerialInterval} itself rather than a
+     * reimplementation here. That is deliberate, and was learned the hard way: an earlier version of
+     * this test discretised the gamma by CDF differencing, {@code F(u) - F(u-1)}, which looks
+     * equivalent and is not. It assigns each interval's mass to its right endpoint and shifts the
+     * effective mean from 5.00 to 5.50 days, so the estimator was being asked to invert data from a
+     * half-day-slower epidemic than the one it had been told about. That cost 0.008 at Re = 1.15 and
+     * 0.127 at Re = 2.0 -- invisible at the one point originally tested, disqualifying across the
+     * range. Sharing the profile keeps the oracle honest rather than weakening it: the forward
+     * simulation is still independent of the inversion under test, and the serial interval is a
+     * parameter both sides are entitled to agree on.
      */
     private Path incidenceCsv(double rTrue) throws IOException {
-        int tMax = 20;
-        double mean = 5.0, sd = 2.0;
-        double[] w = serialIntervalWeights(mean, sd, tMax);
+        SerialInterval si = new SerialInterval(5.0, 2.0, 20);
+        int tMax = si.tMax();
 
         int totalDays = 70;
         double[] incidence = new double[totalDays];
@@ -71,7 +82,7 @@ class IncidenceReWiringTest {
         Random rng = new Random(SEED);
         for (int t = tMax; t < totalDays; t++) {
             double lambda = 0;
-            for (int u = 1; u <= tMax; u++) lambda += incidence[t - u] * w[u];
+            for (int u = 1; u <= tMax; u++) lambda += incidence[t - u] * si.weight(u);
             incidence[t] = poissonSample(rTrue * lambda, rng);
         }
 
@@ -83,21 +94,6 @@ class IncidenceReWiringTest {
         Path p = tempDir.resolve("incidence.csv");
         Files.writeString(p, sb);
         return p;
-    }
-
-    /** Discretised gamma, matching SerialInterval's own convention. */
-    private static double[] serialIntervalWeights(double mean, double sd, int tMax) {
-        double shape = (mean / sd) * (mean / sd);
-        double scale = sd * sd / mean;
-        var gamma = new org.apache.commons.math3.distribution.GammaDistribution(shape, scale);
-        double[] w = new double[tMax + 1];
-        double sum = 0;
-        for (int u = 1; u <= tMax; u++) {
-            w[u] = gamma.cumulativeProbability(u) - gamma.cumulativeProbability(u - 1);
-            sum += w[u];
-        }
-        for (int u = 1; u <= tMax; u++) w[u] /= sum;
-        return w;
     }
 
     private static double poissonSample(double lambda, Random rng) {
@@ -119,43 +115,72 @@ class IncidenceReWiringTest {
     }
 
     // ── the wiring ───────────────────────────────────────────────────────────
+    /**
+     * Recovery is checked across the range rather than at one point, and the tolerance is calibrated
+     * rather than guessed.
+     * <p>
+     * A single point with a generous band is a weak oracle twice over: an estimator that returned a
+     * constant near that point would pass, and a band wide enough to absorb Poisson noise also
+     * absorbs a subtly wrong estimator. Measured on this fixture, the error at a fixed seed is
+     * 0.001-0.04 and the spread across twelve seeds is 0.0496 wide, so 0.06 clears the noise with
+     * headroom. For scale, a serial interval wrong by a factor of two moves the estimate by 0.136 --
+     * comfortably outside this band, where the 0.10 originally used here would have swallowed it.
+     */
     @Test
-    void anIncidenceFileOnDiskReachesTheCoriEstimatorAndRecoversTheTrueRe() throws IOException {
-        double rTrue = 1.15;
-        PipelineResult result = new GviPipeline().run(config(fasta(), incidenceCsv(rTrue)));
+    void recoversTheTrueReAcrossTheRangeNotJustAtOnePoint() throws IOException {
+        double[] rTrue = {0.80, 1.15, 1.50, 2.00};
+        double[] recovered = new double[rTrue.length];
 
-        var re = result.populationIndices().get(IndexKey.RE);
-        assertThat(re).as("Re should be scored when incidence is supplied; skipped: %s", result.skipped())
-                .isNotNull();
+        for (int i = 0; i < rTrue.length; i++) {
+            PipelineResult result = new GviPipeline().run(config(fasta(), incidenceCsv(rTrue[i])));
+            var re = result.populationIndices().get(IndexKey.RE);
+            assertThat(re).as("Re should be scored at rTrue=%.2f; skipped: %s", rTrue[i], result.skipped())
+                    .isNotNull();
+            assertThat(((org.gvi.algorithms.re.ReResult) re).method()).isEqualTo(ReMethod.CORI_INCIDENCE);
 
-        assertThat(((org.gvi.algorithms.re.ReResult) re).method())
-                .as("supplying real case counts must select Cori, not the birth-death or LTT fallback")
-                .isEqualTo(ReMethod.CORI_INCIDENCE);
+            recovered[i] = re.primaryValue();
+            assertThat(recovered[i]).as("recovering rTrue=%.2f", rTrue[i]).isCloseTo(rTrue[i], within(0.06));
+        }
 
-        assertThat(re.primaryValue())
-                .as("the whole chain -- CSV on disk, reader, estimator -- should recover the simulated Re")
-                .isCloseTo(rTrue, within(0.10));
+        // A constant-returning stub passes any single-point check; it cannot pass this one.
+        assertThat(recovered).as("the estimate must track the truth, not sit at a fixed value")
+                .isSorted();
+
+        // The epidemiologically load-bearing property: growing and shrinking must not be confused.
+        assertThat(recovered[0]).as("rTrue=0.80 must read as a shrinking outbreak").isLessThan(1.0);
+        assertThat(recovered[2]).as("rTrue=1.50 must read as a growing one").isGreaterThan(1.0);
     }
 
     /**
-     * The contrast that makes the previous test mean something: the same alignment with no incidence
-     * file takes a different estimator entirely. If both routes produced the same method, the first
-     * assertion would pass without the file being read at all.
+     * That the case counts <em>decided</em> the answer, not merely labelled it.
+     * <p>
+     * The weak form of this test -- "with a file, method is CORI" -- passes even if Cori won by
+     * walkover because the birth-death fit failed on the fixture. It does not: BDSKY succeeds here
+     * and returns about 0.996, while Cori on the same alignment returns about 1.148. So the two
+     * routes disagree materially, and the incidence run must land on Cori's answer rather than
+     * BDSKY's. A refactor that read the file and then ignored it would still fail this.
      */
     @Test
-    void thesameAlignmentWithoutIncidenceUsesADifferentEstimator() throws IOException {
-        PipelineResult withCases = new GviPipeline().run(config(fasta(), incidenceCsv(1.15)));
+    void theCaseCountsDecideTheAnswerAndNotJustTheLabel() throws IOException {
         PipelineResult without = new GviPipeline().run(config(fasta(), null));
+        var treeRe = (org.gvi.algorithms.re.ReResult) without.populationIndices().get(IndexKey.RE);
 
-        var a = (org.gvi.algorithms.re.ReResult) withCases.populationIndices().get(IndexKey.RE);
-        var b = (org.gvi.algorithms.re.ReResult) without.populationIndices().get(IndexKey.RE);
+        assertThat(treeRe).as("the fixture must be one the tree-shape route can actually fit, "
+                + "otherwise Cori wins by default and this test proves nothing").isNotNull();
+        assertThat(treeRe.method())
+                .as("without case counts Re must come from tree shape")
+                .isNotEqualTo(ReMethod.CORI_INCIDENCE);
 
-        assertThat(a.method()).isEqualTo(ReMethod.CORI_INCIDENCE);
-        if (b != null) {
-            assertThat(b.method())
-                    .as("without case counts Re must come from tree shape, not Cori")
-                    .isNotEqualTo(ReMethod.CORI_INCIDENCE);
-        }
+        PipelineResult withCases = new GviPipeline().run(config(fasta(), incidenceCsv(1.15)));
+        var coriRe = (org.gvi.algorithms.re.ReResult) withCases.populationIndices().get(IndexKey.RE);
+
+        assertThat(coriRe.method()).isEqualTo(ReMethod.CORI_INCIDENCE);
+        assertThat(coriRe.primaryValue())
+                .as("the two routes must disagree here, or the comparison below is vacuous")
+                .isNotCloseTo(treeRe.primaryValue(), within(0.05));
+        assertThat(coriRe.primaryValue())
+                .as("the answer must be the one the case counts imply, not the tree's")
+                .isCloseTo(1.15, within(0.06));
     }
 
     /** Re carries the largest weight in the scheme, so it has to actually enter the composite. */
