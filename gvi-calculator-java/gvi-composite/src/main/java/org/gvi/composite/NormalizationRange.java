@@ -17,6 +17,26 @@ public record NormalizationRange(double min, double max) {
         }
     }
 
+    /**
+     * True when {@code raw} sits at or beyond the top of the range, so normalisation clamped it there.
+     * <p>
+     * Only the ceiling counts. A value at the floor of a natural domain is usually a real measurement
+     * rather than lost information -- RI = 0.0 means the PHI test found no recombination signal,
+     * which is a finding, not a clamp. Reporting it as saturation both cried wolf and produced
+     * nonsense arithmetic ("0.0 against a 1.0 ceiling, 0.0x over").
+     * <p>
+     * A clamped index is indistinguishable, by its normalised value alone, from one that genuinely
+     * sits at the extreme of its reference range -- both read 1.0 (or 0.0) and contribute exactly the
+     * same. That matters because a clamped index carries no discriminating information: it would
+     * report the same value for this dataset and for one twice as divergent. On this project's
+     * corpus pi clamps on 6 of 13 scored datasets and GD on 2, so it is the common case rather than
+     * an edge one, and the reader should be told rather than left to infer it from a suspiciously
+     * round 1.0000.
+     */
+    public boolean exceedsCeiling(double raw) {
+        return raw >= max;
+    }
+
     public double normalize(double raw) {
         double v = (raw - min) / (max - min);
         return Math.max(0.0, Math.min(1.0, v));

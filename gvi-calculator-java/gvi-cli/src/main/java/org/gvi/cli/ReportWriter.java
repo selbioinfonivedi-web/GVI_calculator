@@ -67,6 +67,7 @@ public final class ReportWriter {
             if (!result.datasetGvi().excludedIndices().isEmpty()) {
                 out.println("  excluded: " + result.datasetGvi().excludedIndices());
             }
+            printCompositeDiagnostics(out, result.datasetGvi());
         } else {
             out.println("\n(Whole-file GVI could not be computed -- see warnings below.)");
         }
@@ -142,6 +143,19 @@ public final class ReportWriter {
             out.println("-- Warnings --");
             result.warnings().forEach(w -> out.println("  - " + w));
         }
+    }
+
+    /**
+     * The composite's own diagnostics -- which indices were excluded and renormalized, and which hit
+     * their normalisation ceiling. These were reaching the JSON report but never the text one, so a
+     * reader working from the printed report could not see that, say, two indices carrying a fifth of
+     * the surviving scheme had been clamped and were contributing no discriminating information.
+     */
+    private void printCompositeDiagnostics(PrintStream out, org.gvi.composite.GviResult gvi) {
+        if (gvi == null || gvi.diagnostics().isEmpty()) return;
+        out.println();
+        out.println("-- Composite notes --");
+        gvi.diagnostics().forEach(d -> out.println("  - " + d));
     }
 
     private void printIndex(PrintStream out, String indent, IndexKey key, IndexResult r) {

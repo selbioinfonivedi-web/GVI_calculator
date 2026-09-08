@@ -64,6 +64,11 @@ gvi_results_superseded_*/
 *.rej
 *~
 
+# ─── Packaged distributions ──────────────────────────────────────────────────
+# package.sh output. Rebuildable from any tagged commit, and 14MB a copy; the CI
+# release job attaches the artefacts to the tag instead.
+/dist/
+
 # ─── Local scratch ───────────────────────────────────────────────────────────
 /gvi_dossier_preview.html
 /gvi_result_view.html

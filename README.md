@@ -56,6 +56,19 @@ the default build but still compiles:
 mvn -Pdesktop install
 ```
 
+### Packaging a release
+
+```bash
+./package.sh                  # -> dist/gvi-calculator-<version>.{tar.gz,zip}
+./package.sh --skip-build     # reuse jars already in target/
+```
+
+Produces a bundle that runs anywhere a JRE 17 exists: both jars, `gvi` / `gvi-web`
+launchers (plus `.bat`), INSTALL.txt, the README and the licence. Deliberately not
+`jpackage` — that builds a native installer around a *desktop* application, and the
+supported surface here is a local server plus a CLI, so a platform-independent bundle
+is the honest shape and avoids maintaining three platform-specific installers.
+
 ---
 
 ## Repository layout
@@ -97,7 +110,7 @@ type, so identical input scored differently depending on which front end ran it.
 
 ```bash
 cd gvi-calculator-java
-mvn test                      # 322 tests
+mvn test                      # 351 tests
 java -jar gvi-cli/target/gvi-calculator.jar --self-test
 bash ../run_corpus.sh /tmp/corpus_check    # all 16 datasets end to end
 ```
@@ -152,6 +165,11 @@ Nine of the sixteen corpus datasets currently clear the floor.
   currently supplies incidence data.
 - **π and GD saturate their normalisation ceilings** on inter-serotype alignments, so
   they contribute the maximum the scheme allows and carry no discriminating information.
+  Measured on this corpus: π clamps on 6 of 13 scored datasets (peaking at 0.0825 against
+  a 0.02 ceiling, 4.1× over) and GD on 2 of 13 (0.1071 against 0.05, 2.1×). The ceilings
+  are the specification's, so they have not been changed — instead the composite now names
+  every clamped index and its share of the surviving scheme, in both the report and the
+  JSON, so a score resting on saturated inputs says so rather than looking merely high.
 - **The indices are not orthogonal.** μ, π, MB, GD and GC intercorrelate at r ≥ 0.89
   while carrying 52.98% of the scheme.
 

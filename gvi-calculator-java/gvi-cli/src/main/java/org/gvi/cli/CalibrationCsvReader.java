@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,14 +53,22 @@ public final class CalibrationCsvReader {
         Set<IndexKey> keysInPlay = new LinkedHashSet<>();
 
         try (CSVParser parser = format.parse(reader)) {
-            if (!parser.getHeaderMap().containsKey("target")) {
-                throw new GviInputException("Calibration CSV (" + sourceLabel + ") is missing required column 'target'");
-            }
-            List<IndexKey> columnKeys = new ArrayList<>();
+            // Index columns are matched case-insensitively (IndexKey.fromLabel), so the target
+            // column is too: a file headed TARGET otherwise reported the column it plainly has as
+            // missing. The name as written is kept, because record lookup is case-sensitive.
+            String targetColumn = parser.getHeaderNames().stream()
+                    .filter(h -> h.equalsIgnoreCase("target"))
+                    .findFirst()
+                    .orElseThrow(() -> new GviInputException(
+                            "Calibration CSV (" + sourceLabel + ") is missing required column 'target'"));
+            // Key -> the header exactly as written. IndexKey.fromLabel matches case-insensitively
+            // but CSVRecord.get does not, so a file headed "MU" resolved to a key and then failed
+            // the row lookup for "mu"; carrying the written spelling is what makes the two agree.
+            Map<IndexKey, String> columnKeys = new LinkedHashMap<>();
             for (String header : parser.getHeaderNames()) {
-                if (header.equalsIgnoreCase("target")) continue;
+                if (header.equals(targetColumn)) continue;
                 try {
-                    columnKeys.add(IndexKey.fromLabel(header));
+                    columnKeys.put(IndexKey.fromLabel(header), header);
                 } catch (IllegalArgumentException e) {
                     throw new GviInputException("Calibration CSV (" + sourceLabel + ") has unrecognized column '" + header + "': " + e.getMessage());
                 }
@@ -67,14 +76,14 @@ public final class CalibrationCsvReader {
             if (columnKeys.isEmpty()) {
                 throw new GviInputException("Calibration CSV (" + sourceLabel + ") has no index columns besides 'target'");
             }
-            keysInPlay.addAll(columnKeys);
+            keysInPlay.addAll(columnKeys.keySet());
 
             for (CSVRecord rec : parser) {
                 Map<IndexKey, Double> values = new EnumMap<>(IndexKey.class);
-                for (IndexKey key : columnKeys) {
-                    values.put(key, Double.parseDouble(rec.get(key.label())));
+                for (Map.Entry<IndexKey, String> column : columnKeys.entrySet()) {
+                    values.put(column.getKey(), Double.parseDouble(rec.get(column.getValue())));
                 }
-                double target = Double.parseDouble(rec.get("target"));
+                double target = Double.parseDouble(rec.get(targetColumn));
                 observations.add(new WeightCalibrator.Observation(values, target));
             }
         } catch (IOException e) {

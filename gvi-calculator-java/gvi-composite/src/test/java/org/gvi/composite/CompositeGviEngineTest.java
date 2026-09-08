@@ -120,4 +120,66 @@ class CompositeGviEngineTest {
         // increasing MU's weight (which has normalized value 1.0) should raise GVI
         assertThat(muSensitivity.gviAtHighWeight()).isGreaterThan(muSensitivity.gviAtLowWeight());
     }
+
+    /**
+     * An index clamped at its normalisation ceiling must say so. Clamped and genuinely-maximal both
+     * read 1.0 and contribute identically, but a clamped index carries no discriminating information:
+     * it would report the same value for a dataset twice as divergent. On this project's corpus pi
+     * clamps on 6 of 13 scored datasets and GD on 2, so the reader needs telling.
+     */
+    @Test
+    void anIndexClampedAtItsCeilingIsReportedWithHowFarOverItWent() {
+        Map<IndexKey, Double> weightMap = new EnumMap<>(IndexKey.class);
+        weightMap.put(IndexKey.PI, 0.5);
+        weightMap.put(IndexKey.MU, 0.5);
+        CompositeWeights weights = CompositeWeights.of(weightMap);
+
+        Map<IndexKey, NormalizationRange> ranges = new EnumMap<>(IndexKey.class);
+        ranges.put(IndexKey.PI, new NormalizationRange(0, 0.02));
+        ranges.put(IndexKey.MU, new NormalizationRange(0, 10));
+
+        Map<IndexKey, FakeIndexResult> available = new EnumMap<>(IndexKey.class);
+        available.put(IndexKey.PI, new FakeIndexResult("pi", 0.0825));   // 4.1x the ceiling
+        available.put(IndexKey.MU, new FakeIndexResult("mu", 5.0));      // mid-range
+
+        GviResult r = engine.compute(available, weights, ranges);
+
+        assertThat(r.diagnostics())
+                .anyMatch(d -> d.contains("Normalisation ceiling reached by") && d.contains("pi"));
+        assertThat(r.diagnostics()).anyMatch(d -> d.contains("4.1x over"));
+        assertThat(r.diagnostics())
+                .as("an index inside its range must not be named")
+                .noneMatch(d -> d.contains("Normalisation ceiling") && d.contains("mu ("));
+    }
+
+    /**
+     * A value at the FLOOR is a measurement, not a clamp. RI = 0.0 means the PHI test found no
+     * recombination signal, which is a finding. Reporting it as saturation both cried wolf and
+     * produced nonsense arithmetic ("0.0 against a 1.0 ceiling, 0.0x over").
+     */
+    @Test
+    void aValueAtTheFloorIsNotReportedAsSaturated() {
+        Map<IndexKey, Double> weightMap = new EnumMap<>(IndexKey.class);
+        weightMap.put(IndexKey.RI, 1.0);
+        CompositeWeights weights = CompositeWeights.of(weightMap);
+
+        Map<IndexKey, NormalizationRange> ranges = new EnumMap<>(IndexKey.class);
+        ranges.put(IndexKey.RI, new NormalizationRange(0, 1.0));
+
+        Map<IndexKey, FakeIndexResult> available = new EnumMap<>(IndexKey.class);
+        available.put(IndexKey.RI, new FakeIndexResult("RI", 0.0));
+
+        GviResult r = engine.compute(available, weights, ranges);
+
+        assertThat(r.diagnostics()).noneMatch(d -> d.contains("Normalisation ceiling"));
+    }
+
+    @Test
+    void exceedsCeilingIsTrueOnlyAtOrAboveTheTop() {
+        NormalizationRange range = new NormalizationRange(0, 0.02);
+        assertThat(range.exceedsCeiling(0.0)).isFalse();
+        assertThat(range.exceedsCeiling(0.019)).isFalse();
+        assertThat(range.exceedsCeiling(0.02)).isTrue();
+        assertThat(range.exceedsCeiling(0.0825)).isTrue();
+    }
 }

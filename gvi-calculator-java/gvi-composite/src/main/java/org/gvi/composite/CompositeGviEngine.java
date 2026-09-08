@@ -43,6 +43,8 @@ public final class CompositeGviEngine {
         }
 
         List<GviComponent> components = new ArrayList<>();
+        List<String> saturated = new ArrayList<>();
+        java.util.Set<IndexKey> saturatedKeys = new java.util.LinkedHashSet<>();
         double gvi = 0.0;
         for (var entry : configuredWeights.entrySet()) {
             IndexKey key = entry.getKey();
@@ -51,12 +53,29 @@ public final class CompositeGviEngine {
             IndexResult result = available.get(key);
             NormalizationRange range = ranges.getOrDefault(key, NormalizationRange.defaults().get(key));
             double normalized = range.normalize(result.primaryValue());
+            if (range.exceedsCeiling(result.primaryValue())) {
+                saturatedKeys.add(key);
+                saturated.add(String.format(java.util.Locale.ROOT, "%s (%.5g against a %.5g ceiling, %.1fx over)",
+                        key.label(), result.primaryValue(), range.max(), result.primaryValue() / range.max()));
+            }
             double contribution = effectiveWeight * normalized;
             gvi += contribution;
             components.add(new GviComponent(key, result.primaryValue(), normalized, configuredWeight, effectiveWeight, contribution));
         }
 
         List<String> diagnostics = new ArrayList<>();
+        if (!saturated.isEmpty()) {
+            double saturatedWeight = components.stream()
+                    .filter(c -> saturatedKeys.contains(c.key()))
+                    .mapToDouble(GviComponent::effectiveWeight).sum();
+            diagnostics.add(String.format(java.util.Locale.ROOT,
+                    "Normalisation ceiling reached by %s, together %.1f%% of the surviving scheme. A clamped index "
+                            + "contributes the maximum the scheme allows and would report the same value for a "
+                            + "dataset twice as divergent, so it carries no discriminating information here -- it "
+                            + "cannot separate this dataset from a worse one. The raw values above are unaffected; "
+                            + "only their contribution to the composite is capped.",
+                    String.join("; ", saturated), saturatedWeight * 100));
+        }
         if (!excluded.isEmpty()) {
             diagnostics.add("Excluded (no data supplied): " + excluded.stream().map(IndexKey::label).reduce((a, b) -> a + ", " + b).orElse("")
                     + " -- remaining weights renormalized to sum to 1 (was " + String.format("%.3f", availableWeightSum) + " of full scheme)");

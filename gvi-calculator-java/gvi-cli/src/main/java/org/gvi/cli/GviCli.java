@@ -255,7 +255,9 @@ public final class GviCli implements Callable<Integer> {
         } catch (GviException e) {
             System.err.println("Error: " + e.getMessage());
             log.warn("Handled application error", e);
-            return e.getClass().getSimpleName().equals("GviInputException") ? 1 : 2;
+            // instanceof, not a name comparison: a subclass of GviInputException is still a
+            // user-input error and must exit 1, not be reported as a failed computation.
+            return e instanceof org.gvi.core.exception.GviInputException ? 1 : 2;
         } catch (Exception e) {
             System.err.println("Unexpected internal error: " + e.getMessage() + " (see log file for the full stack trace; this is likely a bug)");
             log.error("Unhandled exception in CLI", e);
