@@ -1,15 +1,26 @@
 # GVI Calculator — Genomic Virulence Index
 
-A standalone, fully offline implementation of the eight-index Genomic Virulence Index
-framework. Takes an aligned multi-FASTA and produces a single scalar, GVI(t) ∈ [0,1],
-by computing eight named genomic indices, scaling each to a reference range, and
-combining them under a weighted sum.
+A standalone, fully offline implementation of the Genomic Virulence Index framework.
+Takes an aligned multi-FASTA and produces a single scalar, GVI(t) ∈ [0,1], by computing
+a set of genomic indices, scaling each to a reference range, and combining them under a
+weighted sum.
 
 It runs entirely in one JVM process. No MAFFT, no IQ-TREE, no LSD2, no network.
 
 ```
-GVI(t) = w₁·μ + w₂·Re + w₃·π + w₄·MB + w₅·dN/dS + w₆·GD + w₇·CAI + w₈·RI     (Σw = 1)
+GVI(t) = w₁·μ + w₂·Re + w₃·π + w₄·MB + w₅·dN/dS + w₆·GD + w₇·CAI + w₈·GC + w₉·RI     (Σw = 1)
 ```
+
+The specification names eight indices, with GC Content Deviation defined as part of
+CAI's own definition. In practice the two are computed and normalised separately (a
+host codon-adaptation score and a compositional-bias score are different questions),
+so the composite actually sums nine terms — the number the web UI's index picker and
+every JSON/CSV report use. `IndexKey`'s javadoc has the full reasoning.
+
+**Contents:** [Quick start](#quick-start) · [Estimator options](#estimator-options) ·
+[Repository layout](#repository-layout) · [Testing](#testing) ·
+[Reading a result](#reading-a-result) · [Known limitations](#known-limitations) ·
+[Licence](#licence)
 
 ---
 
@@ -29,14 +40,18 @@ java -jar gvi-calculator-java/gvi-web/target/gvi-calculator-web.jar
 # → http://127.0.0.1:8080
 ```
 
-Binds loopback only by default, and unauthenticated on loopback -- a local analyst's tool,
-not a service. `--host` allows a deliberate deployment on a routable interface; the moment
-it's used, HTTP Basic Auth (username `analyst`) is required, with a password generated and
-printed if you don't supply one via `--password` or the `GVI_WEB_PASSWORD` environment
-variable (prefer the env var -- a CLI flag is visible to anyone who can list processes on the
-host). A password can also be set on a loopback bind, for a shared workstation that wants a
-login even for local access. Still put a real deployment behind a reverse proxy with TLS:
-Basic Auth alone sends the password in the clear over plain HTTP.
+A local analyst's tool, not a service:
+
+- **Default:** binds loopback only (`127.0.0.1`), no login required.
+- **`--host <addr>`** binds a routable interface for a deliberate deployment. The moment
+  it's used, HTTP Basic Auth (username `analyst`) is required — supply a password with
+  `--password` or the `GVI_WEB_PASSWORD` environment variable (prefer the env var; a CLI
+  flag is visible to anyone who can list processes on the host), or one is generated and
+  printed for you.
+- A password can also be set on a loopback bind, for a shared workstation that wants a
+  login even for local access.
+- Still put a real deployment behind a reverse proxy with TLS — Basic Auth alone sends
+  the password in the clear over plain HTTP.
 
 ### Command line
 
