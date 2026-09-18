@@ -17,7 +17,9 @@ host codon-adaptation score and a compositional-bias score are different questio
 so the composite actually sums nine terms — the number the web UI's index picker and
 every JSON/CSV report use. `IndexKey`'s javadoc has the full reasoning.
 
-**Contents:** [Quick start](#quick-start) · [Estimator options](#estimator-options) ·
+**Contents:** [Quick start](#quick-start) ·
+[What input unlocks which index](#what-input-unlocks-which-index) ·
+[Estimator options](#estimator-options) ·
 [Repository layout](#repository-layout) · [Testing](#testing) ·
 [Reading a result](#reading-a-result) · [Known limitations](#known-limitations) ·
 [Licence](#licence)
@@ -26,12 +28,19 @@ every JSON/CSV report use. `IndexKey`'s javadoc has the full reasoning.
 
 ## Quick start
 
-Requires **JDK 17**. Build with Maven:
+**Prerequisites:** JDK 17+, Maven 3.6+, and git (to clone). Nothing else — no
+network access is needed after that, and no MAFFT/IQ-TREE/other bioinformatics
+tools to install.
 
 ```bash
-cd gvi-calculator-java
+git clone https://github.com/selbioinfonivedi-web/GVI_calculator.git
+cd GVI_calculator/gvi-calculator-java
 mvn install
 ```
+
+That builds every module and runs the test suite. Skip the tests on a first build
+with `mvn install -DskipTests` if you just want the jars quickly (see
+[Testing](#testing) below for what you're skipping).
 
 ### Web interface (the supported surface)
 
@@ -66,6 +75,23 @@ java -jar gvi-calculator-java/gvi-cli/target/gvi-calculator.jar \
 ```
 
 `--self-test` runs 13 diagnostic checks inside the delivered binary.
+
+### What input unlocks which index
+
+Only the alignment is required; everything else is optional and only gates the
+indices that need it. Both the CLI and the web interface take the same inputs — the
+web UI's own field hints repeat this, so this is a quick reference, not the only copy:
+
+| Input | Required? | Unlocks |
+|---|---|---|
+| Aligned multi-FASTA | **Required** | π, MB, GD, GC — the four that need only sequence |
+| Metadata CSV (`sequence_id, collection_date, location, host`) | Optional | μ and Re (no collection dates, no clock) |
+| GFF3 gene annotation | Optional | dN/dS and CAI use it directly; without it, gene coordinates are auto-predicted (see below) |
+| Host codon usage table (bundled species, or a custom `codon,frequency` CSV) | Optional | CAI specifically — meaningless without a declared organism class of virus/bacterium |
+| Case-incidence CSV (`date, new_cases`) | Optional | Switches Re to the more accurate Cori estimator instead of the tree-shape fallback |
+
+`dummy_data/` in this repo has a small example of all four optional inputs together,
+for a first run without real data on hand.
 
 ### Estimator options
 
