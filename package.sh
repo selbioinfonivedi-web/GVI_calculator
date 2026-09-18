@@ -6,10 +6,10 @@
 #   ./package.sh --skip-build   reuse jars already in target/
 #
 # Not jpackage. jpackage produces a native installer around a desktop
-# application, and the supported surface here is a local web server plus a CLI --
+# application; the supported surface here is a local web server plus a CLI --
 # a bundle that runs anywhere a JRE exists is the honest shape for that, and it
 # avoids building three platform-specific installers for something platform
-# independent. The desktop module stays parked behind -Pdesktop.
+# independent.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,7 +44,6 @@ mkdir -p "$STAGE/bin" "$STAGE/doc"
 
 cp "$CLI_JAR" "$WEB_JAR" "$STAGE/bin/"
 cp "$ROOT/README.md" "$ROOT/LICENSE" "$STAGE/"
-cp "$BUILD_DIR/gvi-ui/src/main/resources/fonts/LICENSE-IBM-Plex.txt" "$STAGE/doc/" 2>/dev/null || true
 [ -f "$ROOT/Genomic_Indices_Detailed_Definitions.docx" ] \
   && cp "$ROOT/Genomic_Indices_Detailed_Definitions.docx" "$STAGE/doc/"
 
@@ -95,8 +94,8 @@ printed. Still put a real deployment behind a reverse proxy with TLS on top of t
 Read README.md before interpreting a score -- in particular the section on
 effectiveWeightSum, which decides whether a score can be compared with another.
 
-Licence: MIT (see LICENSE). Bundled IBM Plex fonts are SIL OFL 1.1; the codon
-usage tables are from the Kazusa database and should be cited on use.
+Licence: MIT (see LICENSE). The codon usage tables are from the Kazusa
+database and should be cited on use.
 TXT
 
 mkdir -p "$ROOT/dist"

@@ -117,15 +117,6 @@ uses: long open reading frames train this genome's own codon-usage model, then e
 candidate is scored against it rather than kept by length alone) — see
 `TrainedGeneFinder`'s javadoc for the model and its documented limitations.
 
-### Desktop application
-
-Parked. The web tool is the supported interface; the JavaFX module is excluded from
-the default build but still compiles:
-
-```bash
-mvn -Pdesktop install
-```
-
 ### Packaging a release
 
 ```bash
@@ -135,7 +126,7 @@ mvn -Pdesktop install
 
 Produces a bundle that runs anywhere a JRE 17 exists: both jars, `gvi` / `gvi-web`
 launchers (plus `.bat`), INSTALL.txt, the README and the licence. Deliberately not
-`jpackage` — that builds a native installer around a *desktop* application, and the
+`jpackage` — that builds a native installer around a desktop application, and the
 supported surface here is a local server plus a CLI, so a platform-independent bundle
 is the honest shape and avoids maintaining three platform-specific installers.
 
@@ -145,7 +136,7 @@ is the honest shape and avoids maintaining three platform-specific installers.
 
 | Path | Contents |
 |---|---|
-| `gvi-calculator-java/` | The Maven reactor — six modules built by default, plus the parked desktop module |
+| `gvi-calculator-java/` | The Maven reactor — six modules: `gvi-core`, `gvi-algorithms`, `gvi-composite`, `gvi-selftest`, `gvi-cli`, `gvi-web` |
 | `pathogen_data/` | The 16-dataset corpus. Three files per dataset: `aligned.fasta`, `metadata.csv`, a GFF3 |
 | `dummy_data/` | A small synthetic dataset (15 taxa, a built-in molecular clock) exercising all four optional inputs — good for a first run of the web interface without real data on hand |
 | `gvi_results_final/` | Current corpus results — **the baseline the regression diffs against** |
@@ -171,14 +162,14 @@ gvi-core          model, readers, genetic code, trimming, exceptions
           └── gvi-composite     weighting, normalisation, renormalisation, sensitivity
                  ├── gvi-selftest    the 13 checks shipped in the binary
                  └── gvi-cli         picocli entry point + the pipeline orchestrator
-                        ├── gvi-web        HTTP server, JSON API, browser client
-                        └── gvi-ui         JavaFX desktop (parked behind -Pdesktop)
+                        └── gvi-web        HTTP server, JSON API, browser client
 ```
 
-Every front end calls the same `GviPipeline.run(PipelineConfig)` through the canonical
-constructor. This is enforced rather than assumed: the desktop UI once diverged from the
-CLI by calling a back-compatible constructor that defaulted organism class and genome
-type, so identical input scored differently depending on which front end ran it.
+The web front end calls `GviPipeline.run(PipelineConfig)` through the canonical
+constructor, not a back-compatible one that defaults organism class and genome type —
+a since-removed JavaFX desktop front end once used the latter, and identical input
+scored differently depending on which front end ran it. The canonical constructor is
+now the only entry point that matters, but this is why one exists at all.
 
 ---
 
@@ -260,17 +251,16 @@ Nine of the sixteen corpus datasets currently clear the floor.
 This project is released under the **MIT Licence** — see [LICENSE](LICENSE).
 Copyright © 2026 Pooja B.N.
 
-Two things bundled here carry their own terms and are **not** covered by the MIT
+One thing bundled here carries its own terms and is **not** covered by the MIT
 licence above:
 
 | Component | Licence | Where |
 |---|---|---|
-| IBM Plex typefaces | SIL Open Font License 1.1 | `gvi-calculator-java/gvi-ui/src/main/resources/fonts/LICENSE-IBM-Plex.txt` |
 | Codon usage tables | Kazusa Codon Usage Database (Nakamura, Gojobori & Ikemura 2000) — cite on use | `gvi-calculator-java/gvi-algorithms/src/main/resources/codon_usage/` |
 
-Runtime dependencies (Apache Commons, Jackson, picocli, SLF4J, Logback, JavaFX,
-JUnit, AssertJ) are Apache-2.0, MIT, EPL or GPL+CE as declared in their own
-distributions; none are redistributed in source form here.
+Runtime dependencies (Apache Commons, Jackson, picocli, SLF4J, Logback, JUnit,
+AssertJ) are Apache-2.0, MIT or EPL as declared in their own distributions;
+none are redistributed in source form here.
 
 ### Citing
 

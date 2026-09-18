@@ -21,25 +21,6 @@
     <module>gvi-web</module>
   </modules>
 
-  <!--
-    The JavaFX desktop application is parked, not deleted: the web tool is the supported
-    surface and gvi-ui is no longer built or tested by default. The source is unchanged and
-    the module still builds under this profile, so reviving it is a flag rather than a rewrite.
-
-        mvn -Pdesktop install
-
-    Parking it also drops the three platform-classified JavaFX native jars from a default
-    build, which is most of what made the reactor platform-specific.
-  -->
-  <profiles>
-    <profile>
-      <id>desktop</id>
-      <modules>
-        <module>gvi-ui</module>
-      </modules>
-    </profile>
-  </profiles>
-
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
@@ -68,10 +49,6 @@
     -->
     <argLine />
     <surefire.heap>-Xmx512m</surefire.heap>
-    <javafx.version>21.0.2</javafx.version>
-    <!-- Build machine's platform classifier for the JavaFX native jars (linux|win|mac). Override with
-         -Djavafx.platform=win or =mac when building on/for another OS. -->
-    <javafx.platform>linux</javafx.platform>
   </properties>
 
   <dependencyManagement>
@@ -155,25 +132,6 @@
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-base</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>${javafx.platform}</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-graphics</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>${javafx.platform}</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-controls</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>${javafx.platform}</classifier>
       </dependency>
     </dependencies>
   </dependencyManagement>
