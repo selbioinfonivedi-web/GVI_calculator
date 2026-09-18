@@ -58,7 +58,7 @@ class ReportWriterTest {
                 fasta, null, null, null, null, null, null, "reference",
                 Set.of("pi", "gd", "mb", "ri"),
                 OrganismClass.VIRUS, null, false, 5.0,
-                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, true, false,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, false, true, false,
                 null, GenomeType.RNA, Map.of(), null, false, 100, false, null);
     }
 

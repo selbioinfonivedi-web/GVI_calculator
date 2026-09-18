@@ -43,6 +43,15 @@ class AnalysisServiceTest {
         return fasta.toString();
     }
 
+    /** Dates for {@link #alignment()}'s eight sequences, spread out enough to give mu/Re real temporal signal. */
+    private static String metadata() {
+        StringBuilder csv = new StringBuilder("sequence_id,collection_date,location,host\n");
+        for (int i = 0; i < 8; i++) {
+            csv.append("seq").append(i).append(",2024-0").append((i % 9) + 1).append("-15,India,Human\n");
+        }
+        return csv.toString();
+    }
+
     /**
      * The web front end must be a different presentation of the same computation, not a second
      * implementation of it. The JavaFX UI regressed exactly here: it called the back-compatible
@@ -63,7 +72,7 @@ class AnalysisServiceTest {
         PipelineConfig config = new PipelineConfig(
                 fasta, null, null, null, null, null, null, null, Set.of("all"),
                 OrganismClass.VIRUS, null, false, 5.0, GdMethod.JUKES_CANTOR, 1.0, 2.0,
-                false, null, "gtr", false, false, true, false, null,
+                false, null, "gtr", false, false, false, true, false, null,
                 GenomeType.RNA, Map.of(), null, false, 100, false, null);
         PipelineResult direct = new GviPipeline().run(config);
 
@@ -72,6 +81,65 @@ class AnalysisServiceTest {
         assertThat(web.gvi).isCloseTo(direct.datasetGvi().gvi(), within(1e-12));
         assertThat(web.comparable).isEqualTo(direct.datasetGvi().comparable());
         assertThat(web.coverageSummary).isEqualTo(direct.datasetGvi().coverageSummary());
+    }
+
+    /**
+     * The opt-in slower estimators ({@code --high-accuracy-mu}, {@code --lsd-mu},
+     * {@code --bootstrap-support}, {@code --ml-dnds}) and the non-default Re path
+     * ({@code bdskyRe=false}) were previously hardcoded off in {@link AnalysisService#buildConfig}
+     * regardless of what the request asked for. This pins the web service against a direct
+     * pipeline run with the same flags set, the same way {@link
+     * #producesTheSameCompositeScoreAsADirectPipelineRun} pins the defaults -- so a future edit
+     * that quietly drops the wiring (as happened once already) fails a test instead of only
+     * being reachable by hand through the browser.
+     */
+    @Test
+    void wiresTheOptInEstimatorFlagsThroughToThePipeline(@TempDir Path tmp) throws Exception {
+        AnalyzeRequest request = new AnalyzeRequest();
+        request.fasta = alignment();
+        request.metadata = metadata();
+        request.organismClass = "virus";
+        request.genomeType = "rna";
+        request.gdMethod = "hamming";
+        request.highAccuracyMu = true;
+        request.bootstrapSupport = true;
+        request.mlDnds = true;
+        request.bdskyRe = false;
+
+        AnalyzeResponse web = service.analyze(request);
+
+        Path fasta = Files.writeString(tmp.resolve("in.fasta"), alignment());
+        Path meta = Files.writeString(tmp.resolve("meta.csv"), metadata());
+        PipelineConfig config = new PipelineConfig(
+                fasta, meta, null, null, null, null, null, null, Set.of("all"),
+                OrganismClass.VIRUS, null, false, 5.0, GdMethod.HAMMING, 1.0, 2.0,
+                true, null, "gtr", true, false, false, false, true, null,
+                GenomeType.RNA, Map.of(), null, false, 100, false, null);
+        PipelineResult direct = new GviPipeline().run(config);
+
+        assertThat(web.gvi).isNotNull();
+        assertThat(direct.datasetGvi()).isNotNull();
+        assertThat(web.gvi).isCloseTo(direct.datasetGvi().gvi(), within(1e-12));
+        assertThat(web.coverageSummary).isEqualTo(direct.datasetGvi().coverageSummary());
+    }
+
+    /**
+     * The web UI's genetic-distance dropdown must send values this service actually understands.
+     * It once sent {@code "k80"} for Kimura two-parameter, which {@link
+     * AnalysisService#buildConfig} rejected with {@code GviInputException} on every single request,
+     * because {@link GdMethod#valueOf} needs the enum's own spelling.
+     */
+    @Test
+    void acceptsEveryGdMethodValueTheUiDropdownCanSend() throws Exception {
+        for (String value : new String[] {"", "hamming", "jukes_cantor", "kimura_2_parameter"}) {
+            AnalyzeRequest request = new AnalyzeRequest();
+            request.fasta = alignment();
+            request.organismClass = "virus";
+            request.genomeType = "rna";
+            request.gdMethod = value;
+
+            assertThat(service.analyze(request).gvi).as("gdMethod='%s'", value).isNotNull();
+        }
     }
 
     /**

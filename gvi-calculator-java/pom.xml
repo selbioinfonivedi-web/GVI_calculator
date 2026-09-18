@@ -202,6 +202,15 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.13.0</version>
+          <configuration>
+            <!-- javac's own lint, not a new tool or dependency, consistent with this project's
+                 minimal-footprint stance. Surfaced as warnings only (no -Werror): a codebase this
+                 size will have pre-existing hits, and turning those into build failures on day one
+                 would block unrelated work rather than catch anything new. -->
+            <compilerArgs>
+              <arg>-Xlint:all,-processing</arg>
+            </compilerArgs>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

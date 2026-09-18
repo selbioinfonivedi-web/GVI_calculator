@@ -3,6 +3,8 @@ package org.gvi.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sun.net.httpserver.BasicAuthenticator;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.gvi.core.exception.GviException;
@@ -18,6 +20,8 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -32,10 +36,16 @@ import java.util.concurrent.TimeUnit;
  * front end is not a good enough reason to break that. No new runtime dependency is introduced: the
  * server is in the JDK, and Jackson was already used for the JSON reports.
  * <p>
- * <b>Binds to loopback by default.</b> This endpoint runs analyses and reads and writes files on the
- * host, so it is a local analyst's tool, not a service. Exposing it on a routable interface would put an
- * unauthenticated code path that accepts uploads on the network; {@code --host} allows it for
- * deliberate deployments behind a reverse proxy, and warns loudly when used.
+ * <b>Binds to loopback by default, and is unauthenticated by default.</b> This endpoint runs analyses
+ * and reads and writes files on the host, so it is a local analyst's tool, not a service -- on
+ * loopback with no password configured, it behaves exactly as it always has: open the page, no login.
+ * {@code --host} allows binding a routable interface for a deliberate deployment; the moment it is used,
+ * this class requires a password (HTTP Basic Auth, username {@value #BASIC_AUTH_USER}) rather than
+ * silently exposing an unauthenticated upload-and-execute endpoint on the network. Pass one explicitly
+ * with {@code --password} (or the {@code GVI_WEB_PASSWORD} environment variable, which avoids the
+ * password appearing in a process listing or shell history); leave it unset on a non-loopback host and
+ * one is generated and printed to the console instead. A password can also be set on a loopback bind,
+ * for a shared workstation that wants a login even for local access.
  */
 public final class GviWebServer {
 
@@ -44,6 +54,8 @@ public final class GviWebServer {
     private static final int DEFAULT_PORT = 8080;
     /** Analyses are CPU-bound (tree building, ML fits); a small pool keeps a burst of requests from thrashing. */
     private static final int WORKER_THREADS = Math.max(2, Runtime.getRuntime().availableProcessors() / 2);
+    private static final String BASIC_AUTH_USER = "analyst";
+    private static final String PASSWORD_ENV_VAR = "GVI_WEB_PASSWORD";
 
     private final ObjectMapper mapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
@@ -54,16 +66,24 @@ public final class GviWebServer {
     public static void main(String[] args) throws Exception {
         int port = DEFAULT_PORT;
         String host = "127.0.0.1";
+        String password = null;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "--port" -> port = Integer.parseInt(args[++i]);
                 case "--host" -> host = args[++i];
+                case "--password" -> password = args[++i];
                 case "--help", "-h" -> {
                     System.out.println("""
                             GVI Calculator -- web interface
 
-                              --port <n>     port to listen on (default 8080)
-                              --host <addr>  address to bind (default 127.0.0.1, loopback only)
+                              --port <n>       port to listen on (default 8080)
+                              --host <addr>    address to bind (default 127.0.0.1, loopback only)
+                              --password <pw>  require HTTP Basic Auth (username "analyst") with this password.
+                                               Prefer the GVI_WEB_PASSWORD environment variable instead of this
+                                               flag where possible -- a command-line argument is visible to
+                                               anyone who can list processes on the host.
+                                               Binding --host beyond loopback requires a password: one is
+                                               generated and printed if you don't supply one.
 
                             Runs the same pipeline as the command-line tool. Open the printed URL in a browser.""");
                     return;
@@ -74,18 +94,35 @@ public final class GviWebServer {
                 }
             }
         }
-        new GviWebServer().start(host, port);
+        if (password == null) password = System.getenv(PASSWORD_ENV_VAR);
+        new GviWebServer().start(host, port, password);
     }
 
     public void start(String host, int port) throws IOException {
+        start(host, port, null);
+    }
+
+    public void start(String host, int port, String password) throws IOException {
+        boolean generated = false;
+        if (password == null && !isLoopback(host)) {
+            password = generatePassword();
+            generated = true;
+        }
+
         server = HttpServer.create(new InetSocketAddress(InetAddress.getByName(host), port), 0);
-        server.createContext("/", this::handleStatic);
-        server.createContext("/api/analyze", this::handleAnalyze);
-        server.createContext("/api/self-test", this::handleSelfTest);
-        server.createContext("/api/health", this::handleHealth);
-        server.createContext("/api/codon-species", this::handleCodonSpecies);
-        server.createContext("/api/pathogens", this::handlePathogens);
-        server.createContext("/api/preflight", this::handlePreflight);
+        HttpContext[] contexts = {
+                server.createContext("/", this::handleStatic),
+                server.createContext("/api/analyze", this::handleAnalyze),
+                server.createContext("/api/self-test", this::handleSelfTest),
+                server.createContext("/api/health", this::handleHealth),
+                server.createContext("/api/codon-species", this::handleCodonSpecies),
+                server.createContext("/api/pathogens", this::handlePathogens),
+                server.createContext("/api/preflight", this::handlePreflight)
+        };
+        if (password != null) {
+            var authenticator = new ConstantTimeBasicAuthenticator(password);
+            for (HttpContext ctx : contexts) ctx.setAuthenticator(authenticator);
+        }
 
         ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(WORKER_THREADS);
         server.setExecutor(pool);
@@ -94,12 +131,52 @@ public final class GviWebServer {
         System.out.println("GVI Calculator web interface -- http://" + host + ":" + port);
         if (!isLoopback(host)) {
             System.out.println();
-            System.out.println("  WARNING: bound to " + host + ", which is not loopback. This endpoint accepts");
-            System.out.println("  uploads and runs analyses with no authentication. Put it behind a reverse proxy");
-            System.out.println("  that handles access control, or bind 127.0.0.1 instead.");
+            System.out.println("  Bound to " + host + ", which is not loopback -- HTTP Basic Auth is required");
+            System.out.println("  (username \"" + BASIC_AUTH_USER + "\"). Still put this behind a reverse proxy");
+            System.out.println("  with TLS before trusting it on an untrusted network; Basic Auth alone sends");
+            System.out.println("  the password in the clear over plain HTTP.");
+            if (generated) {
+                System.out.println();
+                System.out.println("  No --password/" + PASSWORD_ENV_VAR + " was set, so one was generated for this run:");
+                System.out.println();
+                System.out.println("      password: " + password);
+                System.out.println();
+                System.out.println("  This password is not saved anywhere and will be different next run; share it");
+                System.out.println("  out of band with whoever needs access, or set your own with --password or " + PASSWORD_ENV_VAR + ".");
+            }
+        } else if (password != null) {
+            System.out.println();
+            System.out.println("  HTTP Basic Auth is required on this loopback bind (username \"" + BASIC_AUTH_USER + "\") because a password was configured.");
         }
         System.out.println();
         System.out.println("Press Ctrl+C to stop.");
+    }
+
+    private static String generatePassword() {
+        byte[] bytes = new byte[18]; // 24 base64 chars, ~144 bits -- generous for a printed, share-out-of-band credential
+        new SecureRandom().nextBytes(bytes);
+        return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Fixed single username, password compared in constant time -- {@link String#equals} short-circuits
+     * on the first mismatched character, which leaks how many leading characters a guess got right to
+     * anyone who can measure response timing. Not the primary defense here (that's not exposing this
+     * unauthenticated on a network at all), but a correct comparison costs nothing extra to write.
+     */
+    private static final class ConstantTimeBasicAuthenticator extends BasicAuthenticator {
+        private final byte[] expected;
+
+        ConstantTimeBasicAuthenticator(String password) {
+            super("GVI Calculator");
+            this.expected = password.getBytes(StandardCharsets.UTF_8);
+        }
+
+        @Override
+        public boolean checkCredentials(String username, String password) {
+            byte[] given = password.getBytes(StandardCharsets.UTF_8);
+            return BASIC_AUTH_USER.equals(username) && MessageDigest.isEqual(expected, given);
+        }
     }
 
     /** Returns the bound port -- useful when a caller passed 0 to get an ephemeral one (tests do). */

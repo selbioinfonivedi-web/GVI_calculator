@@ -1,0 +1,16 @@
+sequence_id,collection_date,location,host
+reference,2015-01-01,India,cattle
+sample_01,2015-07-03,India,cattle
+sample_02,2016-08-07,Kenya,cattle
+sample_03,2017-09-13,Brazil,cattle
+sample_04,2018-10-20,Vietnam,cattle
+sample_05,2019-11-26,Nigeria,cattle
+sample_06,2021-01-01,Egypt,cattle
+sample_07,2022-02-06,India,cattle
+sample_08,2023-03-15,Kenya,cattle
+sample_09,2024-04-20,Brazil,cattle
+sample_10,2025-05-27,Vietnam,cattle
+sample_11,2026-07-02,Nigeria,cattle
+sample_12,2027-08-08,Egypt,cattle
+sample_13,2028-09-13,India,cattle
+sample_14,2029-10-20,Kenya,cattle

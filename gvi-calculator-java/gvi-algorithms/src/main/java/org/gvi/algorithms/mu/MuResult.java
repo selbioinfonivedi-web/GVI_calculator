@@ -13,7 +13,7 @@ import java.util.List;
  */
 public record MuResult(double muSubPerSiteYear, double rSquared, int pointsUsed, double timeSpanYears,
                         MuEstimationMethod method, String category, List<String> diagnostics,
-                        boolean temporalSignalConfirmed) implements IndexResult {
+                        boolean temporalSignalConfirmed, Double rateCoefficientOfVariation) implements IndexResult {
 
     private static final double RELIABLE_R_SQUARED_THRESHOLD = 0.3;
 
@@ -23,7 +23,18 @@ public record MuResult(double muSubPerSiteYear, double rSquared, int pointsUsed,
      */
     public MuResult(double muSubPerSiteYear, double rSquared, int pointsUsed, double timeSpanYears,
                     MuEstimationMethod method, String category, List<String> diagnostics) {
-        this(muSubPerSiteYear, rSquared, pointsUsed, timeSpanYears, method, category, diagnostics, true);
+        this(muSubPerSiteYear, rSquared, pointsUsed, timeSpanYears, method, category, diagnostics, true, null);
+    }
+
+    /**
+     * Back-compatible constructor for callers predating {@link MuEstimationMethod#RELAXED_CLOCK_ML}.
+     * {@code rateCoefficientOfVariation} is null for every other method -- they all assume one shared
+     * rate across every branch, so "how much does the rate vary between branches" is not a question
+     * they answer.
+     */
+    public MuResult(double muSubPerSiteYear, double rSquared, int pointsUsed, double timeSpanYears,
+                    MuEstimationMethod method, String category, List<String> diagnostics, boolean temporalSignalConfirmed) {
+        this(muSubPerSiteYear, rSquared, pointsUsed, timeSpanYears, method, category, diagnostics, temporalSignalConfirmed, null);
     }
 
     @Override

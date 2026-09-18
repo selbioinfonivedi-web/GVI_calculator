@@ -212,6 +212,79 @@ public final class EvolutionaryRateCalculator {
         return new MuResult(mu, rSquared, tipDates.size(), timeSpanYears, MuEstimationMethod.LEAST_SQUARES_DATING, category, diagnostics);
     }
 
+    /**
+     * Uncorrelated lognormal relaxed clock -- see {@link RelaxedClockMlEstimator} for the model and
+     * fitting method. Like {@link #computeLeastSquaresDating}, needs every sequence dated (a relaxed
+     * clock's per-branch rates are even less identifiable than a strict clock's single rate when
+     * dates are missing, not more).
+     */
+    public MuResult computeRelaxedClock(SequenceAlignment alignment) {
+        return computeRelaxedClock(alignment, GenomeType.UNSPECIFIED);
+    }
+
+    public MuResult computeRelaxedClock(SequenceAlignment alignment, GenomeType genomeType) {
+        List<String> diagnostics = new ArrayList<>();
+        String rootId = PhyloTreeFactory.temporalAnchorId(alignment, diagnostics);
+        PhyloTreeFactory.BuiltTree built = PhyloTreeFactory.build(alignment, GdMethod.JUKES_CANTOR, rootId);
+        diagnostics.addAll(built.diagnostics());
+
+        Map<String, Double> tipDates = new HashMap<>();
+        int noDateExcluded = 0;
+        for (NucleotideSequence seq : alignment.getSequences()) {
+            if (seq.getCollectionDate().isEmpty()) {
+                noDateExcluded++;
+                continue;
+            }
+            tipDates.put(seq.getId(), TemporalUtil.toDecimalYear(seq.getCollectionDate().get()));
+        }
+        if (noDateExcluded > 0) {
+            throw new GviComputationException("Relaxed-clock dating needs every sequence to have a collection date ("
+                    + noDateExcluded + " missing); exclude undated sequences first or use the tree-aware estimator instead");
+        }
+
+        RelaxedClockMlEstimator.Estimate estimate = new RelaxedClockMlEstimator().estimate(built.tree(), tipDates);
+
+        double meanBranchLength = estimate.nodeDates().keySet().stream()
+                .filter(n -> n.parent() != null).mapToDouble(PhyloNode::branchLength).average().orElse(0.0);
+        double residualSse = 0.0, totalSse = 0.0;
+        for (PhyloNode n : estimate.nodeDates().keySet()) {
+            if (n.parent() == null) continue;
+            double dt = estimate.nodeDates().get(n) - estimate.nodeDates().get(n.parent());
+            double predicted = estimate.rate0SubPerSiteYear() * dt;
+            residualSse += Math.pow(n.branchLength() - predicted, 2);
+            totalSse += Math.pow(n.branchLength() - meanBranchLength, 2);
+        }
+        double rSquared = totalSse > 0 ? Math.max(0.0, 1.0 - residualSse / totalSse) : 0.0;
+
+        diagnostics.add(String.format(java.util.Locale.ROOT,
+                "Uncorrelated lognormal relaxed clock (Drummond et al. 2006 UCLD-equivalent model, fit by maximum "
+                        + "likelihood): %d iteration(s), log-likelihood=%.6g, rate coefficient of variation=%.3f "
+                        + "(0 = behaviourally a strict clock; the reported rate is the fitted clock's median branch rate).",
+                estimate.iterationsUsed(), estimate.logLikelihood(), estimate.coefficientOfVariation()));
+
+        double mu = estimate.rate0SubPerSiteYear();
+        List<DateRandomizationTest.TemporalPoint> drtPoints = new ArrayList<>();
+        for (NucleotideSequence seq : alignment.getSequences()) {
+            Double year = tipDates.get(seq.getId());
+            if (year != null) drtPoints.add(new DateRandomizationTest.TemporalPoint(year, built.tree().rootToTip(seq.getId())));
+        }
+        DateRandomizationTest.Result drt = new DateRandomizationTest().run(drtPoints, mu);
+        diagnostics.add(drt.explanation());
+
+        String category;
+        if (mu <= 0) {
+            category = "N/A (non-positive rate estimate -- check temporal signal / possible sampling artifact)";
+        } else {
+            var band = MuReferenceTable.classify(mu, genomeType);
+            category = MuReferenceTable.describe(band, genomeType);
+        }
+
+        double timeSpanYears = tipDates.values().stream().mapToDouble(Double::doubleValue).max().orElse(0.0)
+                - tipDates.values().stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
+        return new MuResult(mu, rSquared, tipDates.size(), timeSpanYears, MuEstimationMethod.RELAXED_CLOCK_ML, category,
+                diagnostics, drt.passed(), estimate.coefficientOfVariation());
+    }
+
     private void appendBootstrapSupportDiagnostic(SequenceAlignment alignment, PhyloTree tree, int replicates, List<String> diagnostics) {
         if (alignment.size() > BootstrapSupportCalculator.MAX_TAXA_FOR_BOOTSTRAP) {
             diagnostics.add("Bootstrap support skipped: " + alignment.size() + " taxa exceeds the "

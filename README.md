@@ -29,9 +29,14 @@ java -jar gvi-calculator-java/gvi-web/target/gvi-calculator-web.jar
 # → http://127.0.0.1:8080
 ```
 
-Binds loopback only. It accepts uploads and runs analyses with no authentication,
-so it is a local analyst's tool rather than a service; `--host` allows a deliberate
-deployment behind a reverse proxy and warns when used.
+Binds loopback only by default, and unauthenticated on loopback -- a local analyst's tool,
+not a service. `--host` allows a deliberate deployment on a routable interface; the moment
+it's used, HTTP Basic Auth (username `analyst`) is required, with a password generated and
+printed if you don't supply one via `--password` or the `GVI_WEB_PASSWORD` environment
+variable (prefer the env var -- a CLI flag is visible to anyone who can list processes on the
+host). A password can also be set on a loopback bind, for a shared workstation that wants a
+login even for local access. Still put a real deployment behind a reverse proxy with TLS:
+Basic Auth alone sends the password in the clear over plain HTTP.
 
 ### Command line
 
@@ -46,6 +51,30 @@ java -jar gvi-calculator-java/gvi-cli/target/gvi-calculator.jar \
 ```
 
 `--self-test` runs 13 diagnostic checks inside the delivered binary.
+
+### Estimator options
+
+Every index that has more than one way to compute it defaults to the fast/standard
+method and offers slower, more accurate ones as opt-in — on the CLI as flags, in the
+web UI as dropdowns in the Input tab's Advanced section (each falls back to the default
+automatically, with a warning, if it can't run on a given dataset):
+
+| Index | Default | Opt-in alternatives |
+|---|---|---|
+| μ (evolutionary rate) | Tree root-to-tip regression | `--high-accuracy-mu` (GTR+Gamma ML branch lengths), `--lsd-mu` (least-squares dating, LSD2-equivalent), `--relaxed-clock-mu` (uncorrelated lognormal relaxed clock, BEAST UCLD-equivalent — per-branch rate variation instead of one shared rate) |
+| Re | Cori (if `--incidence` supplied) else birth-death ML | `--bdsky-re` is already the non-incidence default; the web UI can force the weaker lineages-through-time regression instead, for comparison |
+| dN/dS | Nei-Gojobori counting | `--ml-dnds` (maximum-likelihood codon-substitution model) |
+| GD | Jukes-Cantor | `--gd-method hamming\|kimura_2_parameter` |
+
+All three μ alternatives and `--ml-dnds` are genuinely slower (ML branch-length or
+codon-likelihood optimization); the CLI has no time limit, and the web UI warns before
+running one.
+
+When no `--gff` is supplied, gene coordinates for dN/dS and CAI are predicted natively
+by a self-training coding-potential model (the same bootstrapping principle Prodigal
+uses: long open reading frames train this genome's own codon-usage model, then every
+candidate is scored against it rather than kept by length alone) — see
+`TrainedGeneFinder`'s javadoc for the model and its documented limitations.
 
 ### Desktop application
 
@@ -77,15 +106,21 @@ is the honest shape and avoids maintaining three platform-specific installers.
 |---|---|
 | `gvi-calculator-java/` | The Maven reactor — six modules built by default, plus the parked desktop module |
 | `pathogen_data/` | The 16-dataset corpus. Three files per dataset: `aligned.fasta`, `metadata.csv`, a GFF3 |
+| `dummy_data/` | A small synthetic dataset (15 taxa, a built-in molecular clock) exercising all four optional inputs — good for a first run of the web interface without real data on hand |
 | `gvi_results_final/` | Current corpus results — **the baseline the regression diffs against** |
 | `run_corpus.sh` | Runs every dataset end to end and rebuilds the summary |
 | `summarize_corpus.py` | Builds `ALL_PATHOGENS_SUMMARY.csv` from a results directory |
-| `Genomic_Indices_Detailed_Definitions.docx` | The source specification |
-| `.github/workflows/ci.yml` | Build, self-test, corpus regression, release on tag |
+| `.github/workflows/ci.yml` | Build + lint, self-test, corpus regression, release on tag |
 | `gui_concepts/` | Interface design explorations |
 
+The original source specification (`Genomic_Indices_Detailed_Definitions.docx`) is kept
+locally for reference but not tracked: every index it specifies is now implemented in
+code and documented in this README and the javadoc, so that has become the source of
+truth.
+
 Every push runs the four CI jobs; the corpus job diffs all 16 datasets against
-`gvi_results_final/` and fails on any drift.
+`gvi_results_final/` and fails on any drift. The build job also surfaces javac's own
+`-Xlint` warnings in the run summary — informational for now, not a gate.
 
 ### Modules
 
@@ -110,7 +145,7 @@ type, so identical input scored differently depending on which front end ran it.
 
 ```bash
 cd gvi-calculator-java
-mvn test                      # 406 tests
+mvn test                      # 427 tests
 java -jar gvi-cli/target/gvi-calculator.jar --self-test
 bash ../run_corpus.sh /tmp/corpus_check    # all 16 datasets end to end
 ```
@@ -158,8 +193,9 @@ Nine of the sixteen corpus datasets currently clear the floor.
 - **Re depends heavily on the generation time.** δ = 365.25 / generation time scales the
   whole birth–death process, so a value wrong by a factor of *k* moves Re by roughly the
   same factor — and Re carries the largest weight (0.2752). Supply `--pathogen-id` or
-  `--generation-time-days`; the bundled table currently has a usable value for only 9 of
-  its 27 entries.
+  `--generation-time-days`; the bundled table currently has a usable value for 17 of its
+  27 entries (8 more are correctly marked not-applicable -- environmentally/toxin-acquired
+  organisms with no host-to-host generation interval; 2 remain unpopulated stubs).
 - **Case-incidence data is the accurate path for Re.** The Cori estimator recovers a
   known Re to within 0.02; tree-shape inference is far weaker. No corpus dataset
   currently supplies incidence data, so this path is exercised only by tests — one of

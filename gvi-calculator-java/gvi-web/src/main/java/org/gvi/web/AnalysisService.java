@@ -160,12 +160,13 @@ public final class AnalysisService {
                 r.generationTimeDays != null ? r.generationTimeDays : DEFAULT_GENERATION_TIME_DAYS,
                 parseGdMethod(r.gdMethod),
                 1.0, 2.0,
-                false,                 // high-accuracy mu: too slow for an interactive request
+                r.highAccuracyMu,       // GTR(+Gamma) ML branch lengths -- opt-in, slower; falls back on its own size cap
                 null, "gtr",
-                false,                 // bootstrap support: same reason
-                false,                 // least-squares dating
+                r.bootstrapSupport,     // only exercised inside the default tree-aware mu estimator
+                r.lsdMu,                // least-squares dating -- opt-in, needs full date coverage
+                r.relaxedClockMu,       // uncorrelated lognormal relaxed clock -- opt-in, needs full date coverage
                 r.bdskyRe,
-                false,                 // ML dN/dS: 61-state codon likelihood, far too slow to hold a request open
+                r.mlDnds,               // ML dN/dS -- opt-in, 61-state codon likelihood; slower on longer genes
                 null,
                 parseGenomeType(r.genomeType),
                 Map.of(),

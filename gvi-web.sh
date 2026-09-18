@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Starts the GVI web interface, building it first if needed.
 #
-#   ./gvi-web.sh              # http://127.0.0.1:8080
+#   ./gvi-web.sh              # http://127.0.0.1:8080, no login
 #   ./gvi-web.sh --port 9000
+#   GVI_WEB_PASSWORD=secret ./gvi-web.sh --host 0.0.0.0   # requires that password over Basic Auth
 #
-# Binds loopback only. The server accepts uploads and runs analyses with no
-# authentication, so it is a local analyst's tool rather than a service; put it
-# behind a reverse proxy before using --host to expose it.
+# Binds loopback only and unauthenticated by default -- a local analyst's tool, not a
+# service. The moment --host exposes a routable interface, HTTP Basic Auth (username
+# "analyst") is required; set GVI_WEB_PASSWORD (preferred over --password, which is
+# visible to anyone who can list processes) or one is generated and printed. Still put
+# a real deployment behind a reverse proxy with TLS on top of that.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

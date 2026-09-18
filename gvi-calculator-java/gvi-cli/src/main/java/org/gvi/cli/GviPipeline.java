@@ -705,6 +705,20 @@ public final class GviPipeline {
             }
         }
 
+        if (config.relaxedClockMu()) {
+            try {
+                // Uncorrelated lognormal relaxed clock -- the same generative model BEAST2's UCLD clock uses,
+                // fit by maximum likelihood instead of MCMC (see RelaxedClockMlEstimator) -- opt-in via
+                // --relaxed-clock-mu; needs every sequence dated, falls through to the standard estimator
+                // below on failure rather than failing the run.
+                MuResult r = calc.computeRelaxedClock(alignment, config.genomeType());
+                population.put(IndexKey.MU, r);
+                return;
+            } catch (GviException relaxedClockFailure) {
+                warnings.add("mu: --relaxed-clock-mu unavailable (" + relaxedClockFailure.getMessage() + "); falling back to the standard estimator");
+            }
+        }
+
         try {
             // Prefer the tree-aware estimator (accounts for shared ancestry between sequences);
             // fall back to pairwise-to-reference if the tree can't be built (e.g. too many taxa, too few sequences).
@@ -877,45 +891,36 @@ public final class GviPipeline {
             "The supplied --gff parsed but contained no usable CDS record (see the gff warnings above -- "
                     + "a GFF3 saved with spaces instead of tabs fails every row this way)";
 
-    /** Real ORFs in a compact viral genome are dramatically longer than the chance ORFs a 6-frame scan finds everywhere in a whole genome (an ~11kb sequence has dozens of >=30-codon runs by pure chance) -- keeping only ORFs within this fraction of the single longest one found is what actually separates real signal from that noise; confirmed empirically (real KFDV polyprotein: 3416 codons; next-longest, noise: 179 codons -- a 19x gap). */
-    private static final double ORF_RELATIVE_LENGTH_THRESHOLD = 0.3;
-
     /**
      * No {@code --gff} supplied: rather than blindly treating the whole
-     * sequence as one ORF, run a real (if simple) native ORF prediction --
-     * {@link org.gvi.algorithms.orf.OrfFinder}, a standard 6-frame
-     * ATG-to-stop scan -- on the reference sequence, using its coordinates
-     * for every sequence in the alignment (consistent with how a supplied
-     * GFF3's coordinates are already used dataset-wide). Falls back to the
-     * single-whole-sequence-ORF treatment only if prediction finds nothing.
-     * Filters down to ORFs of a comparable size to the longest one found
-     * (see {@link #ORF_RELATIVE_LENGTH_THRESHOLD}) -- without this, dozens
-     * of short chance ORFs from a whole-genome scan pollute dN/dS's
-     * max-omega aggregation with noise (confirmed against real KFDV data:
-     * an unfiltered scan drove the composite dN/dS to an implausible 45,
-     * driven entirely by a handful of essentially meaningless codons in a
-     * spurious 30-40 codon "ORF").
+     * sequence as one ORF, run a real native gene prediction --
+     * {@link org.gvi.algorithms.orf.TrainedGeneFinder}, a self-training
+     * coding-potential model in the same bootstrapping spirit as Prodigal
+     * (see that class's javadoc for the full method and its documented
+     * limitations relative to genuine Prodigal) -- on the reference
+     * sequence, using its coordinates for every sequence in the alignment
+     * (consistent with how a supplied GFF3's coordinates are already used
+     * dataset-wide). Falls back to the single-whole-sequence-ORF treatment
+     * only if candidate enumeration finds nothing at all.
      */
     private List<GeneAnnotation> predictOrfs(SequenceAlignment alignment, List<String> warnings, String reason) {
-        List<GeneAnnotation> allOrfs = new org.gvi.algorithms.orf.OrfFinder().findOrfs(alignment.getReference().getSequence());
-        if (allOrfs.isEmpty()) {
-            warnings.add(reason + ", and native ORF prediction found no open reading frame >= "
+        org.gvi.algorithms.orf.TrainedGeneFinder finder = new org.gvi.algorithms.orf.TrainedGeneFinder();
+        List<GeneAnnotation> predicted = finder.findGenes(alignment.getReference().getSequence());
+        if (predicted.isEmpty()) {
+            warnings.add(reason + ", and native gene prediction found no open reading frame >= "
                     + org.gvi.algorithms.orf.OrfFinder.DEFAULT_MIN_ORF_CODONS
                     + " codons on the reference sequence; falling back to treating the whole sequence as a single ORF");
             return List.of(new GeneAnnotation("whole_genome", 1, alignment.length(), '+'));
         }
 
-        long longest = allOrfs.stream().mapToLong(GeneAnnotation::length).max().orElseThrow();
-        List<GeneAnnotation> predicted = allOrfs.stream()
-                .filter(g -> g.length() >= longest * ORF_RELATIVE_LENGTH_THRESHOLD)
-                .toList();
-
-        warnings.add(reason + "; predicted " + predicted.size() + " open reading frame(s) natively from the "
-                + "reference sequence (ATG...stop 6-frame scan, >= " + org.gvi.algorithms.orf.OrfFinder.DEFAULT_MIN_ORF_CODONS
-                + " codons, kept if within " + (int) (ORF_RELATIVE_LENGTH_THRESHOLD * 100) + "% of the longest one found -- "
-                + allOrfs.size() + " candidate(s) before that filter) instead of treating the whole sequence as one ORF -- "
-                + "a real but simpler technique than a trained gene-finder (no coding-potential model, no splice handling); "
-                + "supply --gff for definitive gene coordinates if available.");
+        warnings.add(reason + "; predicted " + predicted.size() + " gene(s) natively from the reference sequence "
+                + "using a self-trained coding-potential model (Prodigal-style bootstrapping: candidate ORFs of at least "
+                + org.gvi.algorithms.orf.TrainedGeneFinder.MIN_TRAINING_ORF_CODONS
+                + " codons train this genome's own codon-usage model, then every candidate is scored against it and "
+                + "kept only if it fits that trained model better than the genome's bulk composition) instead of a "
+                + "length-only heuristic -- a real accuracy upgrade, but still no splice handling and no ribosome-binding-site-based "
+                + "start-site refinement, so treat this as a working annotation, not a definitive one; supply --gff for "
+                + "definitive gene coordinates if available.");
         return predicted;
     }
 

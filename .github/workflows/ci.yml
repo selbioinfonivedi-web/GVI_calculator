@@ -39,7 +39,9 @@ jobs:
 
       - name: Build and test
         working-directory: gvi-calculator-java
-        run: mvn -B verify
+        # pipefail explicitly, rather than trusting the shell's default: piping into tee for the
+        # lint-summary step below must not silently swallow a real `mvn verify` failure.
+        run: set -o pipefail; mvn -B verify | tee build.log
 
       - name: Summarise test results
         if: always()
@@ -50,6 +52,21 @@ jobs:
           fail=$(grep -rh "Tests run:" */target/surefire-reports/*.txt 2>/dev/null \
                   | awk -F'[ ,]+' '{f+=$5+$7} END{print f+0}')
           echo "### Tests: $total run, $fail failed" >> "$GITHUB_STEP_SUMMARY"
+
+      # javac's own -Xlint (enabled in the parent POM), not a separate tool -- surfaced here,
+      # not gated, for the same reason coverage isn't gated below: a ratchet from a measured
+      # figure is more honest than a threshold picked before anyone looked at the number.
+      - name: Lint summary (javac -Xlint)
+        if: always()
+        working-directory: gvi-calculator-java
+        run: |
+          count=$(grep -c "^\[WARNING\] .*\.java:\[" build.log || true)
+          echo "### Lint: $count javac warning(s)" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$count" -gt 0 ]; then
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            grep "^\[WARNING\] .*\.java:\[" build.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Coverage summary
         if: always()

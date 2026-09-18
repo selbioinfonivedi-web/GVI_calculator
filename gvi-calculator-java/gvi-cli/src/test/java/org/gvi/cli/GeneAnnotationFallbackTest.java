@@ -50,7 +50,7 @@ class GeneAnnotationFallbackTest {
                 fasta(), null, gff, null, null, null, null, "reference",
                 Set.of("dnds", "pi"),
                 OrganismClass.VIRUS, null, true, 5.0,
-                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, false, false,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, false, false, false,
                 null, GenomeType.RNA, Map.of(), null, false, 100, false, null));
     }
 

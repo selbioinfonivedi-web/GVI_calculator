@@ -87,9 +87,10 @@ Verify the install: ./gvi --self-test      (13 checks, all must pass)
 
 On Windows use gvi-web.bat and gvi.bat.
 
-The web interface binds 127.0.0.1 only. It accepts uploads and runs analyses
-with no authentication, so it is a local analyst's tool rather than a service.
---host exposes it and warns when used; put it behind a reverse proxy first.
+The web interface binds 127.0.0.1 only and is unauthenticated by default -- a local
+analyst's tool, not a service. --host exposes a routable interface and then requires
+HTTP Basic Auth (username "analyst"): set GVI_WEB_PASSWORD or one is generated and
+printed. Still put a real deployment behind a reverse proxy with TLS on top of that.
 
 Read README.md before interpreting a score -- in particular the section on
 effectiveWeightSum, which decides whether a score can be compared with another.

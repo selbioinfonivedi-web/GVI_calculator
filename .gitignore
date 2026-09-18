@@ -73,3 +73,13 @@ gvi_results_superseded_*/
 /gvi_dossier_preview.html
 /gvi_result_view.html
 /gvi_redesign.html.bak
+
+# The original spec document, kept locally for reference but no longer tracked:
+# every index it specifies is now implemented in code and documented in the
+# README/javadoc, so the binary source-of-truth has moved there.
+/Genomic_Indices_Detailed_Definitions.docx
+
+# Literature source spreadsheets for the generation-time table -- their data
+# (with citations) is now fully absorbed into generation_times.yaml's T_note
+# fields, so the raw spreadsheets are working documents, not project inputs.
+*.xlsx

@@ -44,7 +44,7 @@ class GenerationTimeTableTest {
 
     @Test
     void stubEntryFailsRatherThanGuessing() {
-        assertThatThrownBy(() -> table.requireGenerationTimeDays("fmd"))
+        assertThatThrownBy(() -> table.requireGenerationTimeDays("babesiosis"))
                 .isInstanceOf(MissingGenerationTimeException.class)
                 .hasMessageContaining("still a stub");
     }

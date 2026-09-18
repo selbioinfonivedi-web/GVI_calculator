@@ -1068,6 +1068,8 @@ public final class GviUiApp extends Application {
                     substitutionModelCombo.getValue(),
                     bootstrapSupportCheckbox.isSelected(),
                     lsdMuCheckbox.isSelected(),
+                    // TODO: no relaxed-clock-mu control in the UI yet (see GviCli's --relaxed-clock-mu).
+                    false,
                     bdskyReCheckbox.isSelected(),
                     mlDndsCheckbox.isSelected(),
                     pathOrNull(weightsField),

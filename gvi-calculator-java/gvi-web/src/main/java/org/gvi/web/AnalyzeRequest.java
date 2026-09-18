@@ -49,5 +49,20 @@ public class AnalyzeRequest {
     public boolean perSequence;
     public boolean bdskyRe = true;
 
+    /**
+     * Opt-in slower/more-accurate estimators, mirroring the CLI's {@code --high-accuracy-mu},
+     * {@code --lsd-mu}, {@code --bootstrap-support} and {@code --ml-dnds}. These were previously
+     * hardcoded off for the web path because they are slow -- now left to the caller, since this
+     * server is a local, single-user, unauthenticated tool (see the class javadoc) where the
+     * caller who requested more accuracy is the same one waiting on the response. Each estimator's
+     * own size cap (e.g. the ML dN/dS and GTR+Gamma branch-length fits) still applies and falls
+     * back to the fast estimator with a warning rather than hanging, exactly as for the CLI.
+     */
+    public boolean highAccuracyMu;
+    public boolean lsdMu;
+    public boolean relaxedClockMu;
+    public boolean bootstrapSupport;
+    public boolean mlDnds;
+
     public List<String> indices;
 }

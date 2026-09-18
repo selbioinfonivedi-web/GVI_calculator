@@ -9,5 +9,7 @@ public enum MuEstimationMethod {
     /** Root-to-tip distance along an NJ topology whose branch lengths were re-optimized by maximum likelihood under GTR(+Gamma) -- see {@link EvolutionaryRateCalculator#computeGtrGammaAware}. Slower; opt-in. */
     GTR_GAMMA_ML_BRANCH_LENGTHS,
     /** Joint least-squares fit of the rate AND every internal node's date directly against every edge, under temporal-precedence constraints -- the same objective LSD2 (To et al. 2016) solves. See {@link EvolutionaryRateCalculator#computeLeastSquaresDating} / {@link LeastSquaresDatingEstimator}. */
-    LEAST_SQUARES_DATING
+    LEAST_SQUARES_DATING,
+    /** Uncorrelated lognormal relaxed clock -- each branch gets its own rate instead of one shared rate, the same generative model BEAST2's UCLD clock uses, fit here by maximum likelihood rather than MCMC. See {@link EvolutionaryRateCalculator#computeRelaxedClock} / {@link RelaxedClockMlEstimator}. */
+    RELAXED_CLOCK_ML
 }

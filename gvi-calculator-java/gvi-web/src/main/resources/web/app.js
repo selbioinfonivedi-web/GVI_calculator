@@ -252,7 +252,7 @@ function hideError() { $('errorBox').classList.add('hidden'); }
 function setBusy(on, text) {
   $('busy').classList.toggle('hidden', !on);
   if (text) $('busyText').textContent = text;
-  $('runBtn').disabled = on; $('runBtn2').disabled = on;
+  $('runBtn').disabled = on;
   $('statusLabel').textContent = on ? 'computing…' : (state.result ? 'complete' : 'awaiting input');
   $('sbEngine').textContent = on ? 'pipeline running' : (state.result ? 'pipeline idle' : 'pipeline idle');
 }
@@ -260,8 +260,11 @@ function setBusy(on, text) {
 /* ========================= run the analysis ========================= */
 async function run() {
   if (!state.fasta) { showError('Load an aligned multi-FASTA first — it is the one required input.'); return; }
+  const indices = Array.from(document.querySelectorAll('.idxCheck:checked')).map((el) => el.value);
+  if (indices.length === 0) { showError('Select at least one index to compute.'); return; }
   hideError();
-  setBusy(true);
+  const slow = $('muMethod').value !== '' || $('dndsMethod').value === 'ml';
+  setBusy(true, slow ? 'Running analysis (a slower estimator was selected, this can take a while)…' : 'Running analysis…');
   const body = {
     fasta: state.fasta,
     metadata: state.metadata || null,
@@ -277,6 +280,13 @@ async function run() {
     genomeType: $('genomeType').value || null,
     trimToCovered: $('trimToCovered').checked,
     perSequence: $('perSequence').checked,
+    indices: indices,
+    highAccuracyMu: $('muMethod').value === 'high_accuracy',
+    lsdMu: $('muMethod').value === 'lsd',
+    relaxedClockMu: $('muMethod').value === 'relaxed_clock',
+    bootstrapSupport: $('bootstrapSupport').checked,
+    mlDnds: $('dndsMethod').value === 'ml',
+    bdskyRe: $('reMethod').value !== 'phylodynamic_only',
     auto: true
   };
   try {
@@ -297,7 +307,12 @@ async function run() {
   }
 }
 $('runBtn').addEventListener('click', run);
-$('runBtn2').addEventListener('click', run);
+$('idxAllBtn').addEventListener('click', () => {
+  document.querySelectorAll('.idxCheck').forEach((el) => { el.checked = true; });
+});
+$('idxNoneBtn').addEventListener('click', () => {
+  document.querySelectorAll('.idxCheck').forEach((el) => { el.checked = false; });
+});
 $('clearBtn').addEventListener('click', () => {
   state.fasta = state.metadata = state.gff = state.result = state.aln = state.incidence = null;
   state.meta = {};
@@ -307,6 +322,9 @@ $('clearBtn').addEventListener('click', () => {
   $('incidenceFile').value = '';
   ['generationTime', 'referenceId', 'referenceGc'].forEach((i) => { $(i).value = ''; });
   $('pathogenId').value = ''; $('gdMethod').value = '';
+  $('muMethod').value = ''; $('dndsMethod').value = ''; $('reMethod').value = '';
+  $('bootstrapSupport').checked = false;
+  document.querySelectorAll('.idxCheck').forEach((el) => { el.checked = true; });
   ['mSeqs', 'mLen', 'mCov', 'mExcl'].forEach((i) => { $(i).textContent = '—'; });
   $('mSeqsSub').textContent = 'no alignment loaded';
   $('mCovSub').textContent = 'of the weighting scheme';

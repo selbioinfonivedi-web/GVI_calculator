@@ -264,7 +264,7 @@ class GviPipelineTest {
                 fasta, null, null, null, null, null, null, "reference",
                 Set.of("pi", "gd", "mb", "re"),
                 org.gvi.core.model.OrganismClass.VIRUS, stubId, false, 5.0,
-                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, true, false,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, false, true, false,
                 null, GenomeType.RNA, Map.of(), null, false, 100, false, null);
 
         PipelineResult result = new GviPipeline().run(config);
@@ -307,7 +307,7 @@ class GviPipelineTest {
                 fasta, null, null, null, null, null, null, "reference",
                 Set.of("pi", "gd", "mb", "re"),
                 org.gvi.core.model.OrganismClass.BACTERIUM, notApplicableId, false, 5.0,
-                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, true, false,
+                GdMethod.JUKES_CANTOR, 1.0, 2.0, false, null, "gtr", false, false, false, true, false,
                 null, GenomeType.DNA, Map.of(), null, false, 100, false, null);
 
         PipelineResult result = new GviPipeline().run(config);

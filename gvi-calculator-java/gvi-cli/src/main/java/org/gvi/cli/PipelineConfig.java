@@ -31,6 +31,7 @@ public record PipelineConfig(
         String substitutionModel,
         boolean bootstrapSupport,
         boolean leastSquaresDating,
+        boolean relaxedClockMu,
         boolean bdskyRe,
         boolean mlDnds,
         Path weightsPath,
@@ -58,7 +59,7 @@ public record PipelineConfig(
         this(fastaPath, metadataPath, gffPath, codonUsagePath, codonUsageSpecies, incidencePath,
                 referenceGcPercent, referenceId, indicesRequested, OrganismClass.UNSPECIFIED, null, true,
                 generationTimeDays, gdMethod, beta0, betaScaleFactor, highAccuracyMu, gammaAlpha,
-                substitutionModel, bootstrapSupport, leastSquaresDating, bdskyRe, mlDnds, weightsPath,
+                substitutionModel, bootstrapSupport, leastSquaresDating, false, bdskyRe, mlDnds, weightsPath,
                 genomeType, segmentFastas, gffOut, false, 100, false, null);
     }
 

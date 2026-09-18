@@ -1,0 +1,2 @@
+##gff-version 3
+alignment	dummy	CDS	1	300	.	+	0	ID=dummy_cds;gene=dummyGene;product=hypothetical protein

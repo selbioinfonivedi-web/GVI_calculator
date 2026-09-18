@@ -175,6 +175,12 @@ public final class GviCli implements Callable<Integer> {
             + "automatically to the standard estimator otherwise.")
     boolean lsdMu;
 
+    @Option(names = "--relaxed-clock-mu", description = "Estimate mu via a native uncorrelated lognormal relaxed clock -- the same "
+            + "generative model BEAST2's UCLD clock uses, fit by maximum likelihood instead of full Bayesian MCMC: every branch "
+            + "gets its own rate instead of one shared rate, reported alongside a rate coefficient of variation. Needs every "
+            + "sequence dated; falls back automatically to the standard estimator otherwise.")
+    boolean relaxedClockMu;
+
     @Option(names = "--bdsky-re", description = "Estimate Re via a native birth-death-sampling maximum-likelihood fit -- the same "
             + "generative model BEAST2's BDSKY package uses, fit by optimization instead of full Bayesian MCMC. Only tried when "
             + "no --incidence data is supplied (Cori et al. remains preferred whenever real case counts exist). Needs every "
@@ -329,7 +335,7 @@ public final class GviCli implements Callable<Integer> {
                 fasta, metadata, gff, codonUsage, codonUsageSpecies, incidence, referenceGc, referenceId,
                 lower(indexSet), org.gvi.core.model.OrganismClass.parse(organismClass), pathogenId,
                 generationTimeExplicit, resolvedGenerationTime, parseGdMethod(gdMethod),
-                beta0, scaleFactor, highAccuracyMu, gammaAlpha, substitutionModel, bootstrapSupport, lsdMu, bdskyRe, mlDnds,
+                beta0, scaleFactor, highAccuracyMu, gammaAlpha, substitutionModel, bootstrapSupport, lsdMu, relaxedClockMu, bdskyRe, mlDnds,
                 weightsPath, parseGenomeType(genomeType), segments == null ? Map.of() : segments, gffOut,
                 trimToCovered, minTrimmedColumns, auto, derivedOutputDir()
         );

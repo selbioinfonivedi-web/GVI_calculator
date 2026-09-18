@@ -340,4 +340,46 @@ class GviWebServerTest {
         assertThat(res.statusCode()).isEqualTo(400);
         assertThat(mapper.readTree(res.body()).get("error").asText()).contains("FASTA");
     }
+
+    /**
+     * A password can be configured on a loopback bind too (a shared workstation that wants a login
+     * even for local access), and once one is set every route -- not just {@code /api/analyze} -- must
+     * enforce it, including the plain static page.
+     */
+    @Test
+    void requiresBasicAuthOnEveryRouteWhenAPasswordIsConfigured() throws Exception {
+        GviWebServer authed = new GviWebServer();
+        authed.start("127.0.0.1", 0, "s3cret-pw");
+        String authedBase = "http://127.0.0.1:" + authed.port();
+        try {
+            HttpResponse<String> noCreds = client.send(
+                    HttpRequest.newBuilder(URI.create(authedBase + "/")).GET().build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(noCreds.statusCode()).isEqualTo(401);
+
+            String wrongAuth = "Basic " + java.util.Base64.getEncoder().encodeToString("analyst:wrong".getBytes());
+            HttpResponse<String> wrongCreds = client.send(
+                    HttpRequest.newBuilder(URI.create(authedBase + "/")).header("Authorization", wrongAuth).GET().build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(wrongCreds.statusCode()).isEqualTo(401);
+
+            String rightAuth = "Basic " + java.util.Base64.getEncoder().encodeToString("analyst:s3cret-pw".getBytes());
+            HttpResponse<String> rightCreds = client.send(
+                    HttpRequest.newBuilder(URI.create(authedBase + "/")).header("Authorization", rightAuth).GET().build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(rightCreds.statusCode()).isEqualTo(200);
+            assertThat(rightCreds.body()).contains("Genomic Virulence Index Calculator");
+
+            HttpResponse<String> apiNoCreds = client.send(
+                    HttpRequest.newBuilder(URI.create(authedBase + "/api/health")).GET().build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(apiNoCreds.statusCode()).as("auth must cover API routes, not just the static page").isEqualTo(401);
+        } finally {
+            authed.stop();
+        }
+    }
+
+    /** The default (no password argument at all) must remain exactly today's behaviour: no login. */
+    @Test
+    void noPasswordConfiguredMeansNoAuthRequired() throws Exception {
+        assertThat(get("/").statusCode()).as("this test class's @BeforeEach starts the server with no password").isEqualTo(200);
+    }
 }

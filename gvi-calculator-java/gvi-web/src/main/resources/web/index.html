@@ -67,7 +67,7 @@
                   <p class="hint" id="fastaStatus">No file loaded</p>
                 </div>
                 <details>
-                  <summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Paste instead</summary>
+                  <summary class="disclosure">Paste instead</summary>
                   <textarea id="fastaText" rows="6" placeholder="&gt;seq1&#10;ATGC&hellip;"></textarea>
                   <button class="btn btn-sm" id="fastaUse" type="button" style="margin-top:6px;">Use pasted sequences</button>
                 </details>
@@ -105,7 +105,7 @@
               <div class="field">
                 <label for="metadataFile">Metadata CSV <span class="hint" style="text-transform:none; letter-spacing:0;">&mdash; needed for &mu; and Re</span></label>
                 <input type="file" id="metadataFile" accept=".csv,.tsv,.txt">
-                <details><summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Paste instead</summary>
+                <details><summary class="disclosure">Paste instead</summary>
                   <textarea id="metadataText" rows="4" placeholder="sequence_id,collection_date,location,host"></textarea>
                   <button class="btn btn-sm" id="metadataUse" type="button" style="margin-top:6px;">Use pasted metadata</button>
                 </details>
@@ -141,7 +141,7 @@
               </div>
 
               <details style="margin-bottom:14px;">
-                <summary style="font-size:11.5px; color:var(--blue); cursor:pointer;">Advanced</summary>
+                <summary class="disclosure">Advanced &mdash; estimator selection, reference, distance method</summary>
                 <div style="padding-top:10px;">
                   <div class="grid2">
                     <div class="field">
@@ -153,7 +153,8 @@
                       <label for="gdMethod">Distance correction</label>
                       <select id="gdMethod">
                         <option value="">Jukes-Cantor (default)</option>
-                        <option value="k80">Kimura two-parameter</option>
+                        <option value="hamming">Hamming (raw p-distance)</option>
+                        <option value="kimura_2_parameter">Kimura two-parameter</option>
                       </select>
                     </div>
                   </div>
@@ -162,6 +163,41 @@
                     <input type="number" id="referenceGc" step="0.01" placeholder="default: this alignment's own reference">
                     <p class="hint">GC deviation is measured from this baseline. Left empty it uses the alignment's own reference sequence, which measures deviation from <em>this dataset</em> rather than from an external host-genome target.</p>
                   </div>
+
+                  <div class="grid2" style="margin-top:8px;">
+                    <div class="field">
+                      <label for="muMethod">&mu; estimator</label>
+                      <select id="muMethod">
+                        <option value="">Auto &mdash; tree root-to-tip (default)</option>
+                        <option value="high_accuracy">GTR(+Gamma) ML branch lengths &mdash; slower, most accurate</option>
+                        <option value="lsd">Least-squares dating (LSD) &mdash; joint rate + node-date fit</option>
+                        <option value="relaxed_clock">Relaxed clock (UCLD-equivalent) &mdash; per-branch rate variation</option>
+                      </select>
+                      <p class="hint">The non-default options re-optimize branch lengths, dates, or per-branch rates by maximum likelihood; falls back to Auto on its own size cap or on unavailable dates, with a warning. The relaxed clock additionally reports a rate coefficient of variation among branches.</p>
+                    </div>
+                    <div class="field">
+                      <label for="dndsMethod">dN/dS estimator</label>
+                      <select id="dndsMethod">
+                        <option value="">Nei-Gojobori counting (default, fast)</option>
+                        <option value="ml">Maximum-likelihood codon model &mdash; slower</option>
+                      </select>
+                      <p class="hint">The ML codon model fits a 61-state substitution model per gene; can take noticeably longer on long or many-gene GFFs.</p>
+                    </div>
+                  </div>
+                  <div class="grid2">
+                    <div class="field">
+                      <label for="reMethod">Re estimator</label>
+                      <select id="reMethod">
+                        <option value="">Auto &mdash; birth-death ML (BDSKY), best available</option>
+                        <option value="phylodynamic_only">Lineages-through-time regression &mdash; faster, far less discriminating</option>
+                      </select>
+                      <p class="hint">Ignored when a case-incidence CSV is supplied above (Cori estimator always wins then). Auto already falls back to this weaker regression on its own if the birth-death fit fails or the tree exceeds its taxon cap.</p>
+                    </div>
+                    <div class="field">
+                      <label class="check" style="margin-top:22px;"><input type="checkbox" id="bootstrapSupport">
+                        <span>Bootstrap support<span class="hint">Felsenstein (1985) nonparametric bootstrap on the &mu; tree. Only applies when the &mu; estimator above is left at Auto.</span></span></label>
+                    </div>
+                  </div>
                 </div>
               </details>
 
@@ -169,13 +205,32 @@
                 <span>Trim to fully-covered columns<span class="hint">Drops positions where any sequence has no data, so indices compare observed bases rather than absent coverage. Use when sequences cover different windows of the locus.</span></span></label>
               <label class="check"><input type="checkbox" id="perSequence">
                 <span>Report per-sequence detail<span class="hint">Adds a row per genome to the report.</span></span></label>
+
+              <div class="field" style="border-top:1px solid var(--border-lt); padding-top:13px; margin-top:6px;">
+                <label>Indices to compute</label>
+                <div class="grid2" id="indexChecks" style="gap:4px 18px;">
+                  <label class="check"><input type="checkbox" class="idxCheck" value="mu" checked><span>&mu; &mdash; Evolutionary rate</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="re" checked><span>Re &mdash; Reproduction number</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="pi" checked><span>&pi; &mdash; Nucleotide diversity</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="mb" checked><span>MB &mdash; Mutation burden</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="dnds" checked><span>dN/dS &mdash; Selection pressure</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="gd" checked><span>GD &mdash; Genetic distance</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="cai" checked><span>CAI &mdash; Codon adaptation</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="gc" checked><span>GC &mdash; GC content deviation</span></label>
+                  <label class="check"><input type="checkbox" class="idxCheck" value="ri" checked><span>RI &mdash; Recombination</span></label>
+                </div>
+                <p class="hint">Unchecked indices are skipped entirely rather than computed and excluded from the composite &mdash; useful to speed up a run when you only need a subset. Leave all checked to compute everything (default).</p>
+                <div style="display:flex; gap:8px; margin-top:4px;">
+                  <button class="btn btn-sm" id="idxAllBtn" type="button">Select all</button>
+                  <button class="btn btn-sm" id="idxNoneBtn" type="button">Select none</button>
+                </div>
+              </div>
             </div>
           </div>
 
           <div style="display:flex; gap:8px; align-items:center; margin-top:6px; padding-top:14px; border-top:1px solid var(--border-light);">
-            <button class="btn btn-primary btn-sm" id="runBtn2" type="button">Compute GVI</button>
             <button class="btn btn-sm" id="clearBtn" type="button">Clear</button>
-            <span class="hint" style="margin-left:6px;">Runs locally in this process &mdash; the same pipeline as the command-line tool.</span>
+            <span class="hint" style="margin-left:6px;">Runs locally in this process &mdash; the same pipeline as the command-line tool. Use the "Compute GVI" button in the top bar to run.</span>
           </div>
           <div class="busy hidden" id="busy"><span class="spinner"></span> <span id="busyText">Running analysis&hellip;</span></div>
           <div class="callout danger hidden" id="errorBox" style="margin-top:14px; margin-bottom:0;"></div>
